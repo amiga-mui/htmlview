@@ -1,0 +1,12 @@
+--------------------------------------
+MUI BetterString MCC class - ChangeLog
+--------------------------------------
+
+$Id$
+$URL$
+
+2007-03-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * initial LGPL release published at sf.net. Please note that currently
+    just the mcp compiles cleanly. The mcc sources still require a large
+    amount of work to get compiled and running...
