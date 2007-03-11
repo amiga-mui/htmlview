@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by HTMLview.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -50,8 +50,10 @@ HOOKPROTONH(AppMessageCode, VOID, Object* htmlview, struct MUIP_AppMessage *args
 {
 	if(args->appmsg->am_NumArgs)
 	{
-		UBYTE dir [256+8];
-		strcpy(dir, "file://");
+		char dir[256+8];
+		
+    strlcpy(dir, "file://", sizeof(dir));
+
 		if(NameFromLock(args->appmsg->am_ArgList[0].wa_Lock, dir+7, 256))
 		{
 			AddPart(dir+7, args->appmsg->am_ArgList[0].wa_Name, 256);
@@ -86,7 +88,7 @@ Object *CheckMarkGadget(UBYTE ctrlchar)
 		End;
 }
 
-Object *MyLabel (STRPTR label, UWORD frame, UBYTE key)
+Object *MyLabel(const char *label, UWORD frame, UBYTE key)
 {
 	return MUI_MakeObject(MUIO_Label, label, MUIO_Label_DontCopy | frame | key);
 }
@@ -94,12 +96,13 @@ Object *MyLabel (STRPTR label, UWORD frame, UBYTE key)
 VOID CreateSampleText(Object *htmlview)
 {
 	ULONG ver, rev;
+	const char *extra = MUIMasterBase->lib_Version > 19 ? "<Br><Br><P Align=Center><Small>You can drop HTML files onto this gadget!</Small>" : "";
+	char text[800];
+
 	get(htmlview, MUIA_Version, &ver);
 	get(htmlview, MUIA_Revision, &rev);
-	STRPTR extra = MUIMasterBase->lib_Version > 19 ? "<Br><Br><P Align=Center><Small>You can drop HTML files onto this gadget!</Small>" : "";
 
-	UBYTE text[800];
-	sprintf(text, "<Body>"
+	snprintf(text, sizeof(text), "<Body>"
 
 		"<Table CellSpacing=0 CellPadding=0 Align=Center>"
 		"<TR><TD RowSpan=2 VAlign=Bottom><Font Size=+2>HTMLview&nbsp;"
@@ -125,8 +128,8 @@ VOID CreateSampleText(Object *htmlview)
 Object *CreatePrefsGroup(struct InstData_MCP *data)
 {
 	ULONG PopImg = MUIMasterBase->lib_Version < 20 ? MUII_PopUp : MUII_PopFont;
-	static STRPTR PageTitles[] = { "Fonts", "Graphics", "Settings", "Sample", NULL };
-	static STRPTR Dither[] = { "Floyd steinberg", "None", NULL };
+	static const char *PageTitles[] = { "Fonts", "Graphics", "Settings", "Sample", NULL };
+	static const char *Dither[] = { "Floyd steinberg", "None", NULL };
 
 	Object **objs = data->Objects;
 	Object *group, *snoop, *htmlview;

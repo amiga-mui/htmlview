@@ -5,6 +5,11 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcp: fixed all compiler warnings and adapted sources to cleanly compile
+    for OS3 and MOS target as well.
+
 2007-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * initial LGPL release published at sf.net. Please note that currently
