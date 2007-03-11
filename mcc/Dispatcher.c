@@ -236,7 +236,7 @@ DISPATCHERPROTO(_Dispatcher)
 				data->ImageLoadHook = data->LoadHook = &DefaultLoadHook;
 
         InitHook(&LayoutHook, LayoutHook, data);
-				set(obj, MUIA_Group_LayoutHook, &LayoutHook);
+				SetAttrs(obj, MUIA_Group_LayoutHook, &LayoutHook, TAG_DONE);
 
         D(DBF_STARTUP, "after DoSuperMethod1");
 
@@ -416,7 +416,7 @@ DISPATCHERPROTO(_Dispatcher)
 
 			Object *child;
 			struct List *childs;
-			get(obj, MUIA_Group_ChildList, &childs);
+			GetAttrs(obj, MUIA_Group_ChildList, &childs, TAG_DONE);
 			struct Node *head = childs->lh_Head;
 			while(child = (Object *)NextObject(&head))
 			{
@@ -491,8 +491,8 @@ DISPATCHERPROTO(_Dispatcher)
 			struct MUIP_Backfill *bmsg = (struct MUIP_Backfill *)msg;
 			struct RastPort *rp = _rp(obj);
 
-			get(obj, MUIA_Virtgroup_Left, &data->Left);
-			get(obj, MUIA_Virtgroup_Top, &data->Top);
+			GetAttrs(obj, MUIA_Virtgroup_Left, &data->Left, TAG_DONE);
+			GetAttrs(obj, MUIA_Virtgroup_Top, &data->Top, TAG_DONE);
 			if(!data->HostObject || (!data->HostObject->Body && (data->Flags & FLG_HostObjNotUsed)))
 			{
 				if(!(data->Flags & FLG_NoBackfill))
@@ -834,7 +834,7 @@ DISPATCHERPROTO(_Dispatcher)
 						{
 							ULONG top = (anchor->top() > 5) ? anchor->top()-5 : 0;
 							if(top != data->Top)
-								set(obj, MUIA_Virtgroup_Top, top);
+								SetAttrs(obj, MUIA_Virtgroup_Top, top, TAG_DONE);
 						}
 						else
 						{
@@ -850,7 +850,7 @@ DISPATCHERPROTO(_Dispatcher)
 					}
 					else if(url[baselen+pagelen] == '\0')
 					{
-						set(obj, MUIA_Virtgroup_Top, 0);
+						SetAttrs(obj, MUIA_Virtgroup_Top, 0, TAG_DONE);
 						delete tmpstr;
 						return(data->PageID);
 					}
@@ -862,7 +862,7 @@ DISPATCHERPROTO(_Dispatcher)
 				HTMLview_SetPath(obj, url, data);
 
 				DoMethod(obj, MUIM_HTMLview_StartParser);
-				set(obj, MUIA_HTMLview_Title, NULL);
+				SetAttrs(obj, MUIA_HTMLview_Title, NULL, TAG_DONE);
 			}
 			delete tmpstr;
 		}
@@ -949,7 +949,7 @@ DISPATCHERPROTO(_Dispatcher)
 							{
 								delete data->Local;
 								data->Local = NULL;
-								set(obj, MUIA_Virtgroup_Top, (anchor->top() > 5) ? anchor->top()-5 : 0);
+								SetAttrs(obj, MUIA_Virtgroup_Top, (anchor->top() > 5) ? anchor->top()-5 : 0, TAG_DONE);
 							}
 						}
 						data->Flags &= ~FLG_NotResized;
@@ -957,7 +957,7 @@ DISPATCHERPROTO(_Dispatcher)
 
 					if(data->PMsg->Title)
 					{
-						set(obj, MUIA_HTMLview_Title, data->PMsg->Title);
+						SetAttrs(obj, MUIA_HTMLview_Title, data->PMsg->Title, TAG_DONE);
 						data->PMsg->Title = NULL;
 					}
 				}
@@ -989,7 +989,7 @@ DISPATCHERPROTO(_Dispatcher)
 
 							data->HostObject = NULL;
 							data->Left = data->Top = 0;
-							set(obj, MUIA_Virtgroup_Height, 0);
+							SetAttrs(obj, MUIA_Virtgroup_Height, 0, TAG_DONE);
 /*							SetAttrs(obj,
 								MUIA_Virtgroup_Left,	0,
 								MUIA_Virtgroup_Top,	0,
@@ -1005,8 +1005,8 @@ DISPATCHERPROTO(_Dispatcher)
 							data->Flags &= ~FLG_RemoveChildren;
 
 							Object *parent = NULL;
-							if(get(obj, MUIA_Parent, &parent), parent)
-								set(parent, MUIA_ScrollGroup_Frames, FALSE);
+							if(GetAttrs(obj, MUIA_Parent, &parent, TAG_DONE), parent)
+								SetAttrs(parent, MUIA_ScrollGroup_Frames, FALSE, TAG_DONE);
 						}
 					}
 					break;
@@ -1046,8 +1046,8 @@ DISPATCHERPROTO(_Dispatcher)
 								else if(data->HostObject->Body->id() == tag_FRAMESET)
 								{
 									Object *parent = NULL;
-									if(get(obj, MUIA_Parent, &parent), parent)
-										set(parent, MUIA_ScrollGroup_Frames, TRUE);
+									if(GetAttrs(obj, MUIA_Parent, &parent, TAG_DONE), parent)
+										SetAttrs(parent, MUIA_ScrollGroup_Frames, TRUE, TAG_DONE);
 								}
 
 								if(data->HostObject->RefreshURL)
@@ -1123,7 +1123,7 @@ DISPATCHERPROTO(_Dispatcher)
 			if(!total)
 				data->Share->ImageTimer.Stop(obj);
 
-			set(obj, MUIA_HTMLview_ImagesInDecodeQueue, total);
+			SetAttrs(obj, MUIA_HTMLview_ImagesInDecodeQueue, total, TAG_DONE);
 		}
 		break;
 
@@ -1159,7 +1159,8 @@ DISPATCHERPROTO(_Dispatcher)
 			if(data->HostObject && (find = data->HostObject->Find(fmsg->String, top, fmsg->Flags)))
 			{
 				if(find != (struct FindMessage *)TRUE)
-					set(obj, MUIA_Virtgroup_Top, find->TopPos > 5 ? find->TopPos - 5 : 0);
+					SetAttrs(obj, MUIA_Virtgroup_Top, find->TopPos > 5 ? find->TopPos - 5 : 0, TAG_DONE);
+
 				result = TRUE;
 			}
 		}

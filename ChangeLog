@@ -7,6 +7,12 @@ $URL$
 
 2007-03-11  Jens Langner <Jens.Langner@light-speed.de>
 
+  * mcc: got rid of the single target makefiles and added a more generalized
+    'Makefile' which should fit for all supported target platforms. In addition,
+    the MCC souces should now at least compile for AmigaOS4 - however the
+    HTMLview-Test application still crashes and as such also the htmlview.mcc
+    class. More work is required to get the class going, especially on all
+    supported target platforms.
   * mcp: fixed all compiler warnings and adapted sources to cleanly compile
     for OS3 and MOS target as well.
 

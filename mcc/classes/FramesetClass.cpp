@@ -9,6 +9,7 @@
 
 #include <ctype.h>
 #include <math.h>
+#include <stdlib.h>
 
 Object *FramesetClass::LookupFrame (STRPTR name, class HostClass *hclass)
 {

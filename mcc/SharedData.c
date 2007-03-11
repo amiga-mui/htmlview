@@ -128,7 +128,7 @@ struct AnimInfo *SharedData::AddAnim (Object *obj, struct HTMLviewData *data, st
 	AnimTimer.ihn.ihn_Current = 0;
 
 	ULONG active;
-	if(get(_win(Obj), MUIA_Window_Activate, &active), active)
+	if(GetAttrs(_win(Obj), MUIA_Window_Activate, &active, TAG_DONE), active)
 		AnimTimer.Start(obj);
 
   RETURN(Anims);

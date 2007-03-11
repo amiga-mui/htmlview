@@ -100,7 +100,7 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
 						data->HostObject->AppendGadget(amsg);
 					}
 					DoMethod(obj, MUIM_Group_ExitChange);
-					set(obj, MUIA_HTMLview_Title, pmsg.Title);
+					SetAttrs(obj, MUIA_HTMLview_Title, pmsg.Title, TAG_DONE);
 
 					if(data->Flags & FLG_Shown)
 					{

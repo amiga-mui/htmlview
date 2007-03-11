@@ -70,7 +70,7 @@ SAVEDS ASM ULONG _Dispatcher(REG(a0, struct IClass * cl), REG(a2, Object * obj),
 HOOKPROTONH(GotoURLCode, ULONG, Object* htmlview, STRPTR *url)
 {
 	STRPTR target;
-	get(htmlview, MUIA_HTMLview_Target, &target);
+	GetAttrs(htmlview, MUIA_HTMLview_Target, &target, TAG_DONE);
 	DoMethod(htmlview, MUIM_HTMLview_GotoURL, *url, target);
 }
 MakeStaticHook(GotoURLHook, GotoURLCode);
@@ -236,12 +236,12 @@ Object *BuildApp(void)
 */
 //		set(htmlview, MUIA_HTMLview_Gauge, gauge);
 
-		set(vscroll, 0x804236ce, TRUE);
-		set(hscroll, 0x804236ce, TRUE);
+		SetAttrs(vscroll, 0x804236ce, TRUE, TAG_DONE);
+		SetAttrs(hscroll, 0x804236ce, TRUE, TAG_DONE);
 
 		DoMethod(win, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 //		set(app, MUIA_Application_Iconified, TRUE);
-		set(win, MUIA_Window_Open, TRUE);
+		SetAttrs(win, MUIA_Window_Open, TRUE, TAG_DONE);
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Duff's:T/«98.09.08»/Log.html", NULL); //Duff's:T/«98.05.31»/aminew.html", NULL);
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Duff's:T/«98.11.13»/index.html");
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Data:Homepage - old/testpage.html");
