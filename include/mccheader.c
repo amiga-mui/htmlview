@@ -483,11 +483,11 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
   static struct StackSwapStruct *stack;
   #endif
 
-  SysBase = (APTR)sb;
+  SysBase = (struct Library *)sb;
 
   #if defined(__amigaos4__) && defined(__NEWLIB__)
   if((NewlibBase = OpenLibrary("newlib.library", 3)) &&
-     GETINTERFACE(INewlib, NewlibBase))
+     GETINTERFACE(INewlib, NewlibIFace*, NewlibBase))
   #endif
   {
     D(DBF_STARTUP, "LibInit()");
@@ -711,7 +711,7 @@ static BOOL UserLibOpen(struct Library *base)
   #endif
 
   if((MUIMasterBase = OpenLibrary(MUIMASTER_NAME, MASTERVERSION)) &&
-     GETINTERFACE(IMUIMaster, MUIMasterBase))
+     GETINTERFACE(IMUIMaster, MUIMasterIFace*, MUIMasterBase))
   {
     #ifdef PreClassInit
     if (!PreClassInitFunc())
@@ -736,20 +736,20 @@ static BOOL UserLibOpen(struct Library *base)
         #define THISCLASS ThisClassP
         #endif
 
-        UtilityBase   = (APTR)THISCLASS->mcc_UtilityBase;
-        DOSBase       = (APTR)THISCLASS->mcc_DOSBase;
-        GfxBase       = (APTR)THISCLASS->mcc_GfxBase;
-        IntuitionBase = (APTR)THISCLASS->mcc_IntuitionBase;
+        UtilityBase   = (struct Library *)THISCLASS->mcc_UtilityBase;
+        DOSBase       = (struct Library *)THISCLASS->mcc_DOSBase;
+        GfxBase       = (struct Library *)THISCLASS->mcc_GfxBase;
+        IntuitionBase = (struct Library *)THISCLASS->mcc_IntuitionBase;
 
         #if defined(USE_UTILITYBASE) && !defined(__NEWLIB__)
         __UtilityBase = (APTR)UtilityBase;
         #endif
 
         if(UtilityBase && DOSBase && GfxBase && IntuitionBase &&
-           GETINTERFACE(IUtility, UtilityBase) &&
-           GETINTERFACE(IDOS, DOSBase) &&
-           GETINTERFACE(IGraphics, GfxBase) &&
-           GETINTERFACE(IIntuition, IntuitionBase))
+           GETINTERFACE(IUtility, UtilityIFace*, UtilityBase) &&
+           GETINTERFACE(IDOS, DOSIFace*, DOSBase) &&
+           GETINTERFACE(IGraphics, GraphicsIFace*, GfxBase) &&
+           GETINTERFACE(IIntuition, IntuitionIFace*, IntuitionBase))
         {
           #if defined(DEBUG)
           SetupDebug();

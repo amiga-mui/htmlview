@@ -251,8 +251,8 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 			{
 				if(GetConfigVal(data->HTMLview, MUICFG_HTMLview_PageScrollSmooth, TRUE))
 				{
-					set(data->RightScroll,	0x804236ce, TRUE);
-					set(data->BottomScroll,	0x804236ce, TRUE);
+					SetAttrs(data->RightScroll,	 0x804236ce, TRUE, TAG_DONE);
+					SetAttrs(data->BottomScroll, 0x804236ce, TRUE, TAG_DONE);
 				}
 
 				data->Events.ehn_Priority	= 0;
@@ -295,11 +295,11 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 						{
 							if(x > 0 && y > 0 && x < _width(knob) && y < _height(knob))
 							{
-								set(knob, MUIA_Selected, TRUE);
+								SetAttrs(knob, MUIA_Selected, TRUE, TAG_DONE);
 								data->KnobPressX = imsg->MouseX;
 								data->KnobPressY = imsg->MouseY;
-								get(data->RightScroll, MUIA_Prop_First, &data->VScrollValue);
-								get(data->BottomScroll, MUIA_Prop_First, &data->HScrollValue);
+								GetAttrs(data->RightScroll, MUIA_Prop_First, &data->VScrollValue, TAG_DONE);
+								GetAttrs(data->BottomScroll, MUIA_Prop_First, &data->HScrollValue, TAG_DONE);
 
 								DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Events);
 								data->Events.ehn_Events |= IDCMP_MOUSEMOVE;
@@ -308,7 +308,7 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 						}
 						else if(imsg->Code == IECODE_LBUTTON + IECODE_UP_PREFIX)
 						{
-							set(knob, MUIA_Selected, FALSE);
+							SetAttrs(knob, MUIA_Selected, FALSE, TAG_DONE);
 							DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Events);
 							data->Events.ehn_Events &= ~IDCMP_MOUSEMOVE;
 							DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->Events);
@@ -325,15 +325,15 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 								h_scroll = data->HScrollValue + 45*x / 10;
 
 						LONG	v_visible, v_entries, h_visible, h_entries;
-						get(data->RightScroll, MUIA_Prop_Visible, &v_visible);
-						get(data->RightScroll, MUIA_Prop_Entries, &v_entries);
-						get(data->BottomScroll, MUIA_Prop_Visible, &h_visible);
-						get(data->BottomScroll, MUIA_Prop_Entries, &h_entries);
+						GetAttrs(data->RightScroll, MUIA_Prop_Visible, &v_visible, TAG_DONE);
+						GetAttrs(data->RightScroll, MUIA_Prop_Entries, &v_entries, TAG_DONE);
+						GetAttrs(data->BottomScroll, MUIA_Prop_Visible, &h_visible, TAG_DONE);
+						GetAttrs(data->BottomScroll, MUIA_Prop_Entries, &h_entries, TAG_DONE);
 						LONG	v_max = v_entries-v_visible,
 								h_max = h_entries-h_visible;
 
-						set(data->RightScroll, MUIA_Prop_First, MAX(0, MIN(v_max, v_scroll)));
-						set(data->BottomScroll, MUIA_Prop_First, MAX(0, MIN(h_max, h_scroll)));
+						SetAttrs(data->RightScroll, MUIA_Prop_First, MAX(0, MIN(v_max, v_scroll)), TAG_DONE);
+						SetAttrs(data->BottomScroll, MUIA_Prop_First, MAX(0, MIN(h_max, h_scroll)), TAG_DONE);
 					}
 					break;
 				}
@@ -347,11 +347,11 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 
       ENTER();
 
-			get(data->HTMLview, MUIA_Virtgroup_Width, &width);
+			GetAttrs(data->HTMLview, MUIA_Virtgroup_Width, &width, TAG_DONE);
 //			set(data->BottomScroll, MUIA_Prop_Entries, width);
 
 			ULONG height;
-			get(data->HTMLview, MUIA_Virtgroup_Height, &height);
+			GetAttrs(data->HTMLview, MUIA_Virtgroup_Height, &height, TAG_DONE);
 //			set(data->RightScroll, MUIA_Prop_Entries, height);
 
 			ULONG flags = data->Flags;

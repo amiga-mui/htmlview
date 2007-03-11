@@ -125,9 +125,6 @@
 
 #if defined(__amigaos4__)
   #define LIBFUNC
-  #if !defined(__cplusplus) &&                                        \
-    (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
-    (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
     #define LIBPROTO(name, ret, ...)                                  \
       LIBFUNC ret name(__VA_ARGS__);                                  \
       LIBFUNC ret libstub_##name(struct Interface *self UNUSED,       \
@@ -142,7 +139,6 @@
     #define LIBSTUBVA(name, ret, ...)                                 \
       LIBFUNC ret VARARGS68K                                          \
       libstub_##name(struct Interface *self UNUSED, ## __VA_ARGS__)
-  #endif
   #define LFUNC_FAS(name) libstub_##name
   #define LFUNC_VAS(name) libstub_##name
   #define LFUNC_FA_(name) ,libstub_##name
@@ -150,9 +146,6 @@
   #define LFUNC(name)     libstub_##name
 #elif defined(__MORPHOS__)
   #define LIBFUNC
-  #if !defined(__cplusplus) &&                                        \
-    (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
-    (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
     #define LIBPROTO(name, ret, ...)                                  \
       LIBFUNC ret name(__VA_ARGS__);                                  \
       LIBFUNC ret libstub_##name(void)
@@ -162,7 +155,6 @@
       LIBFUNC ret libstub_##name(void)
     #define LIBSTUBVA(name, ret, ...)                                 \
       LIBFUNC UNUSED ret VARARGS68K libstub_##name(void)
-  #endif
   #define LFUNC_FAS(name) libstub_##name
   #define LFUNC_VAS(name)
   #define LFUNC_FA_(name) ,libstub_##name
@@ -170,9 +162,6 @@
   #define LFUNC(name)     libstub_##name
 #else
   #define LIBFUNC SAVEDS ASM
-  #if !defined(__cplusplus) &&                                        \
-    (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
-    (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
     #define LIBPROTO(name, ret, ...)                                  \
       LIBFUNC ret name(__VA_ARGS__)
     #define LIBPROTOVA(name, ret, ...)
@@ -181,7 +170,6 @@
       LIBFUNC ret libstub_##name(__VA_ARGS__)
     #define LIBSTUBVA(name, ret, ...)                                 \
       LIBFUNC UNUSED ret STDARGS libstub_##name(__VA_ARGS__)
-  #endif
   #define LFUNC_FAS(name) name
   #define LFUNC_VAS(name)
   #define LFUNC_FA_(name) ,name

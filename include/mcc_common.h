@@ -49,14 +49,14 @@
 #define NewObject IIntuition->NewObject
 #endif
 
-#define GETINTERFACE(iface, base)	(iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
+#define GETINTERFACE(iface, type, base)	(iface = (type)GetInterface((struct Library *)(base), "main", 1L, NULL))
 #define DROPINTERFACE(iface)			(DropInterface((struct Interface *)iface), iface = NULL)
 
 #else
 
 #include <clib/alib_protos.h>
 
-#define GETINTERFACE(iface, base)	TRUE
+#define GETINTERFACE(iface, type, base)	TRUE
 #define DROPINTERFACE(iface)
 
 #endif /* ! __amigaos4__ */

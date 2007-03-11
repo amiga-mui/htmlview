@@ -10,6 +10,7 @@
 
 #include <ctype.h>
 #include <math.h>
+#include <stdlib.h>
 
 BOOL AreaClass::UseMap (struct UseMapMessage &umsg)
 {

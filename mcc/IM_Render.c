@@ -135,7 +135,7 @@ BOOL RenderEngine::AllocateFrame (ULONG width, ULONG height, ULONG animdelay, UL
 				ULONG t_height = height;
 //				if(GetBitMapAttr(my_bmp, BMA_FLAGS) & BMF_INTERLEAVED)
 //					t_height *= depth;
-				UBYTE buf[32];
+				char buf[32];
 				if(GetVar("IP_Solid", buf, 32, 0L) == -1)
 				{
 					if(Mask = AllocRaster(width, t_height))
