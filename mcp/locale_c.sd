@@ -4,7 +4,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by HTMLview.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@
 
 #include <proto/locale.h>
 
-struct FC_Type { long ID; char * Str; };
+struct FC_Type { const long ID; const char *Str; };
 
 const struct FC_Type _%i = { %d, %s };
 
@@ -36,23 +36,21 @@ static struct Catalog *HV_Catalog = NULL;
 
 /*** Catalog functions ***/
 /// GetStr()
-char *GetStr(APTR fcstr)
+const char *GetStr(APTR fcstr)
 {
-  char *defaultstr = ((struct FC_Type *)fcstr)->Str;
+  const char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
   if(LocaleBase)
-  {
-    return (char *)GetCatalogStr(HV_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
-  }
+    return (const char *)GetCatalogStr(HV_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
 
   return defaultstr;
 }
 ///
 /// GetStripStr()
 // function that will strip out the special menusigns
-char *GetStripStr(APTR fcstr)
+const char *GetStripStr(APTR fcstr)
 {
-   char *loc_str = GetStr(fcstr);
+   const char *loc_str = GetStr(fcstr);
 
    return (0 == loc_str[1] ? &loc_str[2] : loc_str);
 }
@@ -73,9 +71,7 @@ void OpenCat(void)
                                          { TAG_DONE,           0  }
                                        };
 
-  if (LocaleBase && !HV_Catalog)
-  {
-    HV_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)&tags[0]);
-  }
+  if(LocaleBase && !HV_Catalog)
+    HV_Catalog = OpenCatalogA(NULL, (STRPTR)"%b.catalog", (struct TagItem *)&tags[0]);
 }
 ///

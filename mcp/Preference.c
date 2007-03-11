@@ -30,6 +30,7 @@
 
 #include "HTMLview_mcc.h"
 #include "private.h"
+#include "locale.h"
 
 #include "SDI_hook.h"
 
@@ -65,9 +66,9 @@ int main(void)
 {
   if((UtilityBase = OpenLibrary("utility.library", 38)) &&
     GETINTERFACE(IUtility, UtilityBase))
-  if((IntuitionBase = OpenLibrary("intuition.library", 38)) &&
+  if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 38)) &&
     GETINTERFACE(IIntuition, IntuitionBase))
-  if((LocaleBase = OpenLibrary("locale.library", 38)) &&
+  if((LocaleBase = (APTR)OpenLibrary("locale.library", 38)) &&
     GETINTERFACE(ILocale, LocaleBase))
   if((MUIMasterBase = OpenLibrary("muimaster.library", MUIMASTER_VMIN)) &&
     GETINTERFACE(IMUIMaster, MUIMasterBase))
@@ -109,11 +110,12 @@ int main(void)
 
 		if(app)
 		{
+			ULONG sigs;
+
 			DoMethod(window, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, app, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 			set(window, MUIA_Window_Open, TRUE);
 
-			ULONG sigs;
-			while(DoMethod(app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)
+			while((LONG)DoMethod(app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)
 			{
 				if(sigs)
 				{
@@ -139,13 +141,13 @@ int main(void)
   if(LocaleBase)
   {
     DROPINTERFACE(ILocale);
-    CloseLibrary(LocaleBase);
+    CloseLibrary((struct Library *)LocaleBase);
   }
 
   if(IntuitionBase)
   {
     DROPINTERFACE(IIntuition);
-    CloseLibrary(IntuitionBase);
+    CloseLibrary((struct Library *)IntuitionBase);
   }
 
   if(UtilityBase)

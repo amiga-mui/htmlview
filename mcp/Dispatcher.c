@@ -21,6 +21,7 @@
 ***************************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 
 #include <clib/alib_protos.h>
 #include <proto/intuition.h>
@@ -30,7 +31,7 @@
 #include "muiextra.h"
 #include "private.h"
 
-struct PrefsExchangeData { ULONG ObjIndex, Tag, CfgItem; LONG Length; STRPTR DefValue; };
+struct PrefsExchangeData { ULONG ObjIndex, Tag, CfgItem; LONG Length; const char *DefValue; };
 
 static struct PrefsExchangeData PrefsInfo[] =
 {
@@ -60,7 +61,7 @@ static struct PrefsExchangeData PrefsInfo[] =
 	{ -1, 0, 0, 0, NULL }
 };
 
-DISPATCHERPROTO(_DispatcherP)
+DISPATCHER(_DispatcherP)
 {
 	struct InstData_MCP *data = (struct InstData_MCP *)INST_DATA(cl, obj);
 
@@ -98,15 +99,17 @@ DISPATCHERPROTO(_DispatcherP)
 			Object *configdata = ((struct MUIP_Settingsgroup_ConfigToGadgets *)msg)->configdata;
 
 			struct PrefsExchangeData *item = PrefsInfo;
-			while(item->ObjIndex != -1)
+			while((LONG)item->ObjIndex != -1)
 			{
 				STRPTR cfg_val;
-				if(cfg_val = (STRPTR)DoMethod(configdata, MUIM_Dataspace_Find, item->CfgItem))
+				if((cfg_val = (STRPTR)DoMethod(configdata, MUIM_Dataspace_Find, item->CfgItem)))
 				{
 					if(item->Length < 0)
 						cfg_val = *(STRPTR *)cfg_val;
 				}
-				else cfg_val = item->DefValue;
+				else
+          cfg_val = (STRPTR)item->DefValue;
+
 				set(data->Objects[item->ObjIndex], item->Tag, cfg_val);
 				item++;
 			}
@@ -118,14 +121,18 @@ DISPATCHERPROTO(_DispatcherP)
 			Object *configdata = ((struct MUIP_Settingsgroup_ConfigToGadgets *)msg)->configdata;
 
 			struct PrefsExchangeData *item = PrefsInfo;
-			while(item->ObjIndex != -1)
+			while((LONG)item->ObjIndex != -1)
 			{
 				STRPTR cfg_val;
-				get(data->Objects[item->ObjIndex], item->Tag, &cfg_val);
 				LONG len;
+
+				get(data->Objects[item->ObjIndex], item->Tag, &cfg_val);
+
 				if((len = item->Length) < 0)
-						DoMethod(configdata, MUIM_Dataspace_Add, &cfg_val, 4, item->CfgItem);
-				else	DoMethod(configdata, MUIM_Dataspace_Add, cfg_val, len ? len : strlen(cfg_val)+1, item->CfgItem);
+				  DoMethod(configdata, MUIM_Dataspace_Add, &cfg_val, 4, item->CfgItem);
+				else
+          DoMethod(configdata, MUIM_Dataspace_Add, cfg_val, len ? len : (LONG)strlen(cfg_val)+1, item->CfgItem);
+
 				item++;
 			}
 		}
@@ -140,48 +147,48 @@ DISPATCHERPROTO(_DispatcherP)
 
 struct CacheSliderData
 {
-	UBYTE Buffer[16];
+	char Buffer[16];
 };
 
-DISPATCHERPROTO(CacheSliderDispatcher)
+DISPATCHER(CacheSliderDispatcher)
 {
 	ULONG result;
 	if(msg->MethodID == MUIM_Numeric_Stringify)
 	{
 		struct CacheSliderData *data = (struct CacheSliderData *)INST_DATA(cl, obj);
 		struct MUIP_Numeric_Stringify *smsg = (struct MUIP_Numeric_Stringify *)msg;
-		STRPTR buf = data->Buffer;
+		char *buf = data->Buffer;
 
 		ULONG val = smsg->value;
 		if(val < 103)
-				sprintf(buf, "%d KB", val);
-		else	sprintf(buf, "%d.%d MB", val/1024, (10*(val%1024))/1024);
+		  snprintf(buf, sizeof(data->Buffer), "%ld KB", val);
+		else
+      snprintf(buf, sizeof(data->Buffer), "%ld.%ld MB", val/1024, (10*(val%1024))/1024);
 
 		result = (ULONG)buf;
 	}
 	else
-	{
 		result = DoSuperMethodA(cl, obj, msg);
-	}
+
 	return result;
 }
 
 struct GammaSliderData
 {
-	UBYTE Buffer[16];
+	char Buffer[16];
 };
 
-DISPATCHERPROTO(GammaSliderDispatcher)
+DISPATCHER(GammaSliderDispatcher)
 {
 	ULONG result;
 	if(msg->MethodID == MUIM_Numeric_Stringify)
 	{
 		struct GammaSliderData *data = (struct GammaSliderData *)INST_DATA(cl, obj);
 		struct MUIP_Numeric_Stringify *smsg = (struct MUIP_Numeric_Stringify *)msg;
-		STRPTR buf = data->Buffer;
+		char *buf = data->Buffer;
 
 		ULONG val = smsg->value;
-		sprintf(buf, "%d.%03d", val/1000, val%1000);
+		snprintf(buf, sizeof(data->Buffer), "%ld.%03ld", val/1000, val%1000);
 
 		result = (ULONG)buf;
 	}
