@@ -205,7 +205,7 @@ struct GraphicsIFace *IGraphics   = NULL;
 struct IntuitionIFace *IIntuition = NULL;
 #if defined(__NEWLIB__)
 struct Library *NewlibBase = NULL;
-struct NewlibIFace* INewlib = NULL;
+struct Interface *INewlib = NULL;
 #endif
 #else
 struct Library        *MUIMasterBase = NULL;
@@ -487,7 +487,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
 
   #if defined(__amigaos4__) && defined(__NEWLIB__)
   if((NewlibBase = OpenLibrary("newlib.library", 3)) &&
-     GETINTERFACE(INewlib, NewlibIFace*, NewlibBase))
+     GETINTERFACE(INewlib, struct Interface*, NewlibBase))
   #endif
   {
     D(DBF_STARTUP, "LibInit()");
@@ -711,7 +711,7 @@ static BOOL UserLibOpen(struct Library *base)
   #endif
 
   if((MUIMasterBase = OpenLibrary(MUIMASTER_NAME, MASTERVERSION)) &&
-     GETINTERFACE(IMUIMaster, MUIMasterIFace*, MUIMasterBase))
+     GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
   {
     #ifdef PreClassInit
     if (!PreClassInitFunc())
@@ -746,10 +746,10 @@ static BOOL UserLibOpen(struct Library *base)
         #endif
 
         if(UtilityBase && DOSBase && GfxBase && IntuitionBase &&
-           GETINTERFACE(IUtility, UtilityIFace*, UtilityBase) &&
-           GETINTERFACE(IDOS, DOSIFace*, DOSBase) &&
-           GETINTERFACE(IGraphics, GraphicsIFace*, GfxBase) &&
-           GETINTERFACE(IIntuition, IntuitionIFace*, IntuitionBase))
+           GETINTERFACE(IUtility, struct UtilityIFace*, UtilityBase) &&
+           GETINTERFACE(IDOS, struct DOSIFace*, DOSBase) &&
+           GETINTERFACE(IGraphics, struct GraphicsIFace*, GfxBase) &&
+           GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
         {
           #if defined(DEBUG)
           SetupDebug();

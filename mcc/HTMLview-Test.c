@@ -275,25 +275,25 @@ VOID MainLoop (Object *app)
 int main(void)
 {
   if((IntuitionBase = OpenLibrary("intuition.library", 38)) &&
-     GETINTERFACE(IIntuition, IntuitionIFace*, IntuitionBase))
+     GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
   if((GfxBase = OpenLibrary("graphics.library", 38)) &&
-     GETINTERFACE(IGraphics, GraphicsIFace*, GfxBase))
+     GETINTERFACE(IGraphics, struct GraphicsIFace*, GfxBase))
   if((UtilityBase = OpenLibrary("utility.library", 38)) &&
-     GETINTERFACE(IUtility, UtilityIFace*, UtilityBase))
+     GETINTERFACE(IUtility, struct UtilityIFace*, UtilityBase))
   if((LayersBase = OpenLibrary("layers.library", 36)) &&
-     GETINTERFACE(ILayers, LayersIFace*, LayersBase))
+     GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
   if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
-     GETINTERFACE(IKeymap, KeymapIFace*, KeymapBase))
+     GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
   if((CxBase = OpenLibrary("commodities.library", 36)) &&
-     GETINTERFACE(ICommodities, CommoditiesIFace*, CxBase))
+     GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
   if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
-     GETINTERFACE(IDiskfont, DiskfontIFace*, DiskfontBase))
+     GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
   if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
-     GETINTERFACE(IDataTypes, DataTypesIFace*, DataTypesBase))
+     GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
   {
     // open cybergraphics.library optional!
     if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
-      GETINTERFACE(ICyberGfx, CyberGfxIFace*, CyberGfxBase))
+      GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
     { }
 
     #if defined(DEBUG)
@@ -303,7 +303,7 @@ int main(void)
     ENTER();
 
     if((MUIMasterBase = OpenLibrary("muimaster.library", MUIMASTER_VMIN)) &&
-      GETINTERFACE(IMUIMaster, MUIMasterIFace*, MUIMasterBase))
+      GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
     {
 		  mcc = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(HTMLviewData), ENTRY(_Dispatcher));
 			ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher));

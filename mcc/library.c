@@ -77,22 +77,22 @@ BOOL ClassInitFunc(UNUSED struct Library *base)
   ENTER();
 
   if((LayersBase = OpenLibrary("layers.library", 36)) &&
-     GETINTERFACE(ILayers, LayersIFace*, LayersBase))
+     GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
   {
     if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
-       GETINTERFACE(IKeymap, KeymapIFace*, KeymapBase))
+       GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
     {
       if((CxBase = OpenLibrary("commodities.library", 36)) &&
-         GETINTERFACE(ICommodities, CommoditiesIFace*, CxBase))
+         GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
       {
         if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
-           GETINTERFACE(IDiskfont, DiskfontIFace*, DiskfontBase))
+           GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
         {
           if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
-             GETINTERFACE(IDataTypes, DataTypesIFace*, DataTypesBase))
+             GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
           {
             if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
-               GETINTERFACE(ICyberGfx, CyberGfxIFace*, CyberGfxBase))
+               GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
             { }
 
             RETURN(TRUE);
