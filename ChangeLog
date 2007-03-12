@@ -5,6 +5,11 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-12  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc/mcp: fixed the incorrect GETINTERFACE() usages for the OS4 target and
+    got the OS4 target compiled again.
+
 2007-03-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc: got rid of the single target makefiles and added a more generalized

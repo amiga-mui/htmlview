@@ -65,13 +65,13 @@ struct MUI_CustomClass* mcc;
 int main(void)
 {
   if((UtilityBase = OpenLibrary("utility.library", 38)) &&
-    GETINTERFACE(IUtility, UtilityBase))
+    GETINTERFACE(IUtility, struct UtilityIFace*, UtilityBase))
   if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 38)) &&
-    GETINTERFACE(IIntuition, IntuitionBase))
+    GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
   if((LocaleBase = (APTR)OpenLibrary("locale.library", 38)) &&
-    GETINTERFACE(ILocale, LocaleBase))
+    GETINTERFACE(ILocale, struct LocaleIFace*, LocaleBase))
   if((MUIMasterBase = OpenLibrary("muimaster.library", MUIMASTER_VMIN)) &&
-    GETINTERFACE(IMUIMaster, MUIMasterBase))
+    GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
   {
     Object *app = NULL;
     Object *window;

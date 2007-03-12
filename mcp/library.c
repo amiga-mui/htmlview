@@ -65,7 +65,7 @@ struct LocaleIFace *ILocale = NULL;
 BOOL ClassInitFunc(UNUSED struct Library *base)
 {
   if((LocaleBase = (APTR)OpenLibrary("locale.library", 38)) &&
-     GETINTERFACE(ILocale, LocaleBase))
+     GETINTERFACE(ILocale, struct LocaleIFace*, LocaleBase))
   {
     // open the TextEditor.mcp catalog
     OpenCat();
