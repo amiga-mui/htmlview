@@ -48,9 +48,14 @@ struct Library* CyberGfxBase = NULL;
 struct Library* DiskfontBase = NULL;
 struct Library* DataTypesBase = NULL;
 struct Library* MUIMasterBase = NULL;
+struct Library* UtilityBase = NULL;
+#if defined(__amigaos4__)
 struct Library* IntuitionBase = NULL;
 struct Library* GfxBase = NULL;
-struct Library* UtilityBase = NULL;
+#else
+struct IntuitionBase* IntuitionBase = NULL;
+struct GfxBase* GfxBase = NULL;
+#endif
 
 #if defined(__amigaos4__)
 struct LayersIFace*       ILayers = NULL;
@@ -65,7 +70,7 @@ struct GraphicsIFace*     IGraphics = NULL;
 struct UtilityIFace*      IUtility = NULL;
 #endif
 
-SAVEDS ASM ULONG _Dispatcher(REG(a0, struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg));
+DISPATCHERPROTO(_Dispatcher);
 
 HOOKPROTONH(GotoURLCode, ULONG, Object* htmlview, STRPTR *url)
 {
@@ -85,7 +90,7 @@ Object *BuildApp(void)
 
   ENTER();
 
-	if(app = ApplicationObject,
+	if((app = ApplicationObject,
 		MUIA_Application_Author,		"Allan Odgaard",
 		MUIA_Application_Base,			"HTMLview-Demo",
 		MUIA_Application_Copyright,	"®1998 Allan Odgaard",
@@ -197,7 +202,7 @@ Object *BuildApp(void)
 
 				End,
 			End,
-		End)
+		End))
 	{
 		DoMethod(searchstr,	MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, htmlview, 3, MUIM_HTMLview_Search, MUIV_TriggerValue, MUIF_HTMLview_Search_Next);
 
@@ -274,10 +279,17 @@ VOID MainLoop (Object *app)
 
 int main(void)
 {
+  #if defined(__amigaos4__)
   if((IntuitionBase = OpenLibrary("intuition.library", 38)) &&
      GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
   if((GfxBase = OpenLibrary("graphics.library", 38)) &&
      GETINTERFACE(IGraphics, struct GraphicsIFace*, GfxBase))
+  #else
+  if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 38)) &&
+     GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
+  if((GfxBase = (struct GfxBase *)OpenLibrary("graphics.library", 38)) &&
+     GETINTERFACE(IGraphics, struct GraphicsIFace*, GfxBase))
+  #endif
   if((UtilityBase = OpenLibrary("utility.library", 38)) &&
      GETINTERFACE(IUtility, struct UtilityIFace*, UtilityBase))
   if((LayersBase = OpenLibrary("layers.library", 36)) &&
@@ -309,7 +321,7 @@ int main(void)
 			ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher));
 
   		Object *app;
-	  	if(app = BuildApp())
+	  	if((app = BuildApp()))
 		  {
 			  MainLoop(app);
   			MUI_DisposeObject(app);
@@ -378,7 +390,7 @@ int main(void)
     if(GfxBase)
     {
       DROPINTERFACE(IGraphics);
-      CloseLibrary(GfxBase);
+      CloseLibrary((struct Library *)GfxBase);
       GfxBase = NULL;
     }
 
