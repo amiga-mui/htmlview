@@ -123,7 +123,7 @@ BOOL RenderEngine::AllocateFrame (ULONG width, ULONG height, ULONG animdelay, UL
 	if(!CyberGfxBase && depth > 8)
 		depth = 8;
 
-	if(BMpRP.BitMap = my_bmp = AllocBitMap(width, height, depth, BMF_MINPLANES | BMF_CLEAR, friend_bmp))
+	if((BMpRP.BitMap = my_bmp = AllocBitMap(width, height, depth, BMF_MINPLANES | BMF_CLEAR, friend_bmp)))
 	{
 		BOOL first = FirstFrame ? FALSE : TRUE;
 
@@ -138,7 +138,7 @@ BOOL RenderEngine::AllocateFrame (ULONG width, ULONG height, ULONG animdelay, UL
 				char buf[32];
 				if(GetVar("IP_Solid", buf, 32, 0L) == -1)
 				{
-					if(Mask = AllocRaster(width, t_height))
+					if((Mask = AllocRaster(width, t_height)))
 						memset(Mask, 0, RASSIZE(width, t_height));
 				}
 			}
@@ -150,7 +150,7 @@ BOOL RenderEngine::AllocateFrame (ULONG width, ULONG height, ULONG animdelay, UL
 			break;
 		}
 
-		if(LastFrame->Next = new struct PictureFrame(width, height, leftofs, topofs, animdelay, disposal, background, my_bmp, Mask, flags))
+		if((LastFrame->Next = new struct PictureFrame(width, height, leftofs, topofs, animdelay, disposal, background, my_bmp, Mask, flags)))
 		{
 			LastFrame->Next->AlphaMask = AlphaMask;
 			if(depth <= 8)

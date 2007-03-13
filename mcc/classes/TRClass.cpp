@@ -273,7 +273,7 @@ VOID TRClass::TRRender (struct RenderMessage &rmsg)
 		rmsg.CellPicture = Picture;
 
 		BOOL target;
-		if(target = rmsg.TargetObj == (class SuperClass *)this)
+		if((target = rmsg.TargetObj == (class SuperClass *)this))
 			rmsg.TargetObj = NULL;
 
 		struct ChildsList *first = FirstChild;

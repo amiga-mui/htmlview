@@ -359,7 +359,7 @@ BOOL ImgClass::UpdateImage (LONG ystart, LONG ystop, LONG top, LONG bottom, BOOL
 
 	BOOL redraw;
 	LONG pic_top = Top+ystart;
-	if(redraw = pic_top <= bottom && pic_top+(ystop-ystart) >= top)
+	if((redraw = pic_top <= bottom && pic_top+(ystop-ystart)) >= top)
 	{
 		YStart = ystart;
 		YStop = ystop;

@@ -44,7 +44,7 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
 
   ENTER();
 
-	while(tag = NextTagItem(&tags))
+	while((tag = NextTagItem(&tags)))
 	{
 		LONG ti_Data = tag->ti_Data;
 		switch(tag->ti_Tag)
@@ -177,7 +177,7 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
 			break;
 
 			case MUIA_HTMLview_ImagesInDecodeQueue:
-				if(ti_Data == data->Share->ImagesInDecodeQueue)
+				if(ti_Data == (LONG)data->Share->ImagesInDecodeQueue)
 					tag->ti_Tag = TAG_IGNORE;
 				data->Share->ImagesInDecodeQueue = ti_Data;
 			break;

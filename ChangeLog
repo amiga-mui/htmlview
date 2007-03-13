@@ -13,6 +13,7 @@ $URL$
     libraries.
   * mcc: now builds for MorphOS.
   * mcc/HTMLview-Test.c: now builds for MorphOS.
+  * mcc: less warnings.
 
 2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
 
