@@ -12,6 +12,7 @@ $URL$
     because constructors/destructors should run only once in this kind of
     libraries.
   * mcc: now builds for MorphOS.
+  * mcc/HTMLview-Test.c: now builds for MorphOS.
 
 2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
 
