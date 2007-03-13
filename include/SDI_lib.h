@@ -125,60 +125,10 @@
 
 #if defined(__amigaos4__)
   #define LIBFUNC
-    #define LIBPROTO(name, ret, ...)                                  \
-      LIBFUNC ret name(__VA_ARGS__);                                  \
-      LIBFUNC ret libstub_##name(struct Interface *self UNUSED,       \
-      ## __VA_ARGS__)
-    #define LIBPROTOVA(name, ret, ...)                                \
-      LIBFUNC ret VARARGS68K                                          \
-      libstub_##name(struct Interface *self UNUSED, ## __VA_ARGS__)
-    #define LIBSTUB(name, ret, ...)                                   \
-      LIBFUNC ret name(__VA_ARGS__);                                  \
-      LIBFUNC ret libstub_##name(struct Interface *self UNUSED,       \
-      ## __VA_ARGS__)
-    #define LIBSTUBVA(name, ret, ...)                                 \
-      LIBFUNC ret VARARGS68K                                          \
-      libstub_##name(struct Interface *self UNUSED, ## __VA_ARGS__)
-  #define LFUNC_FAS(name) libstub_##name
-  #define LFUNC_VAS(name) libstub_##name
-  #define LFUNC_FA_(name) ,libstub_##name
-  #define LFUNC_VA_(name) ,libstub_##name
-  #define LFUNC(name)     libstub_##name
 #elif defined(__MORPHOS__)
   #define LIBFUNC
-    #define LIBPROTO(name, ret, ...)                                  \
-      LIBFUNC ret name(__VA_ARGS__);                                  \
-      LIBFUNC ret libstub_##name(void)
-    #define LIBPROTOVA(name, ret, ...)
-    #define LIBSTUB(name, ret, ...)                                   \
-      LIBFUNC ret name(__VA_ARGS__);                                  \
-      LIBFUNC ret libstub_##name(void)
-    #define LIBSTUBVA(name, ret, ...)                                 \
-      LIBFUNC UNUSED ret VARARGS68K libstub_##name(void)
-  #define LFUNC_FAS(name) libstub_##name
-  #define LFUNC_VAS(name)
-  #define LFUNC_FA_(name) ,libstub_##name
-  #define LFUNC_VA_(name)
-  #define LFUNC(name)     libstub_##name
 #else
   #define LIBFUNC SAVEDS ASM
-    #define LIBPROTO(name, ret, ...)                                  \
-      LIBFUNC ret name(__VA_ARGS__)
-    #define LIBPROTOVA(name, ret, ...)
-    #define LIBSTUB(name, ret, ...)                                   \
-      LIBFUNC ret name(__VA_ARGS__);                                  \
-      LIBFUNC ret libstub_##name(__VA_ARGS__)
-    #define LIBSTUBVA(name, ret, ...)                                 \
-      LIBFUNC UNUSED ret STDARGS libstub_##name(__VA_ARGS__)
-  #define LFUNC_FAS(name) name
-  #define LFUNC_VAS(name)
-  #define LFUNC_FA_(name) ,name
-  #define LFUNC_VA_(name)
-  #define LFUNC(name)     name
-#endif
-
-#if !defined(LIBPROTO) || !defined(LIBPROTOVA)
-  #error "OS or compiler is not yet supported by SDI_lib.h"
 #endif
 
 #endif /* SDI_LIB_H */

@@ -387,6 +387,7 @@ all: $(BINDIR) $(OBJDIR) $(MCCTARGET) $(TESTTARGET)
 $(OBJDIR):
 	@printf '\033[33mGenerating $@ directory\033[0m\n'
 	@$(MKDIR) $(OBJDIR)
+	@$(MKDIR) $(OBJDIR)/classes
 
 # make the binary directories
 $(BINDIR):
