@@ -43,7 +43,7 @@ VOID ImgClass::GetImages (struct GetImagesMessage &gmsg)
 	if(Source && !Picture)
 	{
 		STRPTR url;
-		if(url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, Source))
+		if((url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
 			gmsg.AddImage(url, Width(0), Height(0), this);
 	}
 }
@@ -70,7 +70,7 @@ BOOL ImgClass::HitTest (struct HitTestMessage &hmsg)
 			if(MapObj)
 			{
 				struct UseMapMessage umsg(hmsg.X - left, hmsg.Y - top);
-				if(result = MapObj->UseMap(umsg))
+				if((result = MapObj->UseMap(umsg)))
 				{
 					hmsg.Obj = this;
 					hmsg.URL = umsg.URL;
@@ -80,7 +80,7 @@ BOOL ImgClass::HitTest (struct HitTestMessage &hmsg)
 		}
 		else
 		{
-			if(result = hmsg.Obj ? TRUE : FALSE)
+			if((result = hmsg.Obj ? TRUE : FALSE))
 			{
 				if(Flags & FLG_Img_IsMap)
 				{
@@ -175,7 +175,7 @@ BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
 	STRPTR url;
 	if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
 	{
-		if(Picture = lmsg.Share->ImageStorage->FindImage(url, GivenWidth ? width : 0, GivenHeight ? height : 0))
+		if((Picture = lmsg.Share->ImageStorage->FindImage(url, GivenWidth ? width : 0, GivenHeight ? height : 0)))
 		{
 			ReceiveImage(Picture);
 			width = Picture->Width;
@@ -271,7 +271,7 @@ VOID ImgClass::MinMax (struct MinMaxMessage &mmsg)
 	STRPTR url;
 	if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg->HTMLview, MUIM_HTMLview_AddPart, Source)))
 	{
-		if(Picture = lmsg->Share->ImageStorage->FindImage(url, GivenWidth ? width : 0, Height(0, lmsg)))
+		if((Picture = lmsg->Share->ImageStorage->FindImage(url, GivenWidth ? width : 0, Height(0, lmsg))))
 		{
 			ReceiveImage(Picture);
 			width = Picture->Width;
