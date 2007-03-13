@@ -45,7 +45,7 @@ VOID ULClass::Parse(REG(a2, struct ParseMessage &pmsg))
 #endif
 
 	APTR handle;
-	if(handle = Backup(pmsg, 2, tag_LI, tag_OL))
+	if((handle = Backup(pmsg, 2, tag_LI, tag_OL)))
 	{
 		TreeClass::Parse(pmsg);
 		Restore(pmsg.OpenCounts, 2, handle);

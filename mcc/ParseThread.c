@@ -86,7 +86,7 @@ VOID ParseThread(REG(a0, STRPTR arguments))
 		struct Hook *loadhook = args->Data->LoadHook;
 
 		struct MsgPort *myport;
-		if(myport = CreateMsgPort())
+		if((myport = CreateMsgPort()))
 		{
 			struct ParseInfoMsg msg;
 			msg.nm_node.mn_ReplyPort = myport;

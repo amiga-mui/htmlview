@@ -68,7 +68,7 @@ BOOL AreaClass::UseMap (struct UseMapMessage &umsg)
 					else if(min(first->X, second->X) < x)
 					{
 						LONG divide_width;
-						if(divide_width = bottom - top)
+						if((divide_width = bottom - top))
 						{
 							LONG new_x = ((right - left) * (y - top)) / divide_width;
 							if(new_x <= (x - left))

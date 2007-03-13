@@ -29,7 +29,7 @@
 
 TNode::TNode (STRPTR str, APTR data)
 {
-	if(SplitChar = *str)
+	if((SplitChar = *str))
 			Middle = new TNode(str+1, data);
 	else	Data = data;
 }
