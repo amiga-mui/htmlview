@@ -298,8 +298,8 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 								SetAttrs(knob, MUIA_Selected, TRUE, TAG_DONE);
 								data->KnobPressX = imsg->MouseX;
 								data->KnobPressY = imsg->MouseY;
-								GetAttrs(data->RightScroll, MUIA_Prop_First, &data->VScrollValue, TAG_DONE);
-								GetAttrs(data->BottomScroll, MUIA_Prop_First, &data->HScrollValue, TAG_DONE);
+								data->VScrollValue = xget(data->RightScroll, MUIA_Prop_First);
+								data->HScrollValue = xget(data->BottomScroll, MUIA_Prop_First);
 
 								DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Events);
 								data->Events.ehn_Events |= IDCMP_MOUSEMOVE;
@@ -318,19 +318,18 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 
 					case IDCMP_MOUSEMOVE:
 					{
-						LONG	x = imsg->MouseX - data->KnobPressX,
-								y = imsg->MouseY - data->KnobPressY;
+						LONG x = imsg->MouseX - data->KnobPressX;
+						LONG y = imsg->MouseY - data->KnobPressY;
 
-						LONG	v_scroll = data->VScrollValue + 45*y / 10,
-								h_scroll = data->HScrollValue + 45*x / 10;
+						LONG v_scroll = data->VScrollValue + 45*y / 10;
+						LONG h_scroll = data->HScrollValue + 45*x / 10;
 
-						LONG	v_visible, v_entries, h_visible, h_entries;
-						GetAttrs(data->RightScroll, MUIA_Prop_Visible, &v_visible, TAG_DONE);
-						GetAttrs(data->RightScroll, MUIA_Prop_Entries, &v_entries, TAG_DONE);
-						GetAttrs(data->BottomScroll, MUIA_Prop_Visible, &h_visible, TAG_DONE);
-						GetAttrs(data->BottomScroll, MUIA_Prop_Entries, &h_entries, TAG_DONE);
-						LONG	v_max = v_entries-v_visible,
-								h_max = h_entries-h_visible;
+						LONG v_visible = xget(data->RightScroll, MUIA_Prop_Visible);
+						LONG v_entries = xget(data->RightScroll, MUIA_Prop_Entries);
+						LONG h_visible = xget(data->BottomScroll, MUIA_Prop_Visible);
+						LONG h_entries = xget(data->BottomScroll, MUIA_Prop_Entries);
+						LONG v_max = v_entries-v_visible;
+					  LONG h_max = h_entries-h_visible;
 
 						SetAttrs(data->RightScroll, MUIA_Prop_First, MAX(0, MIN(v_max, v_scroll)), TAG_DONE);
 						SetAttrs(data->BottomScroll, MUIA_Prop_First, MAX(0, MIN(h_max, h_scroll)), TAG_DONE);
@@ -347,11 +346,10 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 
       ENTER();
 
-			GetAttrs(data->HTMLview, MUIA_Virtgroup_Width, &width, TAG_DONE);
+			width = xget(data->HTMLview, MUIA_Virtgroup_Width);
 //			set(data->BottomScroll, MUIA_Prop_Entries, width);
 
-			ULONG height;
-			GetAttrs(data->HTMLview, MUIA_Virtgroup_Height, &height, TAG_DONE);
+			ULONG height = xget(data->HTMLview, MUIA_Virtgroup_Height);
 //			set(data->RightScroll, MUIA_Prop_Entries, height);
 
 			ULONG flags = data->Flags;

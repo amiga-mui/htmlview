@@ -69,9 +69,9 @@ SAVEDS ASM ULONG _Dispatcher(REG(a0, struct IClass * cl), REG(a2, Object * obj),
 
 HOOKPROTONH(GotoURLCode, ULONG, Object* htmlview, STRPTR *url)
 {
-	STRPTR target;
-	GetAttrs(htmlview, MUIA_HTMLview_Target, &target, TAG_DONE);
-	DoMethod(htmlview, MUIM_HTMLview_GotoURL, *url, target);
+	STRPTR target = (STRPTR)xget(htmlview, MUIA_HTMLview_Target);
+	
+  DoMethod(htmlview, MUIM_HTMLview_GotoURL, *url, target);
 }
 MakeStaticHook(GotoURLHook, GotoURLCode);
 

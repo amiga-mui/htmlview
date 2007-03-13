@@ -99,8 +99,8 @@ VOID CreateSampleText(Object *htmlview)
 	const char *extra = MUIMasterBase->lib_Version > 19 ? "<Br><Br><P Align=Center><Small>You can drop HTML files onto this gadget!</Small>" : "";
 	char text[800];
 
-	get(htmlview, MUIA_Version, &ver);
-	get(htmlview, MUIA_Revision, &rev);
+	ver = xget(htmlview, MUIA_Version);
+	rev = xget(htmlview, MUIA_Revision);
 
 	snprintf(text, sizeof(text), "<Body>"
 
@@ -360,7 +360,7 @@ Object *CreatePrefsGroup(struct InstData_MCP *data)
 
 		End;
 
-	get(htmlview, MUIA_ScrollGroup_HTMLview, &htmlview);
+	htmlview = (Object *)xget(htmlview, MUIA_ScrollGroup_HTMLview);
 	CreateSampleText(htmlview);
 
 	SetAttrs(snoop,
