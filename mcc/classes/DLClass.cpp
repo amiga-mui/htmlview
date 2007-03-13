@@ -20,6 +20,8 @@ BOOL DLClass::Layout (struct LayoutMessage &lmsg)
 		lmsg.X -= 5;
 		lmsg.Indent -= 5;
 	}
+
+  return TRUE;
 }
 
 VOID DLClass::MinMax (struct MinMaxMessage &mmsg)

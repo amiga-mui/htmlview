@@ -27,10 +27,10 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args);
 
 struct ArgList
 {
-	STRPTR Name;
+	const char *Name;
 	APTR Storage;
 	ULONG Type;
-	STRPTR *KeywordList;
+	const char **KeywordList;
 };
 
 enum

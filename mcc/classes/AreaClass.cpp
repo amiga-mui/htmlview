@@ -30,10 +30,10 @@ BOOL AreaClass::UseMap (struct UseMapMessage &umsg)
 
 		case Area_Circle:
 		{
-			LONG	x = abs(Circle.CenterX-umsg.X),
-					y = abs(Circle.CenterY-umsg.Y);
+			LONG x = Circle.CenterX-umsg.X;
+			LONG y = Circle.CenterY-umsg.Y;
+			LONG radius = static_cast<LONG>(sqrt(x*x + y*y)+0.5);
 
-			LONG radius = sqrt(x*x + y*y);
 			result = radius < Circle.Radius ? RC_ExactMatch : RC_NoMatch;
 		}
 		break;
@@ -67,17 +67,15 @@ BOOL AreaClass::UseMap (struct UseMapMessage &umsg)
 						inside++;
 					else if(min(first->X, second->X) < x)
 					{
-						LONG divide_width;
-						if((divide_width = bottom - top))
+						LONG divide_width = bottom-top;
+						if(divide_width > 0)
 						{
 							LONG new_x = ((right - left) * (y - top)) / divide_width;
 							if(new_x <= (x - left))
 								inside++;
 						}
 						else
-						{
 							inside++;
-						}
 					}
 				}
 				first = first->Next;
@@ -107,18 +105,18 @@ VOID AreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	AttrClass::Parse(pmsg);
 	pmsg.SkipSpaces();
 
-	STRPTR ShapeKeywords[] = { "DEFAULT", "RECT", "POLY", "CIRCLE", NULL };
+	const char *ShapeKeywords[] = { "DEFAULT", "RECT", "POLY", "CIRCLE", NULL };
 	ULONG shape = Area_Default;
 	BOOL nohref = FALSE;
 	STRPTR coords = NULL;
 	struct ArgList args[] =
 	{
-		{ "HREF",	&URL,		ARG_URL	},
-		{ "NOHREF",	&nohref,	ARG_SWITCH },
-		{ "TARGET",	&Target,	ARG_URL	},
-		{ "COORDS",	&coords,	ARG_STRING	},
-		{ "SHAPE",	&shape,	ARG_KEYWORD, ShapeKeywords	},
-		{ NULL }
+		{ "HREF",	  &URL,		  ARG_URL,      NULL },
+		{ "NOHREF",	&nohref,	ARG_SWITCH,   NULL },
+		{ "TARGET",	&Target,	ARG_URL,      NULL },
+		{ "COORDS",	&coords,	ARG_STRING,   NULL },
+		{ "SHAPE",	&shape,	  ARG_KEYWORD,  ShapeKeywords	 },
+		{ NULL,     NULL,     0,            NULL }
 	};
 	ScanArgs(pmsg.Locked, args);
 
@@ -184,7 +182,7 @@ VOID AreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
 		case Area_Circle:
 		{
 			ULONG centerx, centery, radius;
-			if(3 == sscanf(coords, "%d,%d,%d", &centerx, &centery, &radius))
+			if(sscanf(coords, "%ld,%ld,%ld", &centerx, &centery, &radius) == 3)
 			{
 				Circle.CenterX	= centerx;
 				Circle.CenterY	= centery;

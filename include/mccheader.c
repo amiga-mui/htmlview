@@ -300,6 +300,10 @@ static ULONG                  LIBFUNC MCC_Query  (REG(d0, LONG which));
 /* Dummy entry point and LibNull() function all in one                        */
 /******************************************************************************/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(__amigaos4__)
 int _start(void)
 #else
@@ -308,6 +312,10 @@ int Main(void)
 {
   return RETURN_FAIL;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #if !defined(__amigaos4__)
 static LONG LIBFUNC LibNull(VOID)

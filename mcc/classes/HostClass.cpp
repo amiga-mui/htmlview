@@ -42,7 +42,7 @@ struct FindMessage *HostClass::Find (STRPTR str, ULONG top, ULONG flags)
 		FindMsg.TopPos = top;
 
 		class TextClass *last;
-		if(last = FindMsg.LastMatch)
+		if((last = FindMsg.LastMatch))
 		{
 			MarkMsg.AddBox(last, last->MarkBegin, last->MarkEnd);
 			last->MarkBegin = last->MarkEnd = 0;
@@ -61,7 +61,7 @@ struct FindMessage *HostClass::Find (STRPTR str, ULONG top, ULONG flags)
 		}
 		else
 		{
-      #warning "hier sollte strnicmp sein!!!"
+      #warning "FIXME: here should be strnicmp!"
 			FindMsg.StrCmp = strncmp;
 			while(*str)
 			{
@@ -108,7 +108,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 		else
 		{
 			Object *result;
-			if(result = Body->HandleMUIEvent(emsg))
+			if((result = Body->HandleMUIEvent(emsg)))
 				DefaultFrame = result;
 		}
 	}
@@ -218,7 +218,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 
 								for(; r > PI/2; r -= (PI / 30))
 								{
-									if(imsg = (IntuiMessage *)GetMsg(port))
+									if((imsg = (IntuiMessage *)GetMsg(port)))
 									{
 										if(imsg->Class == IDCMP_RAWKEY && MatchKey(imsg, event, data->Share->PageScrollKey))
 										{
@@ -236,7 +236,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 								ULONG speed = next - last;
 								for(ULONG pos = last; pos < next+add; pos += speed)
 								{
-									if(imsg = (IntuiMessage *)GetMsg(port))
+									if((imsg = (IntuiMessage *)GetMsg(port)))
 									{
 										if(imsg->Class == IDCMP_RAWKEY && MatchKey(imsg, event, data->Share->PageScrollKey))
 										{
@@ -268,13 +268,13 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 		}
 		else
 		{
-			LONG	x = imsg->MouseX - _mleft(obj),
-					y = imsg->MouseY - _mtop(obj);
+			LONG x = imsg->MouseX - _mleft(obj);
+			LONG y = imsg->MouseY - _mtop(obj);
 
 			BOOL map = FALSE;
 			STRPTR url = NULL, link = NULL, target = NULL;
 			class SuperClass *linkobj;
-			if(x >= 0 && y >= 0 && x < data->Width && y < data->Height)
+			if(x >= 0 && y >= 0 && x < (LONG)data->Width && y < (LONG)data->Height)
 			{
 				struct HitTestMessage hmsg(x + data->Left, y + data->Top, this);
 				if(HitTest(hmsg))
@@ -287,7 +287,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 					if(hmsg.ServerMap)
 					{
 						STRPTR t_url = new char[strlen(url) + 11];
-						sprintf(t_url, "%s?%d,%d", url, hmsg.OffsetX, hmsg.OffsetY);
+						sprintf(t_url, "%s?%ld,%ld", url, hmsg.OffsetX, hmsg.OffsetY);
 						delete url;
 						url = t_url;
 						map = TRUE;
@@ -368,7 +368,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 */	 				}
 	 				else
 	 				{
-	 					if(data->ActiveURL = link) // && linkobj->ID == tag_Text)
+	 					if((data->ActiveURL = link)) // && linkobj->ID == tag_Text)
 	 					{
 							data->Flags |= FLG_ActiveLink;
 							data->ActiveURLObj = linkobj;
@@ -376,10 +376,10 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_Handle
 						}
 						else
 						{
-							if(x >= 0 && y >= 0 && x < data->Width && y < data->Height)
+							if(x >= 0 && y >= 0 && x < (LONG)data->Width && y < (LONG)data->Height)
 							{
 								class TextClass *last;
-								if(last = FindMsg.LastMatch)
+								if((last = FindMsg.LastMatch))
 								{
 									MarkMsg.AddBox(last, last->MarkBegin, last->MarkEnd);
 									last->MarkBegin = last->MarkEnd = 0;
@@ -423,9 +423,11 @@ BOOL HostClass::Layout (struct LayoutMessage &lmsg)
 	}
 	else
 	{
-		if(Body = FindBody(FirstChild))
+		if((Body = FindBody(FirstChild)))
 			Layout(lmsg);
 	}
+
+  return TRUE;
 }
 
 VOID HostClass::Mark (LONG x, LONG y)
@@ -529,7 +531,7 @@ ULONG HostClass::NumPadMovement(struct IntuiMessage *imsg)
 		break;
 
 		default:
-			result = MUIKEY_NONE;
+			result = (ULONG)MUIKEY_NONE;
 		break;
 	}
 	return(result);
@@ -564,7 +566,7 @@ class TreeClass *HostClass::FindBody(struct ChildsList *first)
 			if(first->Obj->flags() & FLG_Tree)
 			{
 				class TreeClass *body;
-				if(body = FindBody(((class TreeClass *)first->Obj)->FirstChild))
+				if((body = FindBody(((class TreeClass *)first->Obj)->FirstChild)))
 					return(body);
 			}
 		}

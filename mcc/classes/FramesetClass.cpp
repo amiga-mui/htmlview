@@ -27,26 +27,30 @@ Object *FramesetClass::FindDefaultFrame (ULONG &size)
 {
 	Object *result = NULL, *t_result;
 	struct ChildsList *first = FirstChild;
+
 	while(first)
 	{
-		if(t_result = first->Obj->FindDefaultFrame(size))
+		if((t_result = first->Obj->FindDefaultFrame(size)))
 			result = t_result;
 		first = first->Next;
 	}
-	return(result);
+	
+  return(result);
 }
 
 Object *FramesetClass::HandleMUIEvent (struct MUIP_HandleEvent *emsg)
 {
 	Object *result = NULL, *t_result;
 	struct ChildsList *first = FirstChild;
+
 	while(first)
 	{
-		if(t_result = first->Obj->HandleMUIEvent(emsg))
+		if((t_result = first->Obj->HandleMUIEvent(emsg)))
 			result = t_result;
 		first = first->Next;
 	}
-	return(result);
+	
+  return(result);
 }
 
 BOOL FramesetClass::Layout (struct LayoutMessage &lmsg)
@@ -98,6 +102,8 @@ BOOL FramesetClass::Layout (struct LayoutMessage &lmsg)
 	{
 		lmsg.TopChange = min(lmsg.TopChange, MAX_HEIGHT);
 	}
+
+  return TRUE;
 }
 
 VOID FramesetClass::Parse(REG(a2, struct ParseMessage &pmsg))
@@ -110,10 +116,10 @@ VOID FramesetClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
 	struct ArgList args[] =
 	{
-		{ "COLS",			&ColumnsStr,			ARG_STRING },
-		{ "ROWS",			&RowsStr,				ARG_STRING },
-		{ "FRAMEBORDER",	&pmsg.FrameBorder,	ARG_BOOLEAN },	// This is wrong
-		{ NULL }
+		{ "COLS",			    &ColumnsStr,			  ARG_STRING,  NULL },
+		{ "ROWS",			    &RowsStr,				    ARG_STRING,  NULL },
+		{ "FRAMEBORDER",	&pmsg.FrameBorder,	ARG_BOOLEAN, NULL },	// This is wrong
+		{ NULL,           NULL,               0,           NULL }
 	};
 	ScanArgs(pmsg.Locked, args);
 
@@ -185,7 +191,7 @@ VOID FramesetClass::Parse(REG(a2, struct ParseMessage &pmsg))
 ULONG *FramesetClass::ConvertSizeList(STRPTR value_list, LONG total, ULONG &cnt)
 {
 	if(!value_list)
-		value_list = "*";
+		value_list = (STRPTR)"*";
 
 	LONG width = total, value, slices = 0, substract = 0;
 	STRPTR widthstr = value_list;
@@ -213,7 +219,7 @@ ULONG *FramesetClass::ConvertSizeList(STRPTR value_list, LONG total, ULONG &cnt)
 		while(*t_value_list && isdigit(*t_value_list))
 			t_value_list++;
 
-		sscanf(current, "%d", &value);
+		sscanf(current, "%ld", &value);
 		if(*t_value_list != '*')
 		{
 			if(*t_value_list == '%')
@@ -251,8 +257,9 @@ ULONG *FramesetClass::ConvertSizeList(STRPTR value_list, LONG total, ULONG &cnt)
 			if(*value_list == '*')
 			{
 				if(*current == '*')
-						value =  1;
-				else	sscanf(current, "%d", &value);
+					value =  1;
+				else
+          sscanf(current, "%ld", &value);
 
 				if((value = (total * value) / slices) <= 0)
 					value = 1;

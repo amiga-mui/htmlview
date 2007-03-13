@@ -54,7 +54,9 @@ BOOL ImgClass::HitTest (struct HitTestMessage &hmsg)
 		return(FALSE);
 
 	BOOL result = FALSE;
-	ULONG top = Top+VSpace+ImgBorder, left = Left+HSpace+ImgBorder;
+	ULONG top = Top+VSpace+ImgBorder;
+  ULONG left = Left+HSpace+ImgBorder;
+
 	if(hmsg.X >= left && hmsg.X < left+Width() && hmsg.Y >= top && hmsg.Y < top+Height())
 	{
 		hmsg.ImgSrc = Source;
@@ -301,21 +303,21 @@ VOID ImgClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL ismap = FALSE;
 	struct ArgList args[] =
 	{
-		{ "ALT",		&AltText,		ARG_STRING	},
-		{ "SRC",		&Source,			ARG_URL		},
-		{ "NAME",	&Name,			ARG_URL		},
-		{ "WIDTH",	&GivenWidth,	ARG_VALUE	},
-		{ "HEIGHT",	&GivenHeight,	ARG_VALUE	},
-		{ "BORDER",	&ImgBorder,		ARG_NUMBER	},
-		{ "ALIGN",	&Alignment,		ARG_KEYWORD, ImgAlignKeywords },
-		{ "HSPACE",	&HSpace,			ARG_NUMBER	},
-		{ "VSPACE",	&VSpace,			ARG_NUMBER	},
-		{ "USEMAP",	&Map,				ARG_URL		},
-		{ "ISMAP",	&ismap,			ARG_SWITCH	},
-		{ NULL }
+		{ "ALT",		&AltText,		  ARG_STRING,   NULL },
+		{ "SRC",		&Source,			ARG_URL,      NULL },
+		{ "NAME",	  &Name,			  ARG_URL,      NULL },
+		{ "WIDTH",	&GivenWidth,	ARG_VALUE,    NULL },
+		{ "HEIGHT",	&GivenHeight,	ARG_VALUE,    NULL },
+		{ "BORDER",	&ImgBorder,		ARG_NUMBER,   NULL },
+		{ "ALIGN",	&Alignment,		ARG_KEYWORD,  ImgAlignKeywords },
+		{ "HSPACE",	&HSpace,			ARG_NUMBER,   NULL },
+		{ "VSPACE",	&VSpace,			ARG_NUMBER,   NULL },
+		{ "USEMAP",	&Map,				  ARG_URL,      NULL },
+		{ "ISMAP",	&ismap,			  ARG_SWITCH,   NULL },
+		{ NULL,     NULL,         0,            NULL }
 	};
 	ImgBorder = pmsg.Linkable;
-	Alignment = -1;
+	Alignment = (ULONG)-1;
 	ScanArgs(pmsg.Locked, args);
 	Alignment++;
 	if(Alignment == Align_Center)

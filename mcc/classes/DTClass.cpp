@@ -10,4 +10,6 @@ BOOL DTClass::Layout (struct LayoutMessage &lmsg)
 
 	if(TreeClass::Layout(lmsg))
 		lmsg.EnsureNewline();
+
+  return TRUE;
 }

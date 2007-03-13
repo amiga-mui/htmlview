@@ -78,14 +78,14 @@ VOID FormClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	PrintTag(pmsg.Locked);
 #endif
 
-	STRPTR MethodKeywords[] = { "GET", "POST", NULL };
+	const char *MethodKeywords[] = { "GET", "POST", NULL };
 	struct ArgList args[] =
 	{
-		{ "METHOD",		&Method,		ARG_KEYWORD, MethodKeywords	},
-		{ "ACTION",		&Action,		ARG_URL		},
-		{ "TARGET",		&Target,		ARG_URL		},
-		{ "ENCTYPE",	&EncType,	ARG_STRING	},
-		{ NULL }
+		{ "METHOD",		&Method,  ARG_KEYWORD, MethodKeywords	},
+		{ "ACTION",		&Action,  ARG_URL,     NULL           },
+		{ "TARGET",		&Target,	ARG_URL,     NULL           },
+		{ "ENCTYPE",	&EncType,	ARG_STRING,  NULL           },
+		{ NULL,       NULL,     0,           NULL           }
 	};
 	ScanArgs(pmsg.Locked, args);
 

@@ -218,18 +218,18 @@ VOID InputClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	AttrClass::Parse(pmsg);
 
 	BOOL checked = FALSE, disabled = FALSE, readonly = FALSE;
-	STRPTR InputTypes[] = { "TEXT", "PASSWORD", "CHECKBOX", "RADIO", "SUBMIT", "RESET", "FILE", "HIDDEN", "IMAGE", "BUTTON", NULL };
+	const char *InputTypes[] = { "TEXT", "PASSWORD", "CHECKBOX", "RADIO", "SUBMIT", "RESET", "FILE", "HIDDEN", "IMAGE", "BUTTON", NULL };
 	struct ArgList args[] =
 	{
-		{ "TYPE",		&Type,		ARG_KEYWORD, InputTypes	},
-		{ "NAME",		&Name,		ARG_STRING	},
-		{ "VALUE",		&Value,		ARG_STRING	},
-		{ "CHECKED",	&checked,	ARG_SWITCH	},
-		{ "DISABLED",	&disabled,	ARG_SWITCH	},
-		{ "READONLY",	&readonly,	ARG_SWITCH	},
-		{ "SIZE",		&Size,		ARG_NUMBER	},
-		{ "MAXLENGTH",	&MaxLength,	ARG_NUMBER	},
-		{ NULL }
+		{ "TYPE",		    &Type,		  ARG_KEYWORD, InputTypes	},
+		{ "NAME",		    &Name,		  ARG_STRING,  NULL },
+		{ "VALUE",		  &Value,		  ARG_STRING,  NULL },
+		{ "CHECKED",	  &checked,	  ARG_SWITCH,  NULL },
+		{ "DISABLED",	  &disabled,	ARG_SWITCH,  NULL },
+		{ "READONLY",	  &readonly,	ARG_SWITCH,  NULL },
+		{ "SIZE",		    &Size,		  ARG_NUMBER,  NULL },
+		{ "MAXLENGTH",	&MaxLength,	ARG_NUMBER,  NULL },
+		{ NULL,         NULL,       0,           NULL }
 	};
 
 	ScanArgs(pmsg.Locked, args);
