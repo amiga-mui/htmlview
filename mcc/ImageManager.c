@@ -396,7 +396,7 @@ VOID DecodeQueueManager::InvalidateQueue (Object *obj)
 	ReleaseSemaphore(&Mutex);
 }
 
-DISPATCHERPROTO(DecoderDispatcher)
+DISPATCHER(DecoderDispatcher)
 {
 	ULONG result = NULL;
 	struct DecoderData *data = (struct DecoderData *)INST_DATA(cl, obj);
@@ -405,7 +405,7 @@ DISPATCHERPROTO(DecoderDispatcher)
 	{
 		case OM_NEW:
 		{
-			if(obj = (Object *)DoSuperMethodA(cl, obj, msg))
+			if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
 			{
 				struct DecoderData *data = (struct DecoderData *)INST_DATA(cl, obj);
 				struct opSet *nmsg = (struct opSet *)msg;
@@ -414,7 +414,7 @@ DISPATCHERPROTO(DecoderDispatcher)
 				ULONG width = 0, height = 0;
 
 				struct TagItem *tag, *tags = nmsg->ops_AttrList;
-				while(tag = NextTagItem(&tags))
+				while((tag = NextTagItem(&tags)))
 				{
 					LONG ti_Data = tag->ti_Data;
 					switch(tag->ti_Tag)
@@ -466,7 +466,7 @@ DISPATCHERPROTO(DecoderDispatcher)
 				}
 
 				struct Screen *scr;
-				if(scr = data->Scr)
+				if((scr = data->Scr))
 				{
 					ULONG depth = GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH);
 
@@ -480,7 +480,7 @@ DISPATCHERPROTO(DecoderDispatcher)
 							img = new LowColourNDEngine(scr, width, height, data);
 					else	img = new LowColourEngine(scr, width, height, data);
 
-					if(data->ImgObj = img)
+					if((data->ImgObj = img))
 						return((ULONG)obj);
 				}
 				
@@ -491,7 +491,7 @@ DISPATCHERPROTO(DecoderDispatcher)
 
 		case IDM_Decode:
 		{
-			if(result = DoSuperMethodA(cl, obj, msg))
+			if((result = DoSuperMethodA(cl, obj, msg)))
 				data->ImgObj->FlushBuffers();
 		}
 		break;
@@ -580,7 +580,7 @@ DISPATCHERPROTO(DecoderDispatcher)
 			struct RGBPixel *Background = NULL;
 
 			struct TagItem *tag, *tags = &smsg->Tags;
-			while(tag = NextTagItem(&tags))
+			while((tag = NextTagItem(&tags)))
 			{
 				LONG ti_Data = tag->ti_Data;
 				switch(tag->ti_Tag)
@@ -752,9 +752,9 @@ Object *NewDecoderObject (UBYTE *buf, ULONG tags, ...)
 		{
 			if(!(cl = decoders->Class))
 			{
-				if(decoders->Base = ClassOpen(decoders->Name))
+				if((decoders->Base = ClassOpen(decoders->Name)))
 				{
-					if(cl = MakeClass(NULL, NULL, GetImageDecoderClass(decoders->Base), sizeof(DecoderData), 0L))
+					if((cl = MakeClass(NULL, NULL, GetImageDecoderClass(decoders->Base), sizeof(DecoderData), 0L)))
 					{
 						cl->cl_Dispatcher.h_Entry = (ULONG(*)())DecoderDispatcher;
 						decoders->Class = cl;
@@ -853,7 +853,11 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
 	item->Leave();
 }
 
+#if defined(__PPC__)
+static const BOOL FBlit = FALSE;
+#else
 BOOL FBlit = FindPort("FBlit") ? TRUE : FALSE;
+#endif
 
 VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struct HTMLviewData *data)
 {
@@ -885,8 +889,21 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
 		sprintf(str_args, "%lx", args);
 
 		STRPTR taskname = FBlit ? (char *)"HTMLview ImageDecoder" : args->TaskName;
-		if(CreateNewProcTags(NP_Entry, DecoderThread, NP_Priority, -1, NP_Name, taskname, NP_StackSize, 2*8192, NP_Arguments, str_args, TAG_DONE))
+		if(CreateNewProcTags(
+			NP_Entry, DecoderThread,
+			NP_Priority, -1,
+			NP_Name, taskname,
+			#if !defined(__MORPHOS__)
+			NP_StackSize, 2*8192,
+			NP_Arguments, str_args,
+			#else
+			NP_PPC_Arg1, str_args,
+			NP_CodeType, CODETYPE_PPC,
+			#endif
+			TAG_DONE))
+		{
 			Wait(1 << sigbit);
+		}
 
 		FreeSignal(sigbit);
 	}

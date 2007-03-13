@@ -106,7 +106,7 @@ MakeHook(ScrollGroupLayoutHook, ScrollGroupLayoutCode);
 #define GetConfigVal(o, i, v) GetConfigItemA(o, i, (ULONG)v, TRUE)
 ULONG GetConfigItemA (Object *obj, ULONG item, ULONG def_value, BOOL de_ref = FALSE);
 
-DISPATCHERPROTO(ScrollGroupDispatcher)
+DISPATCHER(ScrollGroupDispatcher)
 {
 	ULONG result = NULL;
 	struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(cl, obj);
@@ -121,7 +121,7 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 
       ENTER();
 
-			if(tag = FindTagItem(MUIA_ScrollGroup_HTMLview, nmsg->ops_AttrList))
+			if((tag = FindTagItem(MUIA_ScrollGroup_HTMLview, nmsg->ops_AttrList)))
 			{
 				HTMLview = (Object *)tag->ti_Data;
 				tag->ti_Tag = Child;
@@ -141,7 +141,7 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 				TAG_MORE, (ULONG)nmsg->ops_AttrList
 			};
 
-			if(obj = (Object *)DoSuperMethod(cl, obj, OM_NEW, tags, nmsg->ops_GInfo))
+			if((obj = (Object *)DoSuperMethod(cl, obj, OM_NEW, tags, nmsg->ops_GInfo)))
 			{
 				struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(cl, obj);
 
@@ -162,7 +162,7 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 				if((tag = FindTagItem(MUIA_ScrollGroup_Smooth, nmsg->ops_AttrList)) && tag->ti_Data)
 					data->Flags |= FLG_SmoothScroll;
 
-				if(tag = FindTagItem(MUIA_ScrollGroup_Scrolling, nmsg->ops_AttrList))
+				if((tag = FindTagItem(MUIA_ScrollGroup_Scrolling, nmsg->ops_AttrList)))
 				{
 					switch(tag->ti_Data)
 					{
@@ -206,7 +206,7 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 
       ENTER();
 
-			if(tag = FindTagItem(MUIA_ScrollGroup_Frames, smsg->ops_AttrList))
+			if((tag = FindTagItem(MUIA_ScrollGroup_Frames, smsg->ops_AttrList)))
 			{
 				if(data->Flags & FLG_HorizAuto)
 				{
@@ -247,7 +247,7 @@ DISPATCHERPROTO(ScrollGroupDispatcher)
 		{
       ENTER();
 
-			if(result = DoSuperMethodA(cl, obj, msg))
+			if((result = DoSuperMethodA(cl, obj, msg)))
 			{
 				if(GetConfigVal(data->HTMLview, MUICFG_HTMLview_PageScrollSmooth, TRUE))
 				{

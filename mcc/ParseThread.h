@@ -23,6 +23,8 @@
 #ifndef PARSETHREAD_H
 #define PARSETHREAD_H
 
+#include "SDI_compiler.h"
+
 /* Protos */
 
 VOID ParseThread(REG(a0, STRPTR arguments));

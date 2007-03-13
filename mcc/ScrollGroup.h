@@ -23,7 +23,10 @@
 #ifndef SCROLLGROUP_H
 #define SCROLLGROUP_H
 
-ULONG ScrollGroupDispatcher(REG(a0, struct IClass *cl), REG(a2, Object *obj), REG(a1, Msg msg));
+#include "SDI_compiler.h"
+#include "SDI_hook.h"
+
+DISPATCHERPROTO(ScrollGroupDispatcher);
 extern struct MUI_CustomClass *ScrollGroupClass;
 
 #define MUIA_ScrollGroup_HTMLview         HTMLview_ID(100) /* Private */
