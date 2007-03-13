@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <exec/types.h>
 
+#include "SDI_compiler.h"
+
 #include "IM_Output.h"
 #include "General.h"
 

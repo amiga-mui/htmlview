@@ -78,7 +78,7 @@ VOID MUI_PulseNode::Start (Object *obj)
 BOOL MUI_PulseNode::Stop (Object *obj)
 {
 	BOOL res;
-	if(res = Running)
+	if((res = Running))
 		DoMethod(_app(obj), MUIM_Application_RemInputHandler, this);
 	Running = FALSE;
 	return(res);
@@ -199,7 +199,7 @@ HOOKPROTO(LayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
 }
 MakeHook(LayoutHook, LayoutCode);
 
-DISPATCHERPROTO(_Dispatcher)
+DISPATCHER(_Dispatcher)
 {
 	ULONG result = NULL;
 	struct HTMLviewData *data = (struct HTMLviewData *)INST_DATA(cl, obj);
@@ -215,14 +215,14 @@ DISPATCHERPROTO(_Dispatcher)
 
 			struct TagItem tags[] =
 			{
-//				MUIA_CustomBackfill, FALSE,
-/*				MUIA_Background, MUII_SHADOWFILL,
-				MUIA_FillArea, FALSE,
-*/				MUIA_InnerBottom, 0,
-				MUIA_InnerLeft, 0,
-				MUIA_InnerRight, 0,
-				MUIA_InnerTop, 0,
-				TAG_MORE, (ULONG)nmsg->ops_AttrList
+//				{ MUIA_CustomBackfill, FALSE },
+/*				{ MUIA_Background, MUII_SHADOWFILL },
+				{ MUIA_FillArea, FALSE },
+*/				{ MUIA_InnerBottom, 0 },
+				{ MUIA_InnerLeft, 0 },
+				{ MUIA_InnerRight, 0 },
+				{ MUIA_InnerTop, 0 },
+				{ TAG_MORE, (ULONG)nmsg->ops_AttrList }
 			};
 
       D(DBF_STARTUP, "before DoSuperMethod");
@@ -248,7 +248,7 @@ DISPATCHERPROTO(_Dispatcher)
         D(DBF_STARTUP, "after DoSuperMethod2");
 
 				struct TagItem *tag;
-				if(tag = FindTagItem(MUIA_HTMLview_SharedData, nmsg->ops_AttrList))
+				if((tag = FindTagItem(MUIA_HTMLview_SharedData, nmsg->ops_AttrList)))
         {
           D(DBF_STARTUP, "after DoSuperMethod3");
 				  data->Share = (struct SharedData *)tag->ti_Data;
@@ -281,7 +281,7 @@ DISPATCHERPROTO(_Dispatcher)
 					sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", obj);
 
 					struct TagItem *tag;
-					if(tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList))
+					if((tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList)))
 					{
             D(DBF_STARTUP, "creating scollgroupclass object...");
 
@@ -319,7 +319,7 @@ DISPATCHERPROTO(_Dispatcher)
 			while(data->ParseCount)
 			{
 				struct ParseInfoMsg *msg;
-				if(msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort))
+				if((msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort)))
 				{
 					switch(msg->Class)
 					{
@@ -435,8 +435,8 @@ DISPATCHERPROTO(_Dispatcher)
 
 			struct TagItem newtags[] =
 			{
-				MUIA_Group_Forward, forward,
-				TAG_MORE, (ULONG)smsg->ops_AttrList
+				{ MUIA_Group_Forward, forward },
+				{ TAG_MORE, (ULONG)smsg->ops_AttrList }
 			};
 			result = DoSuperMethod(cl, obj, OM_SET, newtags, smsg->ops_GInfo);
 		}
@@ -614,7 +614,7 @@ DISPATCHERPROTO(_Dispatcher)
 				MUIA_HTMLview_Prop_VDeltaFactor, data->Share->VDeltaFactor,
 				TAG_DONE);
 
-			if(result = DoSuperMethodA(cl, obj, msg))
+			if((result = DoSuperMethodA(cl, obj, msg)))
 			{
 				data->ihnode.Start(obj);
 
@@ -804,7 +804,7 @@ DISPATCHERPROTO(_Dispatcher)
 			if(gmsg->Target && gmsg->Target != data->FrameName)
 			{
 				Object *dst;
-				if(dst = (Object *)DoMethod(obj, MUIM_HTMLview_LookupFrame, gmsg->Target))
+				if((dst = (Object *)DoMethod(obj, MUIM_HTMLview_LookupFrame, gmsg->Target)))
 				{
 					if(dst != obj)
 					{
@@ -905,7 +905,7 @@ DISPATCHERPROTO(_Dispatcher)
 			char str_args[10];
 			sprintf(str_args, "%lx", args);
 
-			if(data->ParseThread = CreateNewProcTags(NP_Entry, ParseThread, NP_Name, data->ParseThreadName, NP_StackSize, 32576, NP_Arguments, str_args, TAG_DONE))
+			if((data->ParseThread = CreateNewProcTags(NP_Entry, ParseThread, NP_Name, data->ParseThreadName, NP_StackSize, 32576, NP_Arguments, str_args, TAG_DONE)))
 					data->ParseCount++;
 			else	delete args;
 		}
@@ -919,7 +919,7 @@ DISPATCHERPROTO(_Dispatcher)
       ENTER();
 
 			struct ParseMessage *pmsg;
-			if(pmsg = data->PMsg)
+			if((pmsg = data->PMsg))
 			{
 				ULONG n_parsed = pmsg->Parsed + (pmsg->Current-pmsg->Buffer);
 				if(n_parsed || (data->Flags & FLG_RemoveChildren))
@@ -972,7 +972,7 @@ DISPATCHERPROTO(_Dispatcher)
       ENTER();
 
 			struct ParseInfoMsg *msg;
-			while(msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort))
+			while((msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort)))
 			{
 				switch(msg->Class)
 				{
@@ -1186,7 +1186,7 @@ DISPATCHERPROTO(_Dispatcher)
       ENTER();
 			data->RefreshTimer.Stop(obj);
 			STRPTR url;
-			if(url = (STRPTR)DoMethod(obj, MUIM_HTMLview_AddPart, data->HostObject->RefreshURL))
+			if((url = (STRPTR)DoMethod(obj, MUIM_HTMLview_AddPart, data->HostObject->RefreshURL)))
 			{
 				SetAttrs(data->Share->Obj,
 					MUIA_HTMLview_ClickedURL, url,
@@ -1203,7 +1203,7 @@ DISPATCHERPROTO(_Dispatcher)
       ENTER();
 			struct MUIP_HTMLview_HitTest *hmsg = (struct MUIP_HTMLview_HitTest *)msg;
 			class HostClass *host;
-			if(host = data->HostObject)
+			if((host = data->HostObject))
 			{
 				hmsg->HMsg->X += data->Left;
 				hmsg->HMsg->Y += data->Top;
@@ -1220,7 +1220,7 @@ DISPATCHERPROTO(_Dispatcher)
 			struct MUIP_HTMLview_GetContextInfo *cmsg = (struct MUIP_HTMLview_GetContextInfo *)msg;
 
 			class HostClass *host;
-			if(host = data->HostObject)
+			if((host = data->HostObject))
 			{
 				LONG x = cmsg->X-_mleft(obj), y = cmsg->Y-_mtop(obj);
 				struct HitTestMessage *hmsg = new struct HitTestMessage(x + data->Left, y + data->Top, host);
@@ -1241,7 +1241,7 @@ DISPATCHERPROTO(_Dispatcher)
 				if(hmsg->Img)
 				{
 					struct PictureFrame *pic;
-					if(pic = hmsg->Img->Picture)
+					if((pic = hmsg->Img->Picture))
 							cinfo->ImageSize = pic->Size();
 					else	cinfo->ImageSize = 0;
 
@@ -1264,7 +1264,7 @@ DISPATCHERPROTO(_Dispatcher)
 			struct MUIP_HTMLview_AddSingleAnim *amsg = (struct MUIP_HTMLview_AddSingleAnim *)msg;
 			struct ObjectList *receivers = new struct ObjectList(amsg->receiver);
 			struct AnimInfo *item;
-			if(item = data->Share->AddAnim(obj, data, amsg->picture, receivers))
+			if((item = data->Share->AddAnim(obj, data, amsg->picture, receivers)))
 				item->Flags |= AnimFLG_DeleteObjList;
 		}
 		break;
@@ -1315,7 +1315,7 @@ DISPATCHERPROTO(_Dispatcher)
       ENTER();
 			struct MUIP_HTMLview_ServerRequest *smsg = (struct MUIP_HTMLview_ServerRequest *)msg;
 			STRPTR dummy, url = new char[strlen(data->URL) + strlen(smsg->Argument) + 2];
-			if(dummy = strstr(strcpy(url, data->URL), "?"))
+			if((dummy = strstr(strcpy(url, data->URL), "?")))
 				*dummy = '\0';
 			sprintf(url+strlen(url), "?%s", smsg->Argument);
 			SetAttrs(data->Share->Obj,

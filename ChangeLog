@@ -5,6 +5,14 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-13  Ilkka Lehtoranta <ilkleht@isoveli.org>
+
+  * mcc: added constructors.c/.h and libnix.c to initialize constructors for
+    libnix needed to build c++ classes. This required modification to mccheader.c
+    because constructors/destructors should run only once in this kind of
+    libraries.
+  * mcc: now builds for MorphOS.
+
 2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc/mcp: replaced all GetAttrs()/get() uses with xget()

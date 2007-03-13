@@ -4,6 +4,7 @@
 #include "Classes.h"
 
 #include <exec/types.h>
+#include <clib/alib_protos.h>
 #include <proto/intuition.h>
 
 // forward declarations

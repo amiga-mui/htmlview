@@ -224,6 +224,7 @@ endif
 
 MCCOBJS = \
           $(OBJDIR)/library.o \
+          $(OBJDIR)/constructors.o \
           $(OBJDIR)/classes/AClass.o \
           $(OBJDIR)/classes/AreaClass.o \
           $(OBJDIR)/classes/AttrClass.o \

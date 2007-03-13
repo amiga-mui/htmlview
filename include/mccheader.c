@@ -225,7 +225,7 @@ static struct MUI_CustomClass *ThisClassP = NULL;
 #endif
 
 #ifdef __GNUC__
-  #if defined(USE_UTILITYBASE) && !defined(__NEWLIB__)
+  #if defined(USE_UTILITYBASE) && !defined(__NEWLIB__) && !defined(__MORPHOS__)
   struct Library *__UtilityBase = NULL; // required by libnix & clib2
   #endif
   #ifdef __libnix__
@@ -260,7 +260,7 @@ struct LibraryHeader
 /******************************************************************************/
 
 //static BOOL LIBFUNC UserLibInit   (struct Library *base);
-//static BOOL LIBFUNC UserLibExpunge(struct Library *base);
+static BOOL LIBFUNC UserLibExpunge(struct Library *base);
 static BOOL LIBFUNC UserLibOpen   (struct Library *base);
 static BOOL LIBFUNC UserLibClose  (struct Library *base);
 
@@ -469,7 +469,7 @@ const USED_VAR ULONG __abox__ = 1;
 #if defined(__amigaos4__)
 static struct LibraryHeader * LibInit(struct LibraryHeader *base, BPTR librarySegment, struct ExecIFace *pIExec)
 {
-  struct ExecBase *sb = (struct ExecBase *)pIExec->Data.LibBase;
+  struct Library *sb = (struct Library *)pIExec->Data.LibBase;
   IExec = pIExec;
 #elif defined(__MORPHOS__)
 static struct LibraryHeader * LibInit(struct LibraryHeader *base, BPTR librarySegment, struct ExecBase *sb)
@@ -483,7 +483,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
   static struct StackSwapStruct *stack;
   #endif
 
-  SysBase = (struct Library *)sb;
+  SysBase = sb;
 
   #if defined(__amigaos4__) && defined(__NEWLIB__)
   if((NewlibBase = OpenLibrary("newlib.library", 3)) &&
@@ -571,6 +571,8 @@ static BPTR LIBFUNC LibExpunge(REG(a6, struct LibraryHeader *base))
   }
   else
   {
+    UserLibExpunge(&base->lh_Library);
+
     #if defined(__amigaos4__) && defined(__NEWLIB__)
     if(NewlibBase)
     {
@@ -737,11 +739,17 @@ static BOOL UserLibOpen(struct Library *base)
         #endif
 
         UtilityBase   = (struct Library *)THISCLASS->mcc_UtilityBase;
+        #if defined(__amigaos4__)
         DOSBase       = (struct Library *)THISCLASS->mcc_DOSBase;
         GfxBase       = (struct Library *)THISCLASS->mcc_GfxBase;
         IntuitionBase = (struct Library *)THISCLASS->mcc_IntuitionBase;
+        #else
+        DOSBase       = (struct DosLibrary *)THISCLASS->mcc_DOSBase;
+        GfxBase       = (struct GfxBase *)THISCLASS->mcc_GfxBase;
+        IntuitionBase = (struct IntuitionBase *)THISCLASS->mcc_IntuitionBase;
+        #endif
 
-        #if defined(USE_UTILITYBASE) && !defined(__NEWLIB__)
+        #if defined(USE_UTILITYBASE) && !defined(__NEWLIB__) && !defined(__MORPHOS__)
         __UtilityBase = (APTR)UtilityBase;
         #endif
 
@@ -840,6 +848,20 @@ static BOOL UserLibClose(struct Library *base)
       MUIMasterBase = NULL;
     }
   }
+
+  return(TRUE);
+}
+
+/*****************************************************************************************************/
+/*****************************************************************************************************/
+
+static BOOL UserLibExpunge(struct Library *base)
+{
+  VOID ClassExpungeFunc(struct Library *base);
+
+  #ifdef ClassExpunge
+  ClassExpungeFunc(base);
+  #endif
 
   return(TRUE);
 }

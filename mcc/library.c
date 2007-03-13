@@ -30,6 +30,8 @@
 /*                                                                            */
 /******************************************************************************/
 
+#include "constructors.h"
+
 #include "private.h"
 #include "rev.h"
 
@@ -46,6 +48,7 @@
 
 #define ClassInit
 #define ClassExit
+#define ClassExpunge
 
 struct Library *LayersBase = NULL;
 struct Library *KeymapBase = NULL;
@@ -93,10 +96,13 @@ BOOL ClassInitFunc(UNUSED struct Library *base)
           {
             if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
                GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
-            { }
-
-            RETURN(TRUE);
-            return(TRUE);
+            {
+              if(run_constructors())
+              {
+                RETURN(TRUE);
+                return(TRUE);
+              }
+            }
           }
         }
       }
@@ -153,6 +159,16 @@ VOID ClassExitFunc(UNUSED struct Library *base)
     CloseLibrary(LayersBase);
     LayersBase = NULL;
   }
+
+  LEAVE();
+}
+
+
+VOID ClassExpungeFunc(UNUSED struct Library *base)
+{
+  ENTER();
+
+  run_destructors();
 
   LEAVE();
 }
