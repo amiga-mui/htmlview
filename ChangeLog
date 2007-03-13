@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc/mcp: replaced all GetAttrs()/get() uses with xget()
+
 2007-03-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * #?/Debug.c: disabling a debug flag was not possible due to a check for the

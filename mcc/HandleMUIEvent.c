@@ -47,9 +47,12 @@ STRPTR FindTarget (Object *obj, STRPTR target, struct HTMLviewData *data)
 		else if(!stricmp(target, "_parent"))
 		{
 			Object *parent = obj;
-			GetAttrs(parent, MUIA_Parent, &parent, TAG_DONE);
-			GetAttrs(parent, MUIA_Parent, &parent, TAG_DONE);
-			GetAttrs(parent, MUIA_HTMLview_FrameName, &target, TAG_DONE);
+			
+      if((parent = (Object *)xget(parent, MUIA_Parent)) &&
+         (parent = (Object *)xget(parent, MUIA_Parent)))
+      {
+  	    target = (STRPTR)xget(parent, MUIA_HTMLview_FrameName);
+      }
 		}
 	}
 	else

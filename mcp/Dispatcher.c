@@ -126,7 +126,7 @@ DISPATCHER(_DispatcherP)
 				STRPTR cfg_val;
 				LONG len;
 
-				get(data->Objects[item->ObjIndex], item->Tag, &cfg_val);
+				cfg_val = (STRPTR)xget(data->Objects[item->ObjIndex], item->Tag);
 
 				if((len = item->Length) < 0)
 				  DoMethod(configdata, MUIM_Dataspace_Add, &cfg_val, 4, item->CfgItem);

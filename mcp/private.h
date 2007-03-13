@@ -78,4 +78,16 @@ Object *CreatePrefsGroup(struct InstData_MCP *data);
 BOOL CreateSubClasses(void);
 void DeleteSubClasses(void);
 
+/// xget()
+//  Gets an attribute value from a MUI object
+ULONG xget(Object *obj, const ULONG attr);
+#if defined(__GNUC__) || ((__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L))
+  // please note that we do not evaluate the return value of GetAttr()
+  // as some attributes (e.g. MUIA_Selected) always return FALSE, even
+  // when they are supported by the object. But setting b=0 right before
+  // the GetAttr() should catch the case when attr doesn't exist at all
+  #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
+#endif
+///
+
 #endif /* HTMLVIEW_MCP_PRIV_H */

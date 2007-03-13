@@ -415,9 +415,9 @@ DISPATCHERPROTO(_Dispatcher)
 			data->LayoutMsg.FlushGadgetList();
 
 			Object *child;
-			struct List *childs;
-			GetAttrs(obj, MUIA_Group_ChildList, &childs, TAG_DONE);
+			struct List *childs = (struct List *)xget(obj, MUIA_Group_ChildList);
 			struct Node *head = childs->lh_Head;
+
 			while(child = (Object *)NextObject(&head))
 			{
 				DoMethod(obj, OM_REMMEMBER, child);
@@ -491,8 +491,9 @@ DISPATCHERPROTO(_Dispatcher)
 			struct MUIP_Backfill *bmsg = (struct MUIP_Backfill *)msg;
 			struct RastPort *rp = _rp(obj);
 
-			GetAttrs(obj, MUIA_Virtgroup_Left, &data->Left, TAG_DONE);
-			GetAttrs(obj, MUIA_Virtgroup_Top, &data->Top, TAG_DONE);
+			data->Left = xget(obj, MUIA_Virtgroup_Left);
+			data->Top = xget(obj, MUIA_Virtgroup_Top);
+
 			if(!data->HostObject || (!data->HostObject->Body && (data->Flags & FLG_HostObjNotUsed)))
 			{
 				if(!(data->Flags & FLG_NoBackfill))
@@ -1004,8 +1005,8 @@ DISPATCHERPROTO(_Dispatcher)
 							DoMethod(obj, MUIM_HTMLview_Period);
 							data->Flags &= ~FLG_RemoveChildren;
 
-							Object *parent = NULL;
-							if(GetAttrs(obj, MUIA_Parent, &parent, TAG_DONE), parent)
+							Object *parent;
+							if((parent = (Object *)xget(obj, MUIA_Parent)))
 								SetAttrs(parent, MUIA_ScrollGroup_Frames, FALSE, TAG_DONE);
 						}
 					}
@@ -1045,8 +1046,8 @@ DISPATCHERPROTO(_Dispatcher)
 									MUI_Redraw(obj, MADF_DRAWOBJECT);
 								else if(data->HostObject->Body->id() == tag_FRAMESET)
 								{
-									Object *parent = NULL;
-									if(GetAttrs(obj, MUIA_Parent, &parent, TAG_DONE), parent)
+									Object *parent;
+									if((parent = (Object *)xget(obj, MUIA_Parent)))
 										SetAttrs(parent, MUIA_ScrollGroup_Frames, TRUE, TAG_DONE);
 								}
 

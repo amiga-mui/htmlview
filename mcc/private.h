@@ -47,10 +47,6 @@
 
 #include "mcc_common.h"
 
-/* Protos */
-
-//ULONG HTMLviewDispatcher(REG(a0, struct IClass *cl), REG(a2, Object *obj), REG(a1, Msg msg));
-
 struct MUI_PulseNode
 {
   struct MUI_InputHandlerNode ihn;
@@ -157,17 +153,17 @@ struct HTMLviewData
 	struct MUIR_HTMLview_GetContextInfo ContextInfo;
 };
 
-#define FLG_RootObj				(1 << 0)
-#define FLG_HostObjNotUsed		(1 << 1)
-#define FLG_ReAllocColours		(1 << 2)
-#define FLG_NotResized			(1 << 3)
-#define FLG_Shown					(1 << 4)
-#define FLG_ActiveLink			(1 << 5)
-#define FLG_Reload				(1 << 6)
-#define FLG_NoBackfill			(1 << 7)
-#define FLG_RemoveChildren		(1 << 9)
-#define FLG_DiscreteInput		(1 << 10)
-#define FLG_MarkingEnabled		(1 << 11)
-#define FLG_RedrawMarked		(1 << 12)
+#define FLG_RootObj				    (1<<0)
+#define FLG_HostObjNotUsed		(1<<1)
+#define FLG_ReAllocColours		(1<<2)
+#define FLG_NotResized			  (1<<3)
+#define FLG_Shown					    (1<<4)
+#define FLG_ActiveLink			  (1<<5)
+#define FLG_Reload				    (1<<6)
+#define FLG_NoBackfill			  (1<<7)
+#define FLG_RemoveChildren		(1<<9)
+#define FLG_DiscreteInput		  (1<<10)
+#define FLG_MarkingEnabled		(1<<11)
+#define FLG_RedrawMarked		  (1<<12)
 
 #endif
