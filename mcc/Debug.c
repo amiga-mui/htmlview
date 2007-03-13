@@ -30,6 +30,7 @@
 #include <proto/intuition.h>
 #include <proto/utility.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 
 #include "SDI_compiler.h"
 #include "Debug.h"
@@ -54,7 +55,7 @@
 
   #if defined(__MORPHOS__)
     #include <exec/rawfmt.h>
-    #define KPutFmt(format, args) VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
+    #define KPutFmt(format, args) VNewRawDoFmt(format, (void * (*)(void *, UBYTE))RAWFMTFUNC_SERIAL, NULL, args)
   #else
     void STDARGS KPutFmt(const char *format, va_list arg);
   #endif
