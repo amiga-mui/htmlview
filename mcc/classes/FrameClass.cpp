@@ -36,7 +36,7 @@ VOID FrameClass::AppendGadget (struct AppendGadgetMessage &amsg)
 Object *FrameClass::LookupFrame (STRPTR name, class HostClass *hclass)
 {
 	Object *result;
-	if(result = HTMLview)
+	if((result = HTMLview))
 	{
 		if((Name && !stricmp(Name, name)) || (result = (Object *)DoMethod(HTMLview, MUIM_HTMLview_LookupFrame, name)))
 			hclass->DefaultFrame = HTMLview;
@@ -150,6 +150,8 @@ BOOL FrameClass::Layout (struct LayoutMessage &lmsg)
 		}
 		Flags |= FLG_Layouted;
 	}
+
+  return TRUE;
 }
 
 VOID FrameClass::Parse(REG(a2, struct ParseMessage &pmsg))
@@ -157,17 +159,17 @@ VOID FrameClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	AttrClass::Parse(pmsg);
 
 	BOOL noresize = FALSE;
-	STRPTR FrameKeywords[] = { "AUTO", "YES", "NO", NULL };
+	const char *FrameKeywords[] = { "AUTO", "YES", "NO", NULL };
 	struct ArgList args[] =
 	{
-		{ "NAME",			&Name,			ARG_STRING },
-		{ "SRC",				&Src,				ARG_URL },
-		{ "NORESIZE",		&noresize,		ARG_SWITCH },
-		{ "SCROLLING",		&Scrolling,		ARG_KEYWORD, FrameKeywords },
-		{ "FRAMEBORDER",	&FrameBorder,	ARG_BOOLEAN },
-		{ "MARGINWIDTH",	&MarginWidth,	ARG_NUMBER },
-		{ "MARGINHEIGHT",	&MarginHeight,	ARG_NUMBER },
-		{ NULL }
+		{ "NAME",			    &Name,			    ARG_STRING,   NULL },
+		{ "SRC",				  &Src,				    ARG_URL,      NULL },
+		{ "NORESIZE",		  &noresize,		  ARG_SWITCH,   NULL },
+		{ "SCROLLING",		&Scrolling,		  ARG_KEYWORD,  FrameKeywords },
+		{ "FRAMEBORDER",	&FrameBorder,	  ARG_BOOLEAN,  NULL },
+		{ "MARGINWIDTH",	&MarginWidth,	  ARG_NUMBER,   NULL },
+		{ "MARGINHEIGHT",	&MarginHeight,	ARG_NUMBER,   NULL },
+		{ NULL,           NULL,           0,            NULL }
 	};
 	FrameBorder = pmsg.FrameBorder;
 	MarginWidth = MarginHeight = 5;
@@ -176,7 +178,7 @@ VOID FrameClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	if(!Name)
 	{
 		Name = new char[10];
-		sprintf(Name, "%08x", this);
+		sprintf(Name, "%08lx", (ULONG)this);
 	}
 
 	if(noresize)

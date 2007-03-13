@@ -275,8 +275,8 @@ enum
 	OL_UpperRoman
 };
 
-extern STRPTR AlignKeywords[];
-extern STRPTR VAlignKeywords[];
-extern STRPTR ImgAlignKeywords[];
+extern const char *AlignKeywords[];
+extern const char *VAlignKeywords[];
+extern const char *ImgAlignKeywords[];
 
 #endif

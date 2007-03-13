@@ -22,7 +22,7 @@ BOOL HRClass::Layout (struct LayoutMessage &lmsg)
 	}
 
 	Left = lmsg.X;
-	if(lmsg.ScrWidth() > width)
+	if((ULONG)lmsg.ScrWidth() > width)
 	{
 		if(Alignment == Align_Center)
 			Left += (lmsg.ScrWidth() - width) / 2;
@@ -30,12 +30,13 @@ BOOL HRClass::Layout (struct LayoutMessage &lmsg)
 			Left += lmsg.ScrWidth() - width;
 	}
 	else
-	{
-		lmsg.Width = max(lmsg.X + width + lmsg.MarginWidth, lmsg.Width);
-	}
+		lmsg.Width = max(lmsg.X + width + lmsg.MarginWidth, (ULONG)lmsg.Width);
+
 	Right = Left + width - 1;
 
 	Flags |= FLG_Layouted;
+
+  return TRUE;
 }
 
 VOID HRClass::AdjustPosition (LONG x, LONG y)
@@ -55,7 +56,7 @@ BOOL HRClass::Mark (struct MarkMessage &mmsg)
 			mmsg.WriteLF();
 
 		for(UWORD c = 0; c < 78; c++)
-			mmsg.WriteText("-", 1);
+			mmsg.WriteText((STRPTR)"-", 1);
 
 		mmsg.WriteLF();
 		mmsg.Newline = TRUE;
@@ -82,11 +83,11 @@ VOID HRClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL noshade = FALSE;
 	struct ArgList args[] =
 	{
-		{ "NOSHADE",	&noshade,		ARG_SWITCH	},
-		{ "WIDTH",		&GivenWidth,	ARG_VALUE	},
-		{ "SIZE",		&Height,			ARG_NUMBER	},
-		{ "ALIGN",		&Alignment,		ARG_KEYWORD, AlignKeywords },
-		{ NULL }
+		{ "NOSHADE",	&noshade,		  ARG_SWITCH,   NULL },
+		{ "WIDTH",		&GivenWidth,	ARG_VALUE,    NULL },
+		{ "SIZE",		  &Height,			ARG_NUMBER,   NULL },
+		{ "ALIGN",		&Alignment,		ARG_KEYWORD,  AlignKeywords },
+		{ NULL,       NULL,         0,            NULL }
 	};
 	Alignment = Align_Center-1;
 	ScanArgs(pmsg.Locked, args);

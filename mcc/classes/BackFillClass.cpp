@@ -44,7 +44,7 @@ VOID BackFillClass::GetImages (struct GetImagesMessage &gmsg)
 	if(Source && !Picture)
 	{
 		STRPTR url;
-		if(url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, Source))
+		if((url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
 			gmsg.AddImage(url, 0, 0, this);
 	}
 	TreeClass::GetImages(gmsg);
@@ -55,8 +55,9 @@ VOID BackFillClass::FindImage (struct LayoutMessage &lmsg)
 	STRPTR url;
 	if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
 	{
-		if(Picture = lmsg.Share->ImageStorage->FindImage(url, 0, 0))
+		if((Picture = lmsg.Share->ImageStorage->FindImage(url, 0, 0)))
 			Picture->LockPicture();
+
 		delete url;
 	}
 }
@@ -143,11 +144,11 @@ HOOKPROTO(BackFillCode, VOID, struct RastPort *rp, struct LayerMsg *lmsg)
 	bmp_height -= yoffset;
 	for(UWORD y = miny; y <= maxy; y += height)
 	{
-		height = min(maxy-y+1, bmp_height);
+		height = min((ULONG)maxy-y+1, bmp_height);
 		struct BitMap *src = ysrc;
 		for(UWORD x = minx; x <= maxx; x += width)
 		{
-			width = min(maxx-x+1, bmp_width);
+			width = min((ULONG)maxx-x+1, bmp_width);
 			BltBitMap(src, srcx, srcy, dst, x, y, width, height, 0x0c0, ~0, NULL);
 
 			if(src == dst)

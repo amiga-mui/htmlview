@@ -66,9 +66,9 @@
 #include "classes/NoFramesClass.h"
 #include "classes/FontStyleClass.h"
 
-STRPTR AlignKeywords[] = { "LEFT", "CENTER", "RIGHT", NULL };
-STRPTR VAlignKeywords[] = { "TOP", "MIDDLE", "BOTTOM", NULL };
-STRPTR ImgAlignKeywords[] =  { "LEFT", "CENTER", "RIGHT", "TOP", "MIDDLE", "BOTTOM", NULL };
+const char *AlignKeywords[] = { "LEFT", "CENTER", "RIGHT", NULL };
+const char *VAlignKeywords[] = { "TOP", "MIDDLE", "BOTTOM", NULL };
+const char *ImgAlignKeywords[] =  { "LEFT", "CENTER", "RIGHT", "TOP", "MIDDLE", "BOTTOM", NULL };
 
 class SuperClass *CreateObject (struct TagInfo *tag)
 {

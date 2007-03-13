@@ -5,8 +5,10 @@
 
 BOOL AttrClass::Layout (struct LayoutMessage &lmsg)
 {
-	SuperClass::Layout(lmsg);
+  SuperClass::Layout(lmsg);
 	Flags |= FLG_Layouted;
+
+  return TRUE;
 }
 
 VOID AttrClass::Parse(REG(a2, struct ParseMessage &pmsg))

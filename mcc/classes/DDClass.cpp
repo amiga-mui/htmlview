@@ -21,6 +21,8 @@ BOOL DDClass::Layout (struct LayoutMessage &lmsg)
 		lmsg.X -= 15;
 		lmsg.Indent -= 15;
 	}
+
+  return TRUE;
 }
 
 VOID DDClass::MinMax (struct MinMaxMessage &mmsg)

@@ -10,10 +10,11 @@ BOOL BrClass::Layout (struct LayoutMessage &lmsg)
 {
 	if(lmsg.Baseline + lmsg.Bottom == 0)
 		lmsg.UpdateBaseline(lmsg.Font->tf_YSize+1, lmsg.Font->tf_Baseline);
+
 	lmsg.Newline();
 	lmsg.FlushImages(Clear);
 
-	AttrClass::Layout(lmsg);
+	return AttrClass::Layout(lmsg);
 }
 
 BOOL BrClass::Mark (struct MarkMessage &mmsg)
@@ -39,12 +40,12 @@ VOID BrClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	AttrClass::Parse(pmsg);
 	pmsg.SkipSpaces();
 
-	STRPTR ClearKeywords[] = { "LEFT", "RIGHT", "ALL", NULL };
-	ULONG clear = -1;
+	const char *ClearKeywords[] = { "LEFT", "RIGHT", "ALL", NULL };
+	LONG clear = -1;
 	struct ArgList args[] =
 	{
-		{ "CLEAR",	&clear,	ARG_KEYWORD, ClearKeywords	},
-		{ NULL }
+		{ "CLEAR",	&clear,	ARG_KEYWORD, ClearKeywords },
+		{ NULL,     NULL,   0,           NULL          }
 	};
 	ScanArgs(pmsg.Locked, args);
 	Clear = clear+1;

@@ -23,6 +23,8 @@ BOOL BlockquoteClass::Layout (struct LayoutMessage &lmsg)
 		lmsg.X -= 30;
 		lmsg.MaxX += 30;
 	}
+
+  return TRUE;
 }
 
 VOID BlockquoteClass::MinMax (struct MinMaxMessage &mmsg)

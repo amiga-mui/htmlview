@@ -36,6 +36,8 @@ BOOL FontClass::Layout (struct LayoutMessage &lmsg)
 	TreeClass::Layout(lmsg);
 
 	lmsg.Font = oldfont;
+
+  return TRUE;
 }
 
 VOID FontClass::MinMax (struct MinMaxMessage &mmsg)
@@ -60,15 +62,15 @@ VOID FontClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	STRPTR font = NULL;
 	struct ArgList args[] =
 	{
-		{ "COLOR",	&FontRGB,	ARG_COLOUR	},
-		{ "SIZE",	&font,		ARG_STRING },
-		{ NULL }
+		{ "COLOR",	&FontRGB,	ARG_COLOUR, NULL },
+		{ "SIZE",	  &font,		ARG_STRING, NULL },
+		{ NULL,     NULL,     0,          NULL }
 	};
 
 	ScanArgs(pmsg.Locked, args);
 
-	ULONG size = Font_None;
-	if(font && sscanf(font, "%*[+-]%d", &size) == 2)
+	LONG size = Font_None;
+	if(font && sscanf(font, "%*[+-]%ld", &size) == 2)
 	{
 		switch(*font)
 		{

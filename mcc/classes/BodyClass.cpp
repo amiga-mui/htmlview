@@ -92,10 +92,12 @@ BOOL BodyClass::Layout (struct LayoutMessage &lmsg)
 		lmsg.EnsureNewline();
 		lmsg.FlushImages(Flush_All);
 		lmsg.AddYSpace(5);
-		Bottom = lmsg.Height = max(lmsg.MaxY-1+lmsg.MarginHeight, lmsg.Y);
+		Bottom = lmsg.Height = max(lmsg.MaxY-1+lmsg.MarginHeight, (ULONG)lmsg.Y);
 
 //		kprintf("LayoutStack: %ld\n", LayoutStack);
 	}
+
+  return TRUE;
 }
 
 VOID BodyClass::Parse(REG(a2, struct ParseMessage &pmsg))
@@ -108,14 +110,14 @@ VOID BodyClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
 	struct ArgList args[] =
 	{
-		{ "BACKGROUND",	&Source,				ARG_URL		},
-		{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR	},
+		{ "BACKGROUND",	&Source,				ARG_URL,    NULL },
+		{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR, NULL },
 
-		{ "TEXT",			&TextRGB,			ARG_COLOUR	},
-		{ "LINK",			&LinkRGB,			ARG_COLOUR	},
-		{ "VLINK",			&VLinkRGB,			ARG_COLOUR	},
-		{ "ALINK",			&ALinkRGB,			ARG_COLOUR	},
-		{ NULL }
+		{ "TEXT",			  &TextRGB,			  ARG_COLOUR, NULL },
+		{ "LINK",			  &LinkRGB,			  ARG_COLOUR, NULL },
+		{ "VLINK",			&VLinkRGB,			ARG_COLOUR, NULL },
+		{ "ALINK",			&ALinkRGB,			ARG_COLOUR, NULL },
+		{ NULL,         NULL,           0,          NULL }
 	};
 	ScanArgs(pmsg.Locked, args);
 

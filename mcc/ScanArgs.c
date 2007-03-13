@@ -246,7 +246,7 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 					case ARG_KEYWORD:
 					{
 						ULONG result = 0;
-						STRPTR *keywords = args[i].KeywordList;
+						const char **keywords = args[i].KeywordList;
 
 						while(keywords[result])
 						{

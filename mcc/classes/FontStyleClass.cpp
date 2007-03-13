@@ -53,6 +53,8 @@ BOOL FontStyleClass::Layout (struct LayoutMessage &lmsg)
 
 	lmsg.Font = oldfont;
 	lmsg.Align = oldalign;
+
+  return TRUE;
 }
 
 VOID FontStyleClass::MinMax (struct MinMaxMessage &mmsg)
@@ -86,7 +88,7 @@ VOID FontStyleClass::Parse(REG(a2, struct ParseMessage &pmsg))
 		struct ArgList args[] =
 		{
 			{ "ALIGN",	&alignment,	ARG_KEYWORD, AlignKeywords },
-			{ NULL }
+			{ NULL,     NULL,       0,           NULL          }
 		};
 		ScanArgs(pmsg.Locked, args);
 		Alignment = alignment+1;
