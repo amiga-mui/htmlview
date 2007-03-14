@@ -5,6 +5,14 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-14  Ilkka Lehtoranta <ilkleht@isoveli.org>
+  * include/stubgen.pl: perl script (modified from cvinclude.pl from MorphOS SDK)
+    to generate 68k vararg stubs for ppc. It is needed since gcc3/gcc4 compilers
+    for MOS no longer support VARARGS68K.
+  * mcc: demo app now works to some extent in MorphOS. Replaced VARARGS68K in
+    TreeClass.cpp/BackUp() to standard version and reworked
+    ImageManager.c/NewDecoderObject() to build with gcc4/mos.
+
 2007-03-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc/mcp: applied slightly modified patch kindly provided by Joerg

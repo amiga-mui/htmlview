@@ -166,20 +166,18 @@ Object *BuildApp(void)
 				Child, BalanceObject, End,
 */
 #ifndef __amigaos4__
+#ifndef __MORPHOS__
 //				Child, ScrollgroupObject,
 				Child, NewObject(ScrollGroupClass->mcc_Class, NULL,
 					MUIA_Scrollgroup_Contents,*/ htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
 						End,
 					End,
 #endif
+#endif
 
 				Child, ColGroup(2),
 					MUIA_Group_Spacing, 0,
-#ifdef __amigaos4__
 					Child, htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
-#else
-					Child, /*htmlview = (Object *)*/NewObject(mcc->mcc_Class, NULL,
-#endif
 						VirtualFrame,
 						MUIA_HTMLview_DiscreteInput, FALSE,
 						MUIA_HTMLview_Contents, "<html><Body><Center><H1>Hej med dig<hr>test",
@@ -423,7 +421,9 @@ extern void _Z23_INIT_7_BuildEntityTreev(void);
 extern void _Z23_INIT_7_PrepareDecodersv(void);
 __attribute__((constructor)) void AAA_call_constructors(void)
 {
-//   _Z15_INIT_4_InitMemv();
+   #if defined(__MORPHOS__)
+   _Z15_INIT_4_InitMemv();
+   #endif
    _Z17_INIT_5_CMapMutexv();
    _Z18_INIT_6_CharTablesv();
    _Z20_INIT_7_BuildTagTreev();
@@ -443,7 +443,9 @@ __attribute__((destructor)) void ____call_destructors(void)
    _Z22_EXIT_7_DisposeTagTreev();
    _Z25_EXIT_7_DisposeColourTreev();
    _Z25_EXIT_7_DisposeEntityTreev();
-//   _Z18_EXIT_4_CleanupMemv();
+   #if defined(__MORPHOS__)
+   _Z18_EXIT_4_CleanupMemv();
+   #endif
 }
 
 } // extern "C"
