@@ -8,6 +8,8 @@
 #include "MinMax.h"
 #include "ParseMessage.h"
 
+#include "SDI_stdarg.h"
+
 TreeClass::~TreeClass ()
 {
 	struct ChildsList *prev, *first = FirstChild;
@@ -527,9 +529,12 @@ VOID TreeClass::SetCol(LONG &storage, ULONG pen)
 		storage = pen;
 }
 
-APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ULONG tags, ...)
+VARARGS68K APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ...)
 {
-	ULONG *actual = &tags;
+	VA_LIST ap;
+
+   VA_START(ap, len);
+	ULONG *actual = VA_ARG(ap, ULONG*);
 	UWORD *result;
 	result = new UWORD [2*len];
 	UWORD *res = result;
@@ -539,6 +544,9 @@ APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ULONG tags, ...)
 		*res++ = *actual;
 		pmsg.OpenCounts[*actual++] = 0;
 	}
+
+   VA_END(ap);
+
 	return(result);
 }
 

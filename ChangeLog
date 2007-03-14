@@ -5,6 +5,11 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc/mcp: applied slightly modified patch kindly provided by Joerg
+    Strohmayer. Now at least the HTMLview-Text app should run on AmigaOS4.
+
 2007-03-13  Ilkka Lehtoranta <ilkleht@isoveli.org>
 
   * mcc: added constructors.c/.h and libnix.c to initialize constructors for

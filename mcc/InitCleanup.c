@@ -36,7 +36,17 @@
 #include "ScrollGroup.h"
 #include "private.h"
 
+#ifdef __amigaos4__
+#include <stdlib.h>
+// seems to be broken code depending malloc()/new returning cleared memory
+//void *operator new(size_t bytes)
+void *malloc(size_t bytes)
+{
+   return calloc(1, bytes);
+}
+#else
 #include "Memory.c"
+#endif
 
 /*
 struct MUI_CustomClass *HTMLviewClass = NULL;

@@ -75,9 +75,30 @@ struct LocaleIFace *ILocale = NULL;
 struct RexxSysIFace *IRexxSys = NULL;
 struct Interface *IWorkbench = NULL;
 */
+
+extern "C" {
+void _Z17_INIT_5_CMapMutexv(void);
+void _Z18_INIT_6_CharTablesv(void);
+void _Z20_INIT_7_BuildTagTreev(void);
+void _Z23_INIT_7_BuildColourTreev(void);
+void _Z23_INIT_7_BuildEntityTreev(void);
+void _Z23_INIT_7_PrepareDecodersv(void);
+//void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
+//void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
+} // extern "C"
+
 BOOL ClassInitFunc(UNUSED struct Library *base)
 {
   ENTER();
+
+_Z17_INIT_5_CMapMutexv();
+_Z18_INIT_6_CharTablesv();
+_Z20_INIT_7_BuildTagTreev();
+_Z23_INIT_7_BuildColourTreev();
+_Z23_INIT_7_BuildEntityTreev();
+_Z23_INIT_7_PrepareDecodersv();
+//_GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
+//_Z41__static_initialization_and_destruction_0ii(1, 65535);
 
   if((LayersBase = OpenLibrary("layers.library", 36)) &&
      GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
@@ -114,9 +135,20 @@ BOOL ClassInitFunc(UNUSED struct Library *base)
 }
 
 
+extern "C" {
+void _Z21_EXIT_7_FlushDecodersv(void);
+void _Z22_EXIT_7_DisposeTagTreev(void);
+void _Z25_EXIT_7_DisposeColourTreev(void);
+void _Z25_EXIT_7_DisposeEntityTreev(void);
+} // extern "C"
 VOID ClassExitFunc(UNUSED struct Library *base)
 {
   ENTER();
+
+_Z21_EXIT_7_FlushDecodersv();
+_Z22_EXIT_7_DisposeTagTreev();
+_Z25_EXIT_7_DisposeColourTreev();
+_Z25_EXIT_7_DisposeEntityTreev();
 
   if(CyberGfxBase)
   {
