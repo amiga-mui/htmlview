@@ -154,7 +154,7 @@ ifeq ($(OS), os4)
 
   # Compiler/Linker flags
   CRT      = newlib
-  CPU      = -mcpu=604e -mmultiple -Wa,-mregnames
+  CPU      = -mcpu=powerpc -Wa,-mregnames
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ -DNO_PPCINLINE_STDARG
   LDFLAGS  += -mcrt=$(CRT)
 
@@ -190,7 +190,7 @@ ifeq ($(OS), mos)
   OBJDUMP = ppc-morphos-objdump
 
   # Compiler/Linker flags
-  CPU     = -mcpu=750 -mmultiple
+  CPU     = -mcpu=powerpc
   CFLAGS  += -noixemul -DNO_PPCINLINE_STDARG
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug

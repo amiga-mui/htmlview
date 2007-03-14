@@ -905,7 +905,7 @@ DISPATCHER(_Dispatcher)
 			char str_args[10];
 			sprintf(str_args, "%lx", args);
 
-			if((data->ParseThread = CreateNewProcTags(NP_Entry, ParseThread, NP_Name, data->ParseThreadName, NP_StackSize, 32576, NP_Arguments, str_args, TAG_DONE)))
+			if((data->ParseThread = CreateNewProcTags(NP_Entry, ParseThread, NP_Name, data->ParseThreadName, NP_StackSize, 32576, NP_Arguments, str_args, NP_Child, TRUE, TAG_DONE)))
 					data->ParseCount++;
 			else	delete args;
 		}

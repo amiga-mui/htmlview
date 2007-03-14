@@ -29,6 +29,7 @@
 #include <proto/graphics.h>
 #include <proto/intuition.h>
 #include <proto/utility.h>
+#include <exec/emulation.h>
 
 #include "ImageManager.h"
 #include "IM_Output.h"
@@ -42,13 +43,19 @@
 
 #include "private.h"
 
+#include "SDI_stdarg.h"
+
 /*
 struct Library *CyberGfxBase;
 VOID _INIT_3_CGXLib () { CyberGfxBase = OpenLibrary("cybergraphics.library", 40); }
 VOID _EXIT_3_CGXLib () { CloseLibrary(CyberGfxBase); }
 */
 
+#ifdef __amigaos4__
+#define GetImageDecoderClass(base) ( (struct IClass *)(IExec->EmulateTags)(base, ET_Offset, -30, ET_RegisterA6, base, ET_SaveRegs, TRUE, TAG_DONE) )
+#else
 #define GetImageDecoderClass(base) ( (struct IClass *(*)(REG(a6, struct Library *))) ((UBYTE *)base-30) )(base)
+#endif
 
 ImageCacheItem::ImageCacheItem (STRPTR url, struct PictureFrame *pic)
 {
@@ -740,11 +747,15 @@ static struct Library *ClassOpen(STRPTR decoder)
 }
 
 
-Object *NewDecoderObject (UBYTE *buf, ULONG tags, ...)
+VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...);
+VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...)
 {
+	VA_LIST ap;
+	struct TagItem *tags;
 	struct IClass *cl = NULL;
 	struct DecoderInfo *decoders = Decoders;
 
+	tags = VA_ARG(ap, struct TagItem *);
 	ObtainSemaphore(&DecoderMutex);
 	while(decoders->Name && !cl)
 	{
@@ -766,9 +777,12 @@ Object *NewDecoderObject (UBYTE *buf, ULONG tags, ...)
 	}
 	ReleaseSemaphore(&DecoderMutex);
 
+   VA_END(ap);
+
 	if(cl)
-			return((Object *)NewObjectA(cl, NULL, (struct TagItem *)&tags));
-	else	return(NULL);
+	   return((Object *)NewObjectA(cl, NULL, tags));
+	else
+      return(NULL);
 }
 
 VOID _INIT_7_PrepareDecoders ()
@@ -820,6 +834,7 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
 		loadmsg.lm_Read.Size = 10;
 		ULONG len = CallHookA(loadhook, args->Obj, &loadmsg);
 
+#ifndef __amigaos4__
 		Object *decoder = NewDecoderObject(buf,
 			IDA_StartBuffer,		buf,
 			IDA_BytesInBuffer,	len,
@@ -839,6 +854,7 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
 			result = DoMethod(decoder, IDM_Decode);
 			DisposeObject(decoder);
 		}
+#endif
 
 		loadmsg.lm_Type = HTMLview_Close;
 		CallHookA(loadhook, args->Obj, &loadmsg);
@@ -896,6 +912,7 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
 			#if !defined(__MORPHOS__)
 			NP_StackSize, 2*8192,
 			NP_Arguments, str_args,
+			NP_Child, TRUE,
 			#else
 			NP_PPC_Arg1, str_args,
 			NP_CodeType, CODETYPE_PPC,

@@ -165,17 +165,24 @@ Object *BuildApp(void)
 
 				Child, BalanceObject, End,
 */
-				Child, ScrollgroupObject,
-					MUIA_Scrollgroup_Contents, htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
+#ifndef __amigaos4__
+//				Child, ScrollgroupObject,
+				Child, NewObject(ScrollGroupClass->mcc_Class, NULL,
+					MUIA_Scrollgroup_Contents,*/ htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
 						End,
 					End,
+#endif
 
 				Child, ColGroup(2),
 					MUIA_Group_Spacing, 0,
+#ifdef __amigaos4__
+					Child, htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
+#else
 					Child, /*htmlview = (Object *)*/NewObject(mcc->mcc_Class, NULL,
+#endif
 						VirtualFrame,
 						MUIA_HTMLview_DiscreteInput, FALSE,
-						MUIA_HTMLview_Contents, "<Body><Center><H1>Hej med dig",
+						MUIA_HTMLview_Contents, "<html><Body><Center><H1>Hej med dig<hr>test",
 //						MUIA_ContextMenu, TRUE,
 						End,
 					Child, vscroll = ScrollbarObject,
@@ -215,13 +222,13 @@ Object *BuildApp(void)
 
 		DoMethod(urlstring, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, htmlview, 2, MUIM_HTMLview_GotoURL, MUIV_TriggerValue);
 
-/*		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Top,		MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_First,	MUIV_TriggerValue);
+/**/		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Top,		MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_First,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Height,					MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_Visible,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Height,	MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_Entries,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Left,		MUIV_EveryTime, hscroll, 3, MUIM_Set, MUIA_Prop_First,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Width,					MUIV_EveryTime, hscroll, 3, MUIM_Set, MUIA_Prop_Visible,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Width,		MUIV_EveryTime, hscroll, 3, MUIM_Set, MUIA_Prop_Entries,	MUIV_TriggerValue);
-*/
+/**/
 		DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_CurrentURL, MUIV_EveryTime, infotext, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue);
 //		DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_ClickedURL, MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_HTMLview_GotoURL, MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_ClickedURL, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_CallHook, &GotoURLHook, MUIV_TriggerValue);
@@ -251,7 +258,7 @@ Object *BuildApp(void)
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Duff's:T/«98.11.13»/index.html");
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Data:Homepage - old/testpage.html");
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Duff's:Data/C-Sources/ImageRender/GIFAnims/AllAnims.HTML");
-		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Silvia:Homepage_Real/index.html", NULL);
+///		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Silvia:Homepage_Real/index.html", NULL);
 	}
 
   RETURN(app);
@@ -405,3 +412,38 @@ int main(void)
   RETURN(0);
   return 0;
 }
+
+extern "C" {
+extern void _Z15_INIT_4_InitMemv(void);
+extern void _Z17_INIT_5_CMapMutexv(void);
+extern void _Z18_INIT_6_CharTablesv(void);
+extern void _Z20_INIT_7_BuildTagTreev(void);
+extern void _Z23_INIT_7_BuildColourTreev(void);
+extern void _Z23_INIT_7_BuildEntityTreev(void);
+extern void _Z23_INIT_7_PrepareDecodersv(void);
+__attribute__((constructor)) void AAA_call_constructors(void)
+{
+//   _Z15_INIT_4_InitMemv();
+   _Z17_INIT_5_CMapMutexv();
+   _Z18_INIT_6_CharTablesv();
+   _Z20_INIT_7_BuildTagTreev();
+   _Z23_INIT_7_BuildColourTreev();
+   _Z23_INIT_7_BuildEntityTreev();
+   _Z23_INIT_7_PrepareDecodersv();
+}
+
+void _Z18_EXIT_4_CleanupMemv(void);
+void _Z21_EXIT_7_FlushDecodersv(void);
+void _Z22_EXIT_7_DisposeTagTreev(void);
+void _Z25_EXIT_7_DisposeColourTreev(void);
+void _Z25_EXIT_7_DisposeEntityTreev(void);
+__attribute__((destructor)) void ____call_destructors(void)
+{
+   _Z21_EXIT_7_FlushDecodersv();
+   _Z22_EXIT_7_DisposeTagTreev();
+   _Z25_EXIT_7_DisposeColourTreev();
+   _Z25_EXIT_7_DisposeEntityTreev();
+//   _Z18_EXIT_4_CleanupMemv();
+}
+
+} // extern "C"
