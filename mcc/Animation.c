@@ -76,7 +76,7 @@ AnimInfo::AnimInfo (Object *obj, struct HTMLviewData *data, struct PictureFrame 
 	} while(!pic->BMp);
 	BltBitMap(BMp, 0, 0, BMpRP.BitMap, 0, 0, width, height, 0xc0, ~0, NULL);
 
-	if(Mask = pic->Mask)
+	if((Mask = pic->Mask))
 	{
 		depth = 1;
 		do {
@@ -243,7 +243,7 @@ ULONG AnimInfo::Update (ULONG diff)
 
 			UBYTE *mask;
 			struct BitMap *bmp;
-			if(CurrentFrame = CurrentFrame->Next)
+			if((CurrentFrame = CurrentFrame->Next))
 			{
 				bmp = CurrentFrame->BMp;
 				mask = CurrentFrame->Mask;
