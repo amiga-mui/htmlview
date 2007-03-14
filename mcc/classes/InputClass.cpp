@@ -14,7 +14,7 @@
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>
 
-HOOKPROTO(ExportFormCode, VOID, Object *button, class FormClass **form)
+HOOKPROTONHNO(ExportFormCode, VOID, class FormClass **form)
 {
 	(*form)->ExportForm(*((struct ExportFormMessage *)NULL));
 }
@@ -95,15 +95,13 @@ VOID InputClass::AppendGadget (struct AppendGadgetMessage &amsg)
 			break;
 		}
 
-		if(MUIGadget = obj)
+		if((MUIGadget = obj))
 		{
 			SetAttrs(obj, MUIA_CycleChain, TRUE, TAG_DONE);
 			DoMethod(amsg.Parent, OM_ADDMEMBER, MUIGadget);
 		}
 		else
-		{
 			Flags |= FLG_Layouted;
-		}
 	}
 }
 
@@ -123,7 +121,7 @@ VOID InputClass::ExportForm (struct ExportFormMessage &emsg)
 			{
 				value = (STRPTR)xget(MUIGadget, MUIA_Selected);
 				if(value)
-					value = "on"; /* ?¿ */
+					value = (STRPTR)"on"; /* ?¿ */
 			}
 		break;
 
@@ -172,7 +170,7 @@ BOOL InputClass::Layout (struct LayoutMessage &lmsg)
 		Width = _minwidth(MUIGadget) + 4;
 		Height = _minheight(MUIGadget) + 2;
 
-		if(Width > lmsg.ScrWidth())
+		if((LONG)Width > lmsg.ScrWidth())
 			lmsg.EnsureNewline();
 
 		Left = lmsg.X+2;
@@ -193,6 +191,8 @@ BOOL InputClass::Layout (struct LayoutMessage &lmsg)
 //		if(Type == Input_Hidden)
 			Flags |= FLG_Layouted;
 	}
+
+   return TRUE;
 }
 
 VOID InputClass::AdjustPosition (LONG x, LONG y)
@@ -209,7 +209,7 @@ VOID InputClass::MinMax (struct MinMaxMessage &mmsg)
 	{
 		ULONG width = _minwidth(MUIGadget);
 		mmsg.X += width;
-		mmsg.Min = max(width, mmsg.Min);
+		mmsg.Min = max((LONG)width, mmsg.Min);
 	}
 }
 

@@ -54,8 +54,8 @@ BOOL ImgClass::HitTest (struct HitTestMessage &hmsg)
 		return(FALSE);
 
 	BOOL result = FALSE;
-	ULONG top = Top+VSpace+ImgBorder;
-  ULONG left = Left+HSpace+ImgBorder;
+	LONG top = Top+VSpace+ImgBorder;
+   LONG left = Left+HSpace+ImgBorder;
 
 	if(hmsg.X >= left && hmsg.X < left+Width() && hmsg.Y >= top && hmsg.Y < top+Height())
 	{
@@ -171,8 +171,8 @@ LONG ImgClass::Height (LONG def_h, struct LayoutMessage *lmsg)
 
 BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
 {
-	ULONG width = Width(80, &lmsg);
-	ULONG height = Height(20, &lmsg);
+	LONG width = Width(80, &lmsg);
+	LONG height = Height(20, &lmsg);
 
 	STRPTR url;
 	if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
@@ -257,6 +257,8 @@ BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
 		lmsg.AddNotify(notify);
 	}
 	Flags |= FLG_WaitingForSize;
+
+   return TRUE;
 }
 
 VOID ImgClass::AdjustPosition (LONG x, LONG y)

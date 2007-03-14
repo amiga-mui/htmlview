@@ -46,7 +46,7 @@ VOID TableClass::Spread (LONG scale, LONG width, LONG (*get_width) (struct CellW
 	LONG carry = 0, cell_width, add, denominator;
 	for(UWORD i = 0; i < Columns; i++)
 	{
-		if(cell_width = get_width(&Widths[i]))
+		if((cell_width = get_width(&Widths[i])))
 		{
 			denominator = cell_width * scale;
 			add = denominator / width;
@@ -84,18 +84,20 @@ BOOL TableClass::Layout (struct LayoutMessage &lmsg)
 			MinMax(mmsg);
 		}
 
-		LONG scr_width = lmsg.ScrWidth() - (Columns+1)*Spacing - 2*BorderSize;
+		ULONG scr_width = lmsg.ScrWidth() - (Columns+1)*Spacing - 2*BorderSize;
 		if(GivenWidth)
 		{
 			if(GivenWidth->Type == Size_Percent)
-					Width = max(Min, ((lmsg.ScrWidth() * GivenWidth->Size) / 100) - (Columns+1)*Spacing - 2*BorderSize);
-			else	Width = max(GivenWidth->Size-(Columns+1)*Spacing-2*BorderSize, Min);
+			   Width = max(Min, ((lmsg.ScrWidth() * GivenWidth->Size) / 100) - (Columns+1)*Spacing - 2*BorderSize);
+			else
+            Width = max(GivenWidth->Size-(Columns+1)*Spacing-2*BorderSize, Min);
 		}
-		else Width = (Min <= scr_width) ? min(scr_width, Max) : Min;
+		else 
+         Width = (Min <= scr_width) ? min(scr_width, Max) : Min;
 
 		/* Set all cells to their min or max width */
 		LONG scale = Width, table_delta = 0, relative = 0;
-		for(int i = 0; i < Columns; i++)
+		for(ULONG i = 0; i < Columns; i++)
 		{
 			if(!Widths[i].Percent)
 			{
@@ -108,11 +110,11 @@ BOOL TableClass::Layout (struct LayoutMessage &lmsg)
 		}
 
 		/* Set all cells with a width given in percent */
-		for(int i = 0; i < Columns; i++)
+		for(ULONG i = 0; i < Columns; i++)
 		{
 			if(Widths[i].Percent)
 			{
-				LONG cellwidth = max(Widths[i].Min, min(scale, (Width * Widths[i].Percent) / 100));
+				ULONG cellwidth = max(Widths[i].Min, min(scale, (Width * Widths[i].Percent) / 100));
 				Widths[i].Width = cellwidth;
 				scale -= cellwidth;
 			}
@@ -272,6 +274,8 @@ BOOL TableClass::Layout (struct LayoutMessage &lmsg)
 	{
 		lmsg.TopChange = min(lmsg.TopChange, MAX_HEIGHT);
 	}
+
+   return TRUE;
 }
 
 VOID TableClass::AdjustPosition (LONG x, LONG y)
@@ -424,19 +428,19 @@ VOID TableClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
 	APTR handle; UBYTE group = pmsg.OpenGroups[group_Tablecell];
 	pmsg.OpenGroups[group_Tablecell] = 0;
-	if(handle = Backup(pmsg, 11, tag_DD, tag_DL, tag_DT, tag_LI, tag_P, tag_TD, tag_TH, tag_TR, tag_FONT, tag_CENTER, tag_B))
+	if((handle = Backup(pmsg, 11, tag_DD, tag_DL, tag_DT, tag_LI, tag_P, tag_TD, tag_TH, tag_TR, tag_FONT, tag_CENTER, tag_B)))
 	{
 		struct ArgList args[] =
 		{
-			{ "BACKGROUND",	&Source,				ARG_URL		},
-			{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR	},
+			{ "BACKGROUND",	&Source,				ARG_URL,       NULL	},
+			{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR,    NULL	},
 
-			{ "BORDER",			&BorderSize,		ARG_NUMBER	},
-			{ "WIDTH",			&GivenWidth,		ARG_VALUE	},
-			{ "CELLSPACING",	&Spacing,			ARG_NUMBER	},
-			{ "CELLPADDING",	&Padding,			ARG_NUMBER	},
-			{ "ALIGN",			&Alignment,			ARG_KEYWORD, AlignKeywords },
-			{ NULL }
+			{ "BORDER",			&BorderSize,		ARG_NUMBER,    NULL	},
+			{ "WIDTH",			&GivenWidth,		ARG_VALUE,     NULL	},
+			{ "CELLSPACING",	&Spacing,			ARG_NUMBER,    NULL	},
+			{ "CELLPADDING",	&Padding,			ARG_NUMBER,    NULL	},
+			{ "ALIGN",			&Alignment,			ARG_KEYWORD,   AlignKeywords },
+			{ NULL,           NULL,             0,             NULL  }
 		};
 		Spacing = Padding = 2;
 		Alignment = -1;
@@ -518,7 +522,7 @@ VOID TableClass::Render (struct RenderMessage &rmsg)
 			rmsg.BackgroundObj = this;
 		}
 
-		if(target = rmsg.TargetObj == (class SuperClass *)this)
+		if((target = (rmsg.TargetObj == (class SuperClass *)this)))
 			rmsg.TargetObj = NULL;
 
 		if(!rmsg.TargetObj)

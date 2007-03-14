@@ -32,9 +32,11 @@ BOOL TDClass::TDLayout (struct LayoutMessage &lmsg)
 	lmsg.FlushImages(Flush_All);
 	lmsg.AddYSpace(lmsg.Padding);
 	Bottom = lmsg.Y;
-	lmsg.Y = max(lmsg.Y, Top+Height);
+	lmsg.Y = max(lmsg.Y, (LONG)(Top+Height));
 	lmsg.MinX = lmsg.X -= lmsg.Padding;
 	lmsg.Align = oldalign;
+
+   return TRUE;
 }
 
 VOID TDClass::AdjustPosition (LONG x, LONG y)
@@ -129,7 +131,7 @@ VOID TDClass::TDMinMax (struct MinMaxMessage &mmsg)
 				}
 
 				ULONG c_min = 0, c_max = 0, c_ignore = 0;
-				for(int i = 0; i < ColSpan; i++)
+				for(ULONG i = 0; i < ColSpan; i++)
 				{
 					c_min += mmsg.Widths[i].Min;
 					c_max += mmsg.Widths[i].Max;
@@ -147,7 +149,7 @@ VOID TDClass::TDMinMax (struct MinMaxMessage &mmsg)
 				if(percent > 0)
 				{
 					LONG carry = 0, denominator, c_percent;
-					for(int i = 0; i < ColSpan; i++)
+					for(ULONG i = 0; i < ColSpan; i++)
 					{
 						LONG divider = c_max - c_ignore;
 						if(!mmsg.Widths[i].Percent && divider)
@@ -171,7 +173,7 @@ VOID TDClass::TDMinMax (struct MinMaxMessage &mmsg)
 					UWORD scale = Min-c_min, row_delta = c_max-c_min;
 					if(row_delta)
 					{
-						for(int i = 0; i < ColSpan; i++)
+						for(ULONG i = 0; i < ColSpan; i++)
 						{
 							UWORD cell_delta = mmsg.Widths[i].Max - mmsg.Widths[i].Min;
 							ULONG width = (cell_delta * scale) / row_delta;
@@ -182,7 +184,7 @@ VOID TDClass::TDMinMax (struct MinMaxMessage &mmsg)
 					else
 					{
 						UWORD max_scale = Max-c_max;
-						for(int i = 0; i < ColSpan; i++)
+						for(ULONG i = 0; i < ColSpan; i++)
 						{
 							mmsg.Widths[i].Min += scale/ColSpan;
 							mmsg.Widths[i].Max += max_scale/ColSpan;
@@ -209,17 +211,17 @@ VOID TDClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL nowrap = FALSE;
 	struct ArgList args[] =
 	{
-		{ "BACKGROUND",	&Source,				ARG_URL		},
-		{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR	},
+		{ "BACKGROUND",	&Source,				ARG_URL,          NULL  },
+		{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR,       NULL	},
 
-		{ "NOWRAP",			&nowrap,				ARG_SWITCH	},
-		{ "WIDTH",			&GivenWidth,		ARG_MULTIVALUE	},
-		{ "HEIGHT",			&Height,				ARG_NUMBER	},
-		{ "COLSPAN",		&ColSpan,			ARG_NUMBER	},
-		{ "ROWSPAN",		&RowSpan,			ARG_NUMBER	},
-		{ "ALIGN",			&Alignment,			ARG_KEYWORD, AlignKeywords },
-		{ "VALIGN",			&VAlignment,		ARG_KEYWORD, VAlignKeywords },
-		{ NULL }
+		{ "NOWRAP",			&nowrap,				ARG_SWITCH,       NULL	},
+		{ "WIDTH",			&GivenWidth,		ARG_MULTIVALUE,   NULL	},
+		{ "HEIGHT",			&Height,				ARG_NUMBER,       NULL	},
+		{ "COLSPAN",		&ColSpan,			ARG_NUMBER,       NULL	},
+		{ "ROWSPAN",		&RowSpan,			ARG_NUMBER,       NULL	},
+		{ "ALIGN",			&Alignment,			ARG_KEYWORD,      AlignKeywords },
+		{ "VALIGN",			&VAlignment,		ARG_KEYWORD,      VAlignKeywords },
+		{ NULL,           NULL,             0,                NULL  }
 	};
 	Alignment = -1;
 	VAlignment = -1;
@@ -263,7 +265,7 @@ VOID TDClass::TDRender (struct RenderMessage &rmsg)
 		}
 
 		BOOL target;
-		if(target = rmsg.TargetObj == (class SuperClass *)this)
+		if((target = (rmsg.TargetObj == (class SuperClass *)this)))
 			rmsg.TargetObj = NULL;
 
 		if(!rmsg.TargetObj)

@@ -25,6 +25,8 @@ BOOL PClass::Layout (struct LayoutMessage &lmsg)
 		lmsg.EnsureNewline();
 
 	lmsg.Align = oldalign;
+
+   return TRUE;
 }
 
 BOOL PClass::Mark (struct MarkMessage &mmsg)
@@ -50,10 +52,10 @@ VOID PClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	struct ArgList args[] =
 	{
 		{ "ALIGN",	&Alignment,		ARG_KEYWORD, AlignKeywords },
-		{ NULL }
+		{ NULL,     NULL,          0,           NULL }
 	};
 
-	Alignment = -1;
+	Alignment = (ULONG)-1;
 	ScanArgs(pmsg.Locked, args);
 	Alignment++;
 

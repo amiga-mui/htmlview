@@ -16,10 +16,10 @@ VOID OptionClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL disabled = FALSE, selected = FALSE;
 	struct ArgList args[] =
 	{
-		{ "VALUE",		&Value,		ARG_STRING	},
-		{ "DISABLED",	&disabled,	ARG_SWITCH	},
-		{ "SELECTED",	&selected,	ARG_SWITCH	},
-		{ NULL }
+		{ "VALUE",		&Value,		ARG_STRING, NULL	},
+		{ "DISABLED",	&disabled,	ARG_SWITCH, NULL	},
+		{ "SELECTED",	&selected,	ARG_SWITCH, NULL	},
+		{ NULL,        NULL,       0,          NULL  }
 	};
 
 	ScanArgs(pmsg.Locked, args);
@@ -32,7 +32,7 @@ VOID OptionClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	TreeClass::Parse(pmsg);
 	if(FirstChild && FirstChild->Obj->id() == tag_Text)
 	{
-		if(Contents = ((class TextClass *)FirstChild->Obj)->Contents)
+		if((Contents = ((class TextClass *)FirstChild->Obj)->Contents))
 		{
 			STRPTR contents = Contents;
 			while(*contents)
