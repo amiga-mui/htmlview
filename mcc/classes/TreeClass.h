@@ -43,7 +43,7 @@ class TreeClass : public SuperClass
 		struct ChildsList *FirstChild;
 
   protected:
-    VARARGS68K APTR Backup(struct ParseMessage &pmsg, ULONG len, ...);
+    APTR Backup(struct ParseMessage &pmsg, ULONG len, ...);
     VOID Restore(UBYTE *opencounts, ULONG len, APTR handle);
 };
 

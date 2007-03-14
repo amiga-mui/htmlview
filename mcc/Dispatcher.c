@@ -418,7 +418,7 @@ DISPATCHER(_Dispatcher)
 			struct List *childs = (struct List *)xget(obj, MUIA_Group_ChildList);
 			struct Node *head = childs->lh_Head;
 
-			while(child = (Object *)NextObject(&head))
+			while((child = (Object *)NextObject(&head)))
 			{
 				DoMethod(obj, OM_REMMEMBER, child);
 				MUI_DisposeObject(child);
@@ -905,9 +905,23 @@ DISPATCHER(_Dispatcher)
 			char str_args[10];
 			sprintf(str_args, "%lx", args);
 
-			if((data->ParseThread = CreateNewProcTags(NP_Entry, ParseThread, NP_Name, data->ParseThreadName, NP_StackSize, 32576, NP_Arguments, str_args, NP_Child, TRUE, TAG_DONE)))
-					data->ParseCount++;
-			else	delete args;
+			data->ParseThread = CreateNewProcTags(
+				NP_Entry, ParseThread,
+				NP_Name, data->ParseThreadName,
+				#if !defined(__MORPHOS__)
+				NP_StackSize, 32576,
+				NP_Arguments, str_args,
+				NP_Child, TRUE,
+				#else
+				NP_PPC_Arg1, str_args,
+				NP_CodeType, CODETYPE_PPC,
+				#endif
+				TAG_DONE);
+
+			if (data->ParseThread)
+				data->ParseCount++;
+			else
+				delete args;
 		}
 		break;
 

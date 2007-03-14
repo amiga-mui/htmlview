@@ -29,7 +29,12 @@
 #include <proto/graphics.h>
 #include <proto/intuition.h>
 #include <proto/utility.h>
+
+#if defined(__amigaos4__)
 #include <exec/emulation.h>
+#elif defined(__MORPHOS__)
+#include <emul/emulinterface.h>
+#endif
 
 #include "ImageManager.h"
 #include "IM_Output.h"
@@ -53,6 +58,8 @@ VOID _EXIT_3_CGXLib () { CloseLibrary(CyberGfxBase); }
 
 #ifdef __amigaos4__
 #define GetImageDecoderClass(base) ( (struct IClass *)(IExec->EmulateTags)(base, ET_Offset, -30, ET_RegisterA6, base, ET_SaveRegs, TRUE, TAG_DONE) )
+#elif defined(__MORPHOS__)
+#define GetImageDecoderClass(base) (struct IClass *)({ REG_A6 = (ULONG) (base); MyEmulHandle->EmulCallDirectOS(-30); })
 #else
 #define GetImageDecoderClass(base) ( (struct IClass *(*)(REG(a6, struct Library *))) ((UBYTE *)base-30) )(base)
 #endif
@@ -747,15 +754,12 @@ static struct Library *ClassOpen(STRPTR decoder)
 }
 
 
-VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...);
-VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...)
+extern "C" {
+Object *NewDecoderObjectA(UBYTE *buf, struct TagItem *tags)
 {
-	VA_LIST ap;
-	struct TagItem *tags;
 	struct IClass *cl = NULL;
 	struct DecoderInfo *decoders = Decoders;
 
-	tags = VA_ARG(ap, struct TagItem *);
 	ObtainSemaphore(&DecoderMutex);
 	while(decoders->Name && !cl)
 	{
@@ -777,13 +781,30 @@ VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...)
 	}
 	ReleaseSemaphore(&DecoderMutex);
 
-   VA_END(ap);
-
 	if(cl)
 	   return((Object *)NewObjectA(cl, NULL, tags));
 	else
       return(NULL);
 }
+
+#ifndef __MORPHOS__
+static VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...);
+static VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...)
+{
+	VA_LIST ap;
+	struct TagItem *tags;
+	Object *obj;
+
+	tags = VA_ARG(ap, struct TagItem *);
+	obj = NewDecoderObjectA(buf, tags);
+
+   VA_END(ap);
+	return obj;
+}
+#else
+Object *NewDecoderObject (UBYTE *buf, ...);
+#endif
+} /* end of "C" */
 
 VOID _INIT_7_PrepareDecoders ()
 {

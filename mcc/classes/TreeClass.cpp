@@ -529,23 +529,23 @@ VOID TreeClass::SetCol(LONG &storage, ULONG pen)
 		storage = pen;
 }
 
-VARARGS68K APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ...)
+APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ...)
 {
-	VA_LIST ap;
-
-   VA_START(ap, len);
-	ULONG *actual = VA_ARG(ap, ULONG*);
+	va_list ap;
+   va_start(ap, len);
 	UWORD *result;
 	result = new UWORD [2*len];
 	UWORD *res = result;
 	while(len--)
 	{
+		ULONG *actual = va_arg(ap, ULONG *);
+
 		*res++ = pmsg.OpenCounts[*actual];
 		*res++ = *actual;
-		pmsg.OpenCounts[*actual++] = 0;
+		pmsg.OpenCounts[*actual] = 0;
 	}
 
-   VA_END(ap);
+   va_end(ap);
 
 	return(result);
 }
