@@ -24,15 +24,17 @@ VOID LIClass::NumToStr (STRPTR str, UWORD type)
 			lower = TRUE;
 		case OL_UpperAlpha:
 		{
-			ULONG num = Number + 'A' - 1;
-			while(num > 'Z')
+			char num = Number + 'A' - 1;
+			
+         while(num > 'Z')
 				num -= 'Z' - 'A' + 1;
+
 			sprintf(str, "%c.", num);
 		}
 		break;
 
 		default:
-			sprintf(str, "%d.", Number);
+			sprintf(str, "%ld.", Number);
 		break;
 	}
 
@@ -40,7 +42,10 @@ VOID LIClass::NumToStr (STRPTR str, UWORD type)
 	{
 		STRPTR t_str = str;
 		while(*t_str)
-			*t_str++ = tolower(*t_str);
+      {
+			*t_str = tolower(*t_str);
+         t_str++;
+      }
 	}
 }
 
@@ -89,6 +94,8 @@ BOOL LIClass::Layout (struct LayoutMessage &lmsg)
 
 		lmsg.TopChange = min(lmsg.TopChange, Top);
 	}
+
+   return TRUE;
 }
 
 VOID LIClass::AdjustPosition (LONG x, LONG y)
@@ -105,16 +112,17 @@ BOOL LIClass::Mark (struct MarkMessage &mmsg)
 		if(Number)
 		{
 			char str[64];
+
 			NumToStr(str, mmsg.OL_Type);
 			mmsg.WriteText(str, strlen(str));
-			mmsg.WriteText(" ", 1);
+			mmsg.WriteText((STRPTR)" ", 1);
 		}
 		else
-		{
-			mmsg.WriteText("o ", 2);
-		}
+			mmsg.WriteText((STRPTR)"o ", 2);
+
 		mmsg.Newline = TRUE;
 	}
+
 	return(TreeClass::Mark(mmsg));
 }
 
@@ -137,8 +145,8 @@ VOID LIClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	LONG number = pmsg.OL_Cnt[pmsg.OL_Level];
 	struct ArgList args[] =
 	{
-		{ "VALUE",	&number,		ARG_NUMBER	},
-		{ NULL }
+		{ "VALUE",	&number,		ARG_NUMBER, NULL	},
+		{ NULL,     NULL,       0,          NULL  }
 	};
 	ScanArgs(pmsg.Locked, args);
 

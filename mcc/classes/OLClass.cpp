@@ -11,6 +11,8 @@ BOOL OLClass::Layout (struct LayoutMessage &lmsg)
 	lmsg.OL_Type = Type;
 	ULClass::Layout(lmsg);
 	lmsg.OL_Type = old_type;
+
+   return TRUE;
 }
 
 BOOL OLClass::Mark (struct MarkMessage &mmsg)
@@ -19,6 +21,8 @@ BOOL OLClass::Mark (struct MarkMessage &mmsg)
 	mmsg.OL_Type = Type;
 	ULClass::Mark(mmsg);
 	mmsg.OL_Type = old_type;
+
+   return TRUE;
 }
 
 VOID OLClass::Parse(REG(a2, struct ParseMessage &pmsg))
@@ -33,9 +37,9 @@ VOID OLClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	LONG start = 1;
 	struct ArgList args[] =
 	{
-		{ "TYPE",	&type,		ARG_STRING	},
-		{ "START",	&start,		ARG_NUMBER	},
-		{ NULL }
+		{ "TYPE",	&type,		ARG_STRING, NULL	},
+		{ "START",	&start,		ARG_NUMBER, NULL	},
+		{ NULL,     NULL,       0,          NULL  }
 	};
 	ScanArgs(pmsg.Locked, args);
 
@@ -63,7 +67,7 @@ VOID OLClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	}
 
 	APTR handle;
-	if(handle = Backup(pmsg, 1, tag_LI))
+	if((handle = Backup(pmsg, 1, tag_LI)))
 	{
 		if(++pmsg.OL_Level < 3)
 			pmsg.OL_Cnt[pmsg.OL_Level] = start;

@@ -57,7 +57,7 @@ BOOL SelectClass::Layout (struct LayoutMessage &lmsg)
 			Width = _minwidth(MUIGadget) + 4;
 			Height = _minheight(MUIGadget) + 2;
 
-			if(Width > lmsg.ScrWidth())
+			if(Width > (ULONG)lmsg.ScrWidth())
 				lmsg.EnsureNewline();
 
 			Left = lmsg.X+2;
@@ -74,6 +74,8 @@ BOOL SelectClass::Layout (struct LayoutMessage &lmsg)
 			Flags |= FLG_WaitingForSize;
 		}
 	}
+
+   return TRUE;
 }
 
 VOID SelectClass::AdjustPosition (LONG x, LONG y)
@@ -90,7 +92,7 @@ VOID SelectClass::MinMax (struct MinMaxMessage &mmsg)
 	{
 		ULONG width = _minwidth(MUIGadget);
 		mmsg.X += width;
-		mmsg.Min = max(width, mmsg.Min);
+		mmsg.Min = max(width, (ULONG)mmsg.Min);
 	}
 }
 
@@ -105,11 +107,11 @@ VOID SelectClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL disabled = FALSE, multiple = FALSE;
 	struct ArgList args[] =
 	{
-		{ "NAME",		&Name,		ARG_STRING	},
-		{ "SIZE",		&Size,		ARG_NUMBER	},
-		{ "DISABLED",	&disabled,	ARG_SWITCH	},
-		{ "MULTIPLE",	&multiple,	ARG_SWITCH	},
-		{ NULL }
+		{ "NAME",		&Name,		ARG_STRING, NULL	},
+		{ "SIZE",		&Size,		ARG_NUMBER, NULL	},
+		{ "DISABLED",	&disabled,	ARG_SWITCH, NULL	},
+		{ "MULTIPLE",	&multiple,	ARG_SWITCH, NULL	},
+		{ NULL,        NULL,       0,          NULL  }
 	};
 
 	ScanArgs(pmsg.Locked, args);

@@ -13,18 +13,18 @@ VOID IsIndexClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
 	if(!MUIGadget)
 	{
-		if(MUIGadget = BetterStringObject,
-			StringFrame,
-			MUIA_BetterString_Columns, 40,
-			End)
+		MUIGadget = BetterStringObject,
+			            StringFrame,
+			            MUIA_BetterString_Columns, 40,
+                  End;
+
+		if(MUIGadget)
 		{
 			DoMethod(MUIGadget, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, amsg.Parent, 2, MUIM_HTMLview_ServerRequest, MUIV_TriggerValue);
 			DoMethod(amsg.Parent, OM_ADDMEMBER, MUIGadget);
 		}
 		else
-		{
 			Flags |= FLG_Layouted;
-		}
 	}
 }
 
@@ -41,7 +41,7 @@ BOOL IsIndexClass::Layout (struct LayoutMessage &lmsg)
 		Width = _minwidth(MUIGadget) + 4;
 		Height = _minheight(MUIGadget) + 2;
 
-		if(Width > lmsg.ScrWidth())
+		if((LONG)Width > lmsg.ScrWidth())
 			lmsg.EnsureNewline();
 
 		Left = lmsg.X+2;
@@ -61,6 +61,8 @@ BOOL IsIndexClass::Layout (struct LayoutMessage &lmsg)
 	{
 		Flags |= FLG_Layouted;
 	}
+
+   return TRUE;
 }
 
 VOID IsIndexClass::AdjustPosition (LONG x, LONG y)
@@ -77,7 +79,7 @@ VOID IsIndexClass::MinMax (struct MinMaxMessage &mmsg)
 	{
 		ULONG width = _minwidth(MUIGadget);
 		mmsg.X += width;
-		mmsg.Min = max(width, mmsg.Min);
+		mmsg.Min = max((LONG)width, mmsg.Min);
 	}
 }
 
@@ -87,8 +89,8 @@ VOID IsIndexClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
 	struct ArgList args[] =
 	{
-		{ "PROMPT",		&Prompt,		ARG_STRING	},
-		{ NULL }
+		{ "PROMPT",		&Prompt,		ARG_STRING, NULL	},
+		{ NULL,        NULL,       0,          NULL  }
 	};
 
 	ScanArgs(pmsg.Locked, args);

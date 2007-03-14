@@ -12,9 +12,9 @@ VOID MetaClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	STRPTR http = NULL, content = NULL;
 	struct ArgList args[] =
 	{
-		{ "HTTP-EQUIV",	&http,		ARG_STRING },
-		{ "CONTENT",		&content,	ARG_STRING },
-		{ NULL }
+		{ "HTTP-EQUIV",	&http,		ARG_STRING, NULL },
+		{ "CONTENT",		&content,	ARG_STRING, NULL },
+		{ NULL,           NULL,       0,          NULL }
 	};
 	ScanArgs(pmsg.Locked, args);
 

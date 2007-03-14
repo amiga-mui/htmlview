@@ -25,8 +25,8 @@ VOID MapClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
 	struct ArgList args[] =
 	{
-		{ "NAME",	&Name,	ARG_URL },
-		{ NULL }
+		{ "NAME",	&Name,	ARG_URL, NULL },
+		{ NULL,     NULL,    0,       NULL }
 	};
 	ScanArgs(pmsg.Locked, args);
 

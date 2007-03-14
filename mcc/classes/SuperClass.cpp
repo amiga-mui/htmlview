@@ -26,6 +26,8 @@ BOOL SuperClass::Layout (struct LayoutMessage &lmsg)
 {
 	Top = lmsg.Y;
 	Bottom = Top + lmsg.Baseline + lmsg.Bottom;
+
+   return TRUE;
 }
 
 VOID SuperClass::AdjustPosition (LONG x, LONG y)

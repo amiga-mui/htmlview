@@ -54,7 +54,8 @@ BOOL TRClass::TRLayout (struct LayoutMessage &lmsg)
 			td->TDLayout(lmsg);
 			if(td->RowSpan == 1)
 				Bottom = max(lmsg.Y, Bottom);
-			lmsg.Heights[td->RowSpan-1] = max(lmsg.Y, lmsg.Heights[td->RowSpan-1]);
+
+			lmsg.Heights[td->RowSpan-1] = max((ULONG)lmsg.Y, lmsg.Heights[td->RowSpan-1]);
 
 			lmsg.MinX += delta;
 			lmsg.X += delta;
@@ -63,7 +64,7 @@ BOOL TRClass::TRLayout (struct LayoutMessage &lmsg)
 		}
 
 		if(!FirstChild)
-			*lmsg.Heights = max(Top + 2*lmsg.Padding, *lmsg.Heights);
+			*lmsg.Heights = max((ULONG)Top + 2*lmsg.Padding, *lmsg.Heights);
 
 		if(*lmsg.Heights)
 				lmsg.Y = *lmsg.Heights;
@@ -119,6 +120,8 @@ BOOL TRClass::TRLayout (struct LayoutMessage &lmsg)
 
 		Flags |= FLG_Layouted;
 	}
+
+   return TRUE;
 }
 
 BOOL TRClass::Mark (struct MarkMessage &mmsg)
@@ -152,9 +155,10 @@ VOID TRClass::CountCells (struct CountCellsMessage &cmsg)
 	UWORD *src = cmsg.RowSpan, *dst = src;
 	for(UWORD i = 0; i < limit; i++)
 	{
-		if(*dst = *src++ - 1)
-				dst++;
-		else	cmsg.OpenRows--;
+		if((*dst = (*src++ - 1)))
+		   dst++;
+		else
+         cmsg.OpenRows--;
 	}
 
 	cmsg.Rows++;
@@ -200,12 +204,12 @@ VOID TRClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	LONG oldalign = pmsg.CellAlignment, oldvalign = pmsg.CellVAlignment;
 	struct ArgList args[] =
 	{
-		{ "BACKGROUND",	&Source,				ARG_URL		},
-		{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR	},
+		{ "BACKGROUND",	&Source,				ARG_URL,       NULL	},
+		{ "BGCOLOR",		&BackgroundRGB,	ARG_COLOUR,    NULL	},
 
-		{ "ALIGN",			&alignment,			ARG_KEYWORD, AlignKeywords },
-		{ "VALIGN",			&valignment,		ARG_KEYWORD, VAlignKeywords },
-		{ NULL }
+		{ "ALIGN",			&alignment,			ARG_KEYWORD,   AlignKeywords },
+		{ "VALIGN",			&valignment,		ARG_KEYWORD,   VAlignKeywords },
+		{ NULL,           NULL,             0,             NULL  }
 	};
 	ScanArgs(pmsg.Locked, args);
 
