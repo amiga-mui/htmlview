@@ -22,7 +22,7 @@
 
 ###########################################################################
 # This makefile is a very generic one. It tries to identify both, the host
-# and the target operating system for which YAM should be compiled.
+# and the target operating system for which HTMLview should be compiled.
 # However, this auto-detection can be easily overridden by directly
 # specifying an option on the commandline while calling 'make'.
 #
@@ -52,7 +52,7 @@ endif
 
 #############################################
 # now we find out the target OS for
-# which we are going to compile YAM in case
+# which we are going to compile HTMLview in case
 # the caller didn't yet define OS himself
 ifndef (OS)
   ifeq ($(HOST), AmigaOS4)
