@@ -68,93 +68,45 @@ struct DiskfontIFace*     IDiskfont = NULL;
 struct DataTypesIFace*    IDataTypes = NULL;
 #endif
 
-/*
-struct Library *LocaleBase = NULL;
-struct Library *RexxSysBase = NULL;
-struct Library *WorkbenchBase = NULL;
-
-struct LocaleIFace *ILocale = NULL;
-struct RexxSysIFace *IRexxSys = NULL;
-struct Interface *IWorkbench = NULL;
-*/
-
-extern "C" {
-void _Z17_INIT_5_CMapMutexv(void);
-void _Z18_INIT_6_CharTablesv(void);
-void _Z20_INIT_7_BuildTagTreev(void);
-void _Z23_INIT_7_BuildColourTreev(void);
-void _Z23_INIT_7_BuildEntityTreev(void);
-void _Z23_INIT_7_PrepareDecodersv(void);
-//void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
-//void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
-} // extern "C"
+static ULONG initCPP(void);
+static VOID cleanupCPP(void);
 
 BOOL ClassInitFunc(UNUSED struct Library *base)
 {
+  BOOL result = FALSE;
+
   ENTER();
 
   if((LayersBase = OpenLibrary("layers.library", 36)) &&
-     GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
+    GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
+  if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
+    GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
+  if((CxBase = OpenLibrary("commodities.library", 36)) &&
+    GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
+  if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
+    GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
+  if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
+    GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
+  if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
+    GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
   {
-    if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
-       GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
+    // setup our sub custom classes
+    if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher))))
     {
-      if((CxBase = OpenLibrary("commodities.library", 36)) &&
-         GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
-      {
-        if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
-           GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
-        {
-          if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
-             GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
-          {
-            if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
-               GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
-            {
-              if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher))))
-              {
-                if(run_constructors())
-                {
-                  _Z17_INIT_5_CMapMutexv();
-                  _Z18_INIT_6_CharTablesv();
-                  _Z20_INIT_7_BuildTagTreev();
-                  _Z23_INIT_7_BuildColourTreev();
-                  _Z23_INIT_7_BuildEntityTreev();
-                  _Z23_INIT_7_PrepareDecodersv();
-                  //_GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
-                  //_Z41__static_initialization_and_destruction_0ii(1, 65535);
-
-                  RETURN(TRUE);
-                  return(TRUE);
-                }
-              }
-            }
-          }
-        }
-      }
+      // before we can use our class we have to
+      // setup all C++ specfic tasks
+      if(initCPP())
+        result = TRUE;
     }
   }
 
-  RETURN(FALSE);
-  return(FALSE);
+  RETURN(result);
+  return(result);
 }
 
-
-extern "C" {
-void _Z21_EXIT_7_FlushDecodersv(void);
-void _Z22_EXIT_7_DisposeTagTreev(void);
-void _Z25_EXIT_7_DisposeColourTreev(void);
-void _Z25_EXIT_7_DisposeEntityTreev(void);
-} // extern "C"
 VOID ClassExitFunc(UNUSED struct Library *base)
 {
   ENTER();
-
-#warning remember to check out are these con/destructors re-entrant... -itix
-_Z21_EXIT_7_FlushDecodersv();
-_Z22_EXIT_7_DisposeTagTreev();
-_Z25_EXIT_7_DisposeColourTreev();
-_Z25_EXIT_7_DisposeEntityTreev();
 
   if(ScrollGroupClass)
   {
@@ -212,9 +164,77 @@ VOID ClassExpungeFunc(UNUSED struct Library *base)
 {
   ENTER();
 
-  run_destructors();
+  cleanupCPP();
 
   LEAVE();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// In this section we setup specfic C++ related things. In fact, we initialize
+// the vtables for various classes, including running certain constructors
+// defined by the C-runtime libraries involved
+// Here we
+
+
+// prototypes for the C++ virtual tables setup/cleanup
+// functions automatically defined by the C++ compiler of GCC
+extern "C"
+{
+  // C++ virtual table init functions
+  void _Z17_INIT_5_CMapMutexv(void);
+  void _Z18_INIT_6_CharTablesv(void);
+  void _Z20_INIT_7_BuildTagTreev(void);
+  void _Z23_INIT_7_BuildColourTreev(void);
+  void _Z23_INIT_7_BuildEntityTreev(void);
+  void _Z23_INIT_7_PrepareDecodersv(void);
+  //void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
+  //void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
+
+  // C++ virtual table exit/cleanup functions
+  void _Z21_EXIT_7_FlushDecodersv(void);
+  void _Z22_EXIT_7_DisposeTagTreev(void);
+  void _Z25_EXIT_7_DisposeColourTreev(void);
+  void _Z25_EXIT_7_DisposeEntityTreev(void);
+}
+
+// C-runtime specific constructor/destructor
+// initialization routines.
+#if defined(__MORPHOS__)
+#include "libnix.c"
+#endif
+
+static ULONG initCPP(void)
+{
+  // call the virtual tables setup in the
+  // correct priority
+  _Z17_INIT_5_CMapMutexv();
+  _Z18_INIT_6_CharTablesv();
+  _Z20_INIT_7_BuildTagTreev();
+  _Z23_INIT_7_BuildColourTreev();
+  _Z23_INIT_7_BuildEntityTreev();
+  _Z23_INIT_7_PrepareDecodersv();
+
+  #if defined(__MORPHOS__)
+  return run_constructors();
+  #else
+  return 1;
+  #endif
+}
+
+
+static VOID cleanupCPP(void)
+{
+  #if defined(__MORPHOS__)
+  run_destructors();
+  #endif
+
+  // cleanup the virtual tables of various
+  // classes
+  #warning remember to check out are these con/destructors re-entrant... -itix
+  _Z21_EXIT_7_FlushDecodersv();
+  _Z22_EXIT_7_DisposeTagTreev();
+  _Z25_EXIT_7_DisposeColourTreev();
+  _Z25_EXIT_7_DisposeEntityTreev();
 }
 
 /******************************************************************************/

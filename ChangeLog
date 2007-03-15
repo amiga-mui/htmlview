@@ -5,13 +5,20 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-15  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc/library.c: cleaned up the CPP constructor/destructor setups and added
+    various missing comments about what is going on there.
+
 2007-03-15  Ilkka Lehtoranta <ilkleht@isoveli.org>
+
   * mcc: ScrollGroup custom class was not created causing htmlview.mcc to crash.
     Also moved init functions after run_constructors() to make sure malloc() is
     available for new operator. The htmlview.mcc no longer crashes in MorphOS but
     does not function like original 68k version.
 
 2007-03-14  Ilkka Lehtoranta <ilkleht@isoveli.org>
+
   * include/stubgen.pl: perl script (modified from cvinclude.pl from MorphOS SDK)
     to generate 68k vararg stubs for ppc. It is needed since gcc3/gcc4 compilers
     for MOS no longer support VARARGS68K.
