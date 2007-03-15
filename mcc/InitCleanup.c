@@ -44,7 +44,7 @@ void *malloc(size_t bytes)
 {
    return calloc(1, bytes);
 }
-#else
+#elif !defined(__libnix__)
 #include "Memory.c"
 #endif
 

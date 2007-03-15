@@ -28,8 +28,8 @@
 
 // change the libnix pool size by defining _MSTEP var
 
-int ThisRequiresConstructorHandling = 1;
-VOID *libnix_mempool = NULL;
+int ThisRequiresConstructorHandling;
+static VOID *mempool;
 
 extern const unsigned long	__ctrslist[];
 extern const unsigned long	__dtrslist[];
@@ -92,6 +92,14 @@ ULONG run_constructors(void)
 	if (constructors_done)
 		return 1;
 
+	if (!mempool)
+	{
+		mempool = CreatePool(MEMF_CLEAR | MEMF_SEM_PROTECTED, 12*1024, 6*1024);
+
+		if (!mempool)
+			return 0;
+	}
+
 	if (!sorted)
 	{
 		struct HunkSegment *seg;
@@ -115,7 +123,7 @@ ULONG run_constructors(void)
 		ctdt++;
 	}
 
-	malloc(0);
+	//malloc(0);
 
 	__HandleConstructors((void (**)(void)) __ctrslist);
 
@@ -143,6 +151,42 @@ VOID run_destructors(void)
 			}
 		}
 		ctdt++;
+	}
+
+	if (mempool)
+	{
+		DeletePool(mempool);
+		mempool = NULL;
+	}
+}
+
+void *malloc(size_t size)
+{
+	ULONG *p = NULL;
+
+	if (size)
+	{
+		size += 4;
+
+		//p = (ULONG *)AllocPooledAligned(mempool, size, 8, 4);
+		p = (ULONG *)AllocPooled(mempool, size);
+
+		if (p)
+		{
+			*p++ = size;
+		}
+	}
+
+	return (void *)p;
+}
+
+void free(void *p)
+{
+	if (p && mempool)
+	{
+		ULONG size, *ptr = (ULONG *)p;
+		size = *--ptr;
+		FreePooled(mempool, ptr, size);
 	}
 }
 
