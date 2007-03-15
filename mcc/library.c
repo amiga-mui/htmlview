@@ -21,6 +21,7 @@
 ***************************************************************************/
 
 #include <proto/exec.h>
+#include <proto/muimaster.h>
 
 /******************************************************************************/
 /*                                                                            */
@@ -31,6 +32,7 @@
 /******************************************************************************/
 
 #include "constructors.h"
+#include "ScrollGroup.h"
 
 #include "private.h"
 #include "rev.h"
@@ -91,15 +93,6 @@ BOOL ClassInitFunc(UNUSED struct Library *base)
 {
   ENTER();
 
-_Z17_INIT_5_CMapMutexv();
-_Z18_INIT_6_CharTablesv();
-_Z20_INIT_7_BuildTagTreev();
-_Z23_INIT_7_BuildColourTreev();
-_Z23_INIT_7_BuildEntityTreev();
-_Z23_INIT_7_PrepareDecodersv();
-//_GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
-//_Z41__static_initialization_and_destruction_0ii(1, 65535);
-
   if((LayersBase = OpenLibrary("layers.library", 36)) &&
      GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
   {
@@ -118,10 +111,22 @@ _Z23_INIT_7_PrepareDecodersv();
             if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
                GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
             {
-              if(run_constructors())
+              if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher))))
               {
-                RETURN(TRUE);
-                return(TRUE);
+                if(run_constructors())
+                {
+                  _Z17_INIT_5_CMapMutexv();
+                  _Z18_INIT_6_CharTablesv();
+                  _Z20_INIT_7_BuildTagTreev();
+                  _Z23_INIT_7_BuildColourTreev();
+                  _Z23_INIT_7_BuildEntityTreev();
+                  _Z23_INIT_7_PrepareDecodersv();
+                  //_GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
+                  //_Z41__static_initialization_and_destruction_0ii(1, 65535);
+
+                  RETURN(TRUE);
+                  return(TRUE);
+                }
               }
             }
           }
@@ -145,10 +150,17 @@ VOID ClassExitFunc(UNUSED struct Library *base)
 {
   ENTER();
 
+#warning remember to check out are these con/destructors re-entrant... -itix
 _Z21_EXIT_7_FlushDecodersv();
 _Z22_EXIT_7_DisposeTagTreev();
 _Z25_EXIT_7_DisposeColourTreev();
 _Z25_EXIT_7_DisposeEntityTreev();
+
+  if(ScrollGroupClass)
+  {
+    MUI_DeleteCustomClass(ScrollGroupClass);
+    ScrollGroupClass = NULL;
+  }
 
   if(CyberGfxBase)
   {
