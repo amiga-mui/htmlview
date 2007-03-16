@@ -56,7 +56,7 @@ ULONG xget(Object *obj, const ULONG attr);
 
 #define MUIA_CustomBackfill                 0x80420a63
 #define MUIM_Backfill                       0x80428d73
-struct  MUIP_Backfill { ULONG MethodID; LONG left; LONG top; LONG right; LONG bottom; LONG xoffset; LONG yoffset; };
+struct  MUIP_Backfill { ULONG MethodID; LONG left; LONG top; LONG right; LONG bottom; LONG xoffset; LONG yoffset; LONG brightness; };
 
 #define MUIM_Group_ExitChange2              0x8042e541 /* private */ /* V12 */
 struct  MUIP_Group_ExitChange2              { ULONG MethodID; ULONG flags; }; /* private */
