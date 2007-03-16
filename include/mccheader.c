@@ -617,10 +617,8 @@ static struct LibraryHeader * LIBFUNC LibOpen(REG(a6, struct LibraryHeader *base
 
   D(DBF_STARTUP, "LibOpen()");
 
-#warning #error FixMe
   ObtainSemaphore(&base->lh_Semaphore);
 
-#warning #error FixMe
   if(UserLibOpen(&base->lh_Library))
   {
     base->lh_Library.lib_Flags &= ~LIBF_DELEXP; // delete the late expung flag.
@@ -639,7 +637,6 @@ static struct LibraryHeader * LIBFUNC LibOpen(REG(a6, struct LibraryHeader *base
     res = NULL;
   }
 
-#warning #error FixMe
   ReleaseSemaphore(&base->lh_Semaphore);
 
   return res;
