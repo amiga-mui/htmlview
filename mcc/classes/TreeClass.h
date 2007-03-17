@@ -37,7 +37,7 @@ class TreeClass : public SuperClass
 		virtual BOOL Mark (struct MarkMessage &mmsg);
     virtual LONG AllocPen(struct ColorMap *cmap, LONG t_rgb);
     virtual VOID FreePen(struct ColorMap *cmap, ULONG pen) { ReleasePen(cmap, pen); }
-    virtual VOID SetCol(LONG &storage, ULONG pen);
+    virtual VOID SetCol(LONG &storage, LONG pen);
 
 		struct ChildsList *Last;
 		struct ChildsList *FirstChild;

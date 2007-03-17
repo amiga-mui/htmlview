@@ -117,12 +117,12 @@ VOID TextAreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL disabled = FALSE, readonly = FALSE;
 	struct ArgList args[] =
 	{
-		{ "NAME",		&Name,		ARG_STRING	},
-		{ "DISABLED",	&disabled,	ARG_SWITCH	},
-		{ "READONLY",	&readonly,	ARG_SWITCH	},
-		{ "COLS",		&Columns,	ARG_NUMBER	},
-		{ "ROWS",		&Rows,		ARG_NUMBER	},
-		{ NULL }
+		{ "NAME",		&Name,		ARG_STRING, NULL	},
+		{ "DISABLED",	&disabled,	ARG_SWITCH, NULL	},
+		{ "READONLY",	&readonly,	ARG_SWITCH, NULL	},
+		{ "COLS",		&Columns,	ARG_NUMBER, NULL	},
+		{ "ROWS",		&Rows,		ARG_NUMBER, NULL	},
+		{ NULL, NULL, NULL, NULL }
 	};
 
 	Rows = 10; Columns = 40;
