@@ -31,10 +31,13 @@
 struct SignalSemaphore Mutex;
 class ColourManager *FirstCMap = NULL;
 
-VOID _INIT_5_CMapMutex ()
+extern "C"
 {
-	memset(&Mutex, 0, sizeof(Mutex));
-	InitSemaphore(&Mutex);
+	VOID _INIT_5_CMapMutex ()
+	{
+		memset(&Mutex, 0, sizeof(Mutex));
+		InitSemaphore(&Mutex);
+	}
 }
 
 class ColourManager *ObtainCMap (struct Screen *scr)

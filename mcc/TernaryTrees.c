@@ -58,7 +58,7 @@ struct TNode *TNode::TInsert (STRPTR str, APTR data)
 	return res;
 }
 
-APTR TFind (struct TNode *node, STRPTR str, UBYTE *table)
+APTR TFind (struct TNode *node, CONST_STRPTR str, UBYTE *table)
 {
 	UBYTE chr, src = *str++;
 	src = QToUpper(src);

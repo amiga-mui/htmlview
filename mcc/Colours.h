@@ -25,7 +25,7 @@
 
 /* Protos */
 
-UBYTE *GetColourInfo (STRPTR name);
+UBYTE *GetColourInfo (CONST_STRPTR name);
 
 /* Data */
 

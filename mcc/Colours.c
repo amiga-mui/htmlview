@@ -177,17 +177,20 @@ struct ColourInfo ColourTable[] =
 
 struct TNode *ColourTree;
 
-VOID _INIT_7_BuildColourTree ()
+extern "C"
 {
-	BinaryInsert(ColourTree, ColourTable, (ULONG)0, (ULONG)sizeof(ColourTable) / sizeof(ColourInfo) - 2);
+	VOID _INIT_7_BuildColourTree ()
+	{
+		BinaryInsert(ColourTree, ColourTable, (ULONG)0, (ULONG)sizeof(ColourTable) / sizeof(ColourInfo) - 2);
+	}
+
+	VOID _EXIT_7_DisposeColourTree ()
+	{
+		delete ColourTree;
+	}
 }
 
-VOID _EXIT_7_DisposeColourTree ()
-{
-	delete ColourTree;
-}
-
-UBYTE *GetColourInfo (STRPTR str)
+UBYTE *GetColourInfo (CONST_STRPTR str)
 {
 	return (UBYTE *)TFind(ColourTree, str, TagEndTable);
 }

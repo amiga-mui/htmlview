@@ -25,7 +25,7 @@
 
 /* Protos */
 
-struct EntityInfo *GetEntityInfo (STRPTR entity);
+struct EntityInfo *GetEntityInfo (CONST_STRPTR entity);
 
 /* Data */
 

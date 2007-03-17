@@ -24,7 +24,7 @@ ImgClass::~ImgClass ()
 	delete Map;
 }
 
-VOID ImgClass::FreeColours (struct ColorMap *cmap)
+VOID ImgClass::FreeColours (UNUSED struct ColorMap *cmap)
 {
 	if(Picture)
 		Picture->UnLockPicture();
