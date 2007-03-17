@@ -83,12 +83,12 @@ struct FindMessage *HostClass::Find (STRPTR str, ULONG top, ULONG flags)
 	return(result);
 }
 
-Object *HostClass::LookupFrame (STRPTR name, class HostClass *hclass)
+Object *HostClass::LookupFrame (STRPTR name, UNUSED class HostClass *hclass)
 {
 	return(Body ? Body->LookupFrame(name, this) : NULL);
 }
 
-ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl, struct MUIP_HandleEvent *emsg)
+ULONG HostClass::HandleEvent (Object *obj, UNUSED struct IClass *cl, struct MUIP_HandleEvent *emsg)
 {
 	ULONG result = 0;
 	struct HTMLviewData *data = Data;

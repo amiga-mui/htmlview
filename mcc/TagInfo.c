@@ -103,18 +103,21 @@ struct TagInfo TagTable[] =
 UBYTE TagEndTable [256];
 UBYTE WhitespaceTable [256];
 
-VOID _INIT_6_CharTables ()
+extern "C" 
 {
-	memset(TagEndTable, FALSE, 256);
-	STRPTR tagenders = "\f\r\n\t >";
-	do {
-		TagEndTable[*tagenders] = TRUE;
-	} while(*tagenders++);
+	VOID _INIT_6_CharTables ()
+	{
+		memset(TagEndTable, FALSE, 256);
+		const UBYTE *tagenders = (const UBYTE *)"\f\r\n\t >";
+		do {
+			TagEndTable[*tagenders] = TRUE;
+		} while(*tagenders++);
 
-	memset(WhitespaceTable, FALSE, 256);
-	STRPTR whitespaces = "\f\r\n\t ";
-	while(*whitespaces)
-		WhitespaceTable[*whitespaces++] = TRUE;
+		memset(WhitespaceTable, FALSE, 256);
+		const UBYTE *whitespaces = (const UBYTE *)"\f\r\n\t ";
+		while(*whitespaces)
+			WhitespaceTable[*whitespaces++] = TRUE;
+	}
 }
 
 /*BOOL IsWhitespace (REG(d0) UBYTE c)
@@ -155,6 +158,8 @@ BOOL NotTagEnd (REG(d0) UBYTE c)
 
 struct TNode *TagTree;
 
+extern "C" 
+{
 VOID _INIT_7_BuildTagTree ()
 {
 	BinaryInsert(TagTree, TagTable, (ULONG)0, (ULONG)sizeof(TagTable) / sizeof(TagInfo) - 2);
@@ -164,6 +169,7 @@ VOID _EXIT_7_DisposeTagTree ()
 {
 	delete TagTree;
 }
+} /* end of extern "C" */
 
 struct TagInfo DummyTag = { "Unknown", 0, tag_Unknown };
 

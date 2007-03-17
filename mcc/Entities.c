@@ -131,7 +131,7 @@ struct EntityInfo EntityTable[] =
 	{ NULL,       0 }
 };
 
-struct EntityInfo *TFind (struct TNode *node, STRPTR str)
+static struct EntityInfo *TFind (struct TNode *node, CONST_STRPTR str)
 {
 	UBYTE chr, src = *str++;
 
@@ -161,17 +161,20 @@ struct EntityInfo *TFind (struct TNode *node, STRPTR str)
 
 struct TNode *EntityTree;
 
-VOID _INIT_7_BuildEntityTree ()
+extern "C"
 {
-	BinaryInsert(EntityTree, EntityTable, (ULONG)0, (ULONG)sizeof(EntityTable) / sizeof(EntityInfo) - 2);
+	VOID _INIT_7_BuildEntityTree ()
+	{
+		BinaryInsert(EntityTree, EntityTable, (ULONG)0, (ULONG)sizeof(EntityTable) / sizeof(EntityInfo) - 2);
+	}
+
+	VOID _EXIT_7_DisposeEntityTree ()
+	{
+		delete EntityTree;
+	}
 }
 
-VOID _EXIT_7_DisposeEntityTree ()
-{
-	delete EntityTree;
-}
-
-struct EntityInfo *GetEntityInfo (STRPTR str)
+struct EntityInfo *GetEntityInfo (CONST_STRPTR str)
 {
 	return (struct EntityInfo *)TFind(EntityTree, str);
 }

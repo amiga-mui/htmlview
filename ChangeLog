@@ -5,6 +5,12 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-17  Ilkka Lehtoranta <ilkleht@isoveli.org>
+
+  * mcc: now compiles using GCC2. All user CPP con/destructor functions are now
+    declared in C sections to prevent C++ name mangling. Removed stub genetator
+    for GCC4.
+
 2007-03-15  Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc/library.c: cleaned up the CPP constructor/destructor setups and added

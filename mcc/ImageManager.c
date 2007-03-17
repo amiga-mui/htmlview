@@ -754,8 +754,7 @@ static struct Library *ClassOpen(STRPTR decoder)
 }
 
 
-extern "C" {
-Object *NewDecoderObjectA(UBYTE *buf, struct TagItem *tags)
+static Object *NewDecoderObjectA(UBYTE *buf, struct TagItem *tags)
 {
 	struct IClass *cl = NULL;
 	struct DecoderInfo *decoders = Decoders;
@@ -787,7 +786,6 @@ Object *NewDecoderObjectA(UBYTE *buf, struct TagItem *tags)
       return(NULL);
 }
 
-#ifndef __MORPHOS__
 static VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...);
 static VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...)
 {
@@ -795,33 +793,32 @@ static VARARGS68K Object *NewDecoderObject (UBYTE *buf, ...)
 	struct TagItem *tags;
 	Object *obj;
 
-	tags = VA_ARG(ap, struct TagItem *);
+	tags = (struct TagItem *)VA_ARG(ap, struct TagItem *);
 	obj = NewDecoderObjectA(buf, tags);
 
    VA_END(ap);
 	return obj;
 }
-#else
-Object *NewDecoderObject (UBYTE *buf, ...);
-#endif
-} /* end of "C" */
 
-VOID _INIT_7_PrepareDecoders ()
+extern "C"
 {
-	InitSemaphore(&DecoderMutex);
-}
-
-VOID _EXIT_7_FlushDecoders ()
-{
-	struct DecoderInfo *decoders = Decoders;
-	while(decoders->Name)
+	VOID _INIT_7_PrepareDecoders ()
 	{
-		if(decoders->Class)
-			FreeClass(decoders->Class);
-		if(decoders->Base)
-			CloseLibrary(decoders->Base);
+		InitSemaphore(&DecoderMutex);
+	}
 
-		decoders++;
+	VOID _EXIT_7_FlushDecoders ()
+	{
+		struct DecoderInfo *decoders = Decoders;
+		while(decoders->Name)
+		{
+			if(decoders->Class)
+				FreeClass(decoders->Class);
+			if(decoders->Base)
+				CloseLibrary(decoders->Base);
+
+			decoders++;
+		}
 	}
 }
 

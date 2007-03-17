@@ -420,7 +420,7 @@ VOID TextClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	ULONG length = pmsg.Current-pmsg.Locked;
 	Contents = new char[length+2];
 	BOOL pre;
-	if(pre = pmsg.OpenCounts[tag_PRE])
+	if((pre = pmsg.OpenCounts[tag_PRE]))
 		Flags |= FLG_Text_Pre;
 
 	BOOL space = pmsg.PendingSpace;
@@ -529,7 +529,7 @@ VOID TextClass::Parse(REG(a2, struct ParseMessage &pmsg))
 				else
 				{
 					struct EntityInfo *entity;
-					if(entity = GetEntityInfo(src))
+					if((entity = GetEntityInfo(src)))
 					{
 						character = entity->ByteCode;
 						src += strlen(entity->Name);

@@ -36,7 +36,7 @@ BOOL LocalURL (STRPTR url)
 	return(!strncmp("file://", url, 7));
 }
 
-STRPTR HTMLview_AddPart (Object *obj, struct MUIP_HTMLview_AddPart *amsg, struct HTMLviewData *data)
+STRPTR HTMLview_AddPart (UNUSED Object *obj, struct MUIP_HTMLview_AddPart *amsg, struct HTMLviewData *data)
 {
 	STRPTR url, urlbase, base, file = amsg->File;
 	urlbase = base = (data->HostObject && data->HostObject->Base && data->HostObject->Base->URL) ? data->HostObject->Base->URL : data->URLBase;
@@ -157,7 +157,7 @@ STRPTR HTMLview_AddPart (Object *obj, struct MUIP_HTMLview_AddPart *amsg, struct
 	return(url);
 }
 
-VOID HTMLview_SetPath (Object *obj, STRPTR url, struct HTMLviewData *data)
+VOID HTMLview_SetPath (UNUSED Object *obj, STRPTR url, struct HTMLviewData *data)
 {
 	/* Domain name */
 	delete data->URLBase;

@@ -39,7 +39,7 @@ struct TNode
 	UBYTE SplitChar, _pad[3];
 };
 
-APTR TFind (struct TNode *root, STRPTR str, UBYTE *table);
+APTR TFind (struct TNode *root, CONST_STRPTR str, UBYTE *table);
 
 template <class T>
 VOID BinaryInsert (struct TNode *&tree, T *elements, ULONG from, ULONG to)

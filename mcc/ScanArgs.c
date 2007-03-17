@@ -78,7 +78,7 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 				while(IsWhitespace(*tag))
 					tag++;
 
-				STRPTR value = "";
+				CONST_STRPTR value = "";
 				if(*tag == '=')
 				{
 					tag++;
@@ -160,7 +160,7 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 									else
 									{
 										struct EntityInfo *entity;
-										if(entity = GetEntityInfo(value))
+										if((entity = GetEntityInfo(value)))
 										{
 											character = entity->ByteCode;
 											value += strlen(entity->Name);
@@ -265,7 +265,7 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 					{
 						UBYTE *RGB;
 						LONG res, cnt;
-						if(RGB = GetColourInfo(value))
+						if((RGB = GetColourInfo(value)))
 							res = (*(ULONG *)RGB) >> 8;
 //							res = (RGB[0] << 16) | (RGB[1] << 8) | RGB[2];
 						else if(sscanf(value, "%*[#]%x%n", &res, &cnt) < 3 || value[cnt])

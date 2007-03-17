@@ -196,9 +196,7 @@ ifeq ($(OS), mos)
   CPU     = -mcpu=powerpc
   CFLAGS  += -noixemul -DNO_PPCINLINE_STDARG
   LDFLAGS += -noixemul
-  LDLIBS  += -ldebug -L$(OBJDIR) -lhtmlviewstubs
-
-  PPCSTUBS = $(OBJDIR)/libhtmlviewstubs.a
+  LDLIBS  += -ldebug
 
 else
 ifeq ($(OS), aros)
@@ -413,18 +411,14 @@ $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 	@printf '\033[33mGenerating $@\033[0m\n'
 	@$(FC) $(LOCALE)/HTMLview_mcc.cd $< CATALOG $@
 
-$(OBJDIR)/libhtmlviewstubs.a: HTMLview_stubs.h
-	@printf '\033[33mGenerating $@\033[0m\n'
-	@../include/stubgen.pl --clib HTMLview_stubs.h --gluelib ./$@ --quiet
-
 #
 
-$(MCCTARGET): $(M68KSTUBS) $(MCCOBJS) $(PPCSTUBS)
+$(MCCTARGET): $(M68KSTUBS) $(MCCOBJS)
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
 	@$(CPP) -nostartfiles $(LDFLAGS) -o $@.debug $(MCCOBJS) $(M68KSTUBS) $(LDLIBS)
 	@$(STRIP) -R .comment -S -o $@ $@.debug
 
-$(TESTTARGET): $(TESTOBJS) $(PPCSTUBS) $(OBJDIR)/HTMLview-Test.o
+$(TESTTARGET): $(TESTOBJS) $(OBJDIR)/HTMLview-Test.o
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
 	@$(CPP) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS)
 	@$(STRIP) -R .comment -S -o $@ $@.debug

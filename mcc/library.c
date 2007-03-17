@@ -181,20 +181,20 @@ VOID ClassExpungeFunc(UNUSED struct Library *base)
 extern "C"
 {
   // C++ virtual table init functions
-  void _Z17_INIT_5_CMapMutexv(void);
-  void _Z18_INIT_6_CharTablesv(void);
-  void _Z20_INIT_7_BuildTagTreev(void);
-  void _Z23_INIT_7_BuildColourTreev(void);
-  void _Z23_INIT_7_BuildEntityTreev(void);
-  void _Z23_INIT_7_PrepareDecodersv(void);
+  void _INIT_5_CMapMutex(void);
+  void _INIT_6_CharTables(void);
+  void _INIT_7_BuildTagTree(void);
+  void _INIT_7_BuildColourTree(void);
+  void _INIT_7_BuildEntityTree(void);
+  void _INIT_7_PrepareDecoders(void);
   //void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
   //void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
 
   // C++ virtual table exit/cleanup functions
-  void _Z21_EXIT_7_FlushDecodersv(void);
-  void _Z22_EXIT_7_DisposeTagTreev(void);
-  void _Z25_EXIT_7_DisposeColourTreev(void);
-  void _Z25_EXIT_7_DisposeEntityTreev(void);
+  void _EXIT_7_FlushDecoders(void);
+  void _EXIT_7_DisposeTagTree(void);
+  void _EXIT_7_DisposeColourTree(void);
+  void _EXIT_7_DisposeEntityTree(void);
 }
 
 // C-runtime specific constructor/destructor
@@ -205,36 +205,43 @@ extern "C"
 
 static ULONG initCPP(void)
 {
-  // call the virtual tables setup in the
-  // correct priority
-  _Z17_INIT_5_CMapMutexv();
-  _Z18_INIT_6_CharTablesv();
-  _Z20_INIT_7_BuildTagTreev();
-  _Z23_INIT_7_BuildColourTreev();
-  _Z23_INIT_7_BuildEntityTreev();
-  _Z23_INIT_7_PrepareDecodersv();
+  static int initialized = 0;
 
   #if defined(__MORPHOS__)
-  return run_constructors();
-  #else
-  return 1;
+  if (!run_constructors())
+		return 0;
   #endif
+
+  if (initialized)
+    return 1;
+
+  initialized = 1;
+
+  // call the virtual tables setup in the
+  // correct priority
+  _INIT_5_CMapMutex();
+  _INIT_6_CharTables();
+  _INIT_7_BuildTagTree();
+  _INIT_7_BuildColourTree();
+  _INIT_7_BuildEntityTree();
+  _INIT_7_PrepareDecoders();
+
+  return 1;
 }
 
 
 static VOID cleanupCPP(void)
 {
+  // cleanup the virtual tables of various
+  // classes
+  _EXIT_7_FlushDecoders();
+  _EXIT_7_DisposeTagTree();
+  _EXIT_7_DisposeColourTree();
+  _EXIT_7_DisposeEntityTree();
+
   #if defined(__MORPHOS__)
   run_destructors();
   #endif
-
-  // cleanup the virtual tables of various
-  // classes
-  #warning remember to check out are these con/destructors re-entrant... -itix
-  _Z21_EXIT_7_FlushDecodersv();
-  _Z22_EXIT_7_DisposeTagTreev();
-  _Z25_EXIT_7_DisposeColourTreev();
-  _Z25_EXIT_7_DisposeEntityTreev();
 }
 
 /******************************************************************************/

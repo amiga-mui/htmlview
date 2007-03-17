@@ -169,7 +169,7 @@ Object *BuildApp(void)
 #ifndef __MORPHOS__
 //				Child, ScrollgroupObject,
 				Child, NewObject(ScrollGroupClass->mcc_Class, NULL,
-					MUIA_Scrollgroup_Contents,*/ htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
+					MUIA_ScrollGroup_Contents,*/ htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
 						End,
 					End,
 #endif
@@ -256,7 +256,7 @@ Object *BuildApp(void)
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Duff's:T/«98.11.13»/index.html");
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Data:Homepage - old/testpage.html");
 //		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Duff's:Data/C-Sources/ImageRender/GIFAnims/AllAnims.HTML");
-///		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Silvia:Homepage_Real/index.html", NULL);
+//		DoMethod(htmlview, MUIM_HTMLview_GotoURL, "file://Silvia:Homepage_Real/index.html", NULL);
 	}
 
   RETURN(app);
@@ -412,40 +412,78 @@ int main(void)
 }
 
 extern "C" {
-extern void _Z15_INIT_4_InitMemv(void);
-extern void _Z17_INIT_5_CMapMutexv(void);
-extern void _Z18_INIT_6_CharTablesv(void);
-extern void _Z20_INIT_7_BuildTagTreev(void);
-extern void _Z23_INIT_7_BuildColourTreev(void);
-extern void _Z23_INIT_7_BuildEntityTreev(void);
-extern void _Z23_INIT_7_PrepareDecodersv(void);
+extern void _INIT_4_InitMem(void);
+extern void _INIT_5_CMapMutex(void);
+extern void _INIT_6_CharTables(void);
+extern void _INIT_7_BuildTagTree(void);
+extern void _INIT_7_BuildColourTree(void);
+extern void _INIT_7_BuildEntityTree(void);
+extern void _INIT_7_PrepareDecoders(void);
 __attribute__((constructor)) void AAA_call_constructors(void)
 {
-   #if defined(__MORPHOS__)
-   _Z15_INIT_4_InitMemv();
-   #endif
-   _Z17_INIT_5_CMapMutexv();
-   _Z18_INIT_6_CharTablesv();
-   _Z20_INIT_7_BuildTagTreev();
-   _Z23_INIT_7_BuildColourTreev();
-   _Z23_INIT_7_BuildEntityTreev();
-   _Z23_INIT_7_PrepareDecodersv();
+   //_INIT_4_InitMem();
+   _INIT_5_CMapMutex();
+   _INIT_6_CharTables();
+   _INIT_7_BuildTagTree();
+   _INIT_7_BuildColourTree();
+   _INIT_7_BuildEntityTree();
+   _INIT_7_PrepareDecoders();
 }
 
-void _Z18_EXIT_4_CleanupMemv(void);
-void _Z21_EXIT_7_FlushDecodersv(void);
-void _Z22_EXIT_7_DisposeTagTreev(void);
-void _Z25_EXIT_7_DisposeColourTreev(void);
-void _Z25_EXIT_7_DisposeEntityTreev(void);
+void _EXIT_4_CleanupMem(void);
+void _EXIT_7_FlushDecoders(void);
+void _EXIT_7_DisposeTagTree(void);
+void _EXIT_7_DisposeColourTree(void);
+void _EXIT_7_DisposeEntityTree(void);
 __attribute__((destructor)) void ____call_destructors(void)
 {
-   _Z21_EXIT_7_FlushDecodersv();
-   _Z22_EXIT_7_DisposeTagTreev();
-   _Z25_EXIT_7_DisposeColourTreev();
-   _Z25_EXIT_7_DisposeEntityTreev();
-   #if defined(__MORPHOS__)
-   _Z18_EXIT_4_CleanupMemv();
-   #endif
+   _EXIT_7_FlushDecoders();
+   _EXIT_7_DisposeTagTree();
+   _EXIT_7_DisposeColourTree();
+   _EXIT_7_DisposeEntityTree();
+   //_EXIT_4_CleanupMem();
 }
+
+#if defined(__libnix__)
+static void *mempool;
+
+void *malloc(size_t size)
+{
+	ULONG *p = NULL;
+
+	if (!mempool)
+	{
+		mempool = CreatePool(MEMF_CLEAR | MEMF_SEM_PROTECTED, 12*1024, 6*1024);
+
+		if (!mempool)
+			return p;
+	}
+
+	if (size)
+	{
+		size += 4;
+
+		//p = (ULONG *)AllocPooledAligned(mempool, size, 8, 4);
+		p = (ULONG *)AllocPooled(mempool, size);
+
+		if (p)
+		{
+			*p++ = size;
+		}
+	}
+
+	return (void *)p;
+}
+
+void free(void *p)
+{
+	if (p && mempool)
+	{
+		ULONG size, *ptr = (ULONG *)p;
+		size = *--ptr;
+		FreePooled(mempool, ptr, size);
+	}
+}
+#endif
 
 } // extern "C"
