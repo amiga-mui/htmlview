@@ -42,7 +42,7 @@ VOID TextAreaClass::ExportForm (struct ExportFormMessage &emsg)
 	if(MUIGadget)
 	{
 		STRPTR text;
-		if(text = (STRPTR)DoMethod(MUIGadget, MUIM_TextEditor_ExportText))
+		if((text = (STRPTR)DoMethod(MUIGadget, MUIM_TextEditor_ExportText)))
 		{
 			emsg.AddElement(Name, text);
 			FreeVec(text);
