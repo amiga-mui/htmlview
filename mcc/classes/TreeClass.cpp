@@ -523,7 +523,7 @@ VOID TreeClass::Render (struct RenderMessage &rmsg)
 	}
 }
 
-VOID TreeClass::SetCol(LONG &storage, ULONG pen)
+VOID TreeClass::SetCol(LONG &storage, LONG pen)
 {
 	if(pen != -1)
 		storage = pen;

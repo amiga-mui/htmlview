@@ -37,9 +37,9 @@
 
 BOOL MarkMessage::OpenTheClipboard ()
 {
-	if(ClipPort = CreateMsgPort())
+	if((ClipPort = CreateMsgPort()))
 	{
-		if(ClipReq = (struct IOClipReq *)CreateIORequest(ClipPort, sizeof(IOClipReq)))
+		if((ClipReq = (struct IOClipReq *)CreateIORequest(ClipPort, sizeof(IOClipReq))))
 		{
 			if(!OpenDevice("clipboard.device", 0, IOReq, 0))
 			{

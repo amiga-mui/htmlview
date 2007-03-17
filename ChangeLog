@@ -10,6 +10,7 @@ $URL$
   * mcc: now compiles using GCC2. All user CPP con/destructor functions are now
     declared in C sections to prevent C++ name mangling. Removed stub genetator
     for GCC4.
+  * mcc: removed some warnings again.
 
 2007-03-15  Jens Langner <Jens.Langner@light-speed.de>
 

@@ -116,7 +116,7 @@ BOOL ScaleEngine::SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULO
 	SrcBuffer = new RGBPixel [src_size];
 
 	BOOL result;
-	if(result = SrcBuffer ? TRUE : FALSE)
+	if((result = SrcBuffer ? TRUE : FALSE))
 	{
 		DstLineA = XScaledLineA = SrcLineA = SrcBuffer+2;
 		DstLineB = XScaledLineB = SrcLineB = SrcLineA + modulo;
