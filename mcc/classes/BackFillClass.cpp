@@ -81,12 +81,12 @@ BOOL BackFillClass::ReceiveImage (struct PictureFrame *pic)
 	return(FALSE);
 }
 
-BOOL BackFillClass::UpdateImage (LONG ystart, LONG ystop, LONG top, LONG bottom, BOOL last)
+BOOL BackFillClass::UpdateImage (UNUSED LONG ystart, UNUSED LONG ystop, UNUSED LONG top, UNUSED LONG bottom, BOOL last)
 {
 	return(Picture ? last : FALSE);
 }
 
-BOOL BackFillClass::FlushImage (LONG top, LONG bottom)
+BOOL BackFillClass::FlushImage (UNUSED LONG top, UNUSED LONG bottom)
 {
 	if(Picture)
 	{

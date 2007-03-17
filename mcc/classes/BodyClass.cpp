@@ -35,7 +35,7 @@ VOID BodyClass::AllocateColours (struct ColorMap *cmap)
 	}
 }
 
-VOID BodyClass::FreeColours (struct ColorMap *cmap)
+VOID BodyClass::FreeColours (UNUSED struct ColorMap *cmap)
 {
 	if(Flags & FLG_AllocatedColours)
 	{
