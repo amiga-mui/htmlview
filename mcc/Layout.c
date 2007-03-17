@@ -130,7 +130,7 @@ VOID LayoutMessage::Newline ()
 		}
 
 		*notify->Baseline = baseline;
-		if(obj = notify->Obj)
+		if((obj = notify->Obj))
 		{
 			if(obj->id() != tag_IMG || ((class ImgClass *)obj)->Alignment != Align_Top)
 			{
