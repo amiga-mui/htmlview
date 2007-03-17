@@ -50,7 +50,7 @@ ULONG GetConfigItemA (Object *obj, ULONG item, ULONG def_value, BOOL de_ref)
 	return DoMethod(obj, MUIM_GetConfigItem, item, &value) ? (de_ref ? *(ULONG *)value : value) : def_value;
 }
 
-BOOL GetFont (Object *Obj, ULONG item, STRPTR def_value, struct TextFont **storage)
+static BOOL GetFont (Object *Obj, ULONG item, CONST_STRPTR def_value, struct TextFont **storage)
 {
 	struct TextFont *oldfont = *storage;
 	ULONG size;
@@ -76,7 +76,7 @@ BOOL GetFont (Object *Obj, ULONG item, STRPTR def_value, struct TextFont **stora
 	return(oldfont != *storage);
 }
 
-VOID GetColour (Object *Obj, ULONG item, STRPTR def_value, LONG *storage)
+static VOID GetColour (Object *Obj, ULONG item, CONST_STRPTR def_value, LONG *storage)
 {
 	struct MUI_PenSpec *spec = (struct MUI_PenSpec *)GetConfigItem(item, def_value);
 	*storage = MUI_ObtainPen(muiRenderInfo(Obj), spec, 0L);
@@ -85,14 +85,14 @@ VOID GetColour (Object *Obj, ULONG item, STRPTR def_value, LONG *storage)
 Object *DecodeListItemGfx (struct Screen *scr, STRPTR file)
 {
 	Object *dt;
-	if(dt = NewDTObject(file,
+	if((dt = NewDTObject(file,
 		DTA_GroupID,				  GID_PICTURE,
 		PDTA_DestMode,			  PMODE_V43,
 		PDTA_Remap,					  TRUE,
 		PDTA_FreeSourceBitMap,TRUE,
 		PDTA_Screen,				  scr,
 		PDTA_UseFriendBitMap,	TRUE,
-		TAG_DONE))
+		TAG_DONE)))
 	{
 		DoMethod(dt, DTM_PROCLAYOUT, NULL, FALSE);
 	}
@@ -145,7 +145,7 @@ BOOL SharedData::InitConfig ()
 	Pens[Col_Shine] = _pens(Obj)[MPEN_SHINE];
 	Pens[Col_Shadow] = _pens(Obj)[MPEN_SHADOW];
 
-	if(ListItemMarkers = DecodeListItemGfx(Scr, (STRPTR)GetConfigItem(MUICFG_HTMLview_ListItemFile, "ProgDir:Images/ListItems")))
+	if((ListItemMarkers = DecodeListItemGfx(Scr, (STRPTR)GetConfigItem(MUICFG_HTMLview_ListItemFile, "ProgDir:Images/ListItems"))))
 	{
 		LI_Mask = NULL;
 		struct BitMapHeader *header;
