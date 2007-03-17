@@ -8,7 +8,7 @@ class SuperClass *SuperClass::FindElement (ULONG tagID)
 	return(ID == tagID ? this : NULL);
 }
 
-class AClass *SuperClass::FindAnchor (STRPTR name)
+class AClass *SuperClass::FindAnchor (UNUSED STRPTR name)
 {
 	return(NULL);
 }
@@ -30,7 +30,7 @@ BOOL SuperClass::Layout (struct LayoutMessage &lmsg)
    return TRUE;
 }
 
-VOID SuperClass::AdjustPosition (LONG x, LONG y)
+VOID SuperClass::AdjustPosition (UNUSED LONG x, LONG y)
 {
 	Top += y;
 	Bottom += y;
