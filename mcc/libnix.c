@@ -16,7 +16,7 @@
 
  HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
 
- $Id: library.c 6 2007-03-12 07:33:29Z damato $
+ $Id: rev.h,v 1.4 2005/04/11 03:04:38 tactica Exp $
 
 ***************************************************************************/
 

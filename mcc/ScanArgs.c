@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -140,7 +140,6 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 									if(*value == '#')
 									{
 										WORD t_char = 0;
-										BOOL scanning = TRUE;
 										UWORD i = 1;
 										do {
 
@@ -201,8 +200,9 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 					case ARG_NUMBER:
 					{
 						if(isdigit(*value))
-								sscanf(value, "%d", args[i].Storage);
-						else	*((ULONG *)args[i].Storage) = TRUE;
+						  sscanf(value, "%d", (int*)args[i].Storage);
+						else
+              *((ULONG *)args[i].Storage) = TRUE;
 					}
 					break;
 
@@ -268,7 +268,7 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
 						if((RGB = GetColourInfo(value)))
 							res = (*(ULONG *)RGB) >> 8;
 //							res = (RGB[0] << 16) | (RGB[1] << 8) | RGB[2];
-						else if(sscanf(value, "%*[#]%x%n", &res, &cnt) < 3 || value[cnt])
+						else if(sscanf(value, "%*[#]%x%n", (unsigned int *)&res, (int *)&cnt) < 3 || value[cnt])
 							break;
 
 						*((ULONG *)args[i].Storage) = res;

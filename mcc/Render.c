@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -80,7 +80,8 @@ VOID BltMaskRPort (struct BitMap *source, WORD srcLeft,WORD srcTop, struct RastP
 {
 	if(GetBitMapAttr(source, BMA_FLAGS) & BMF_INTERLEAVED)
 	{
-		struct BitMap mask = { };
+		struct BitMap mask;
+
 		InitBitMap(&mask, 8, GetBitMapAttr(source, BMA_WIDTH), GetBitMapAttr(source, BMA_HEIGHT));
 
 		for(UWORD i = 0; i < 8; i++)

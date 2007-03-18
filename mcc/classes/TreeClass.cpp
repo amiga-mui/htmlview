@@ -1,3 +1,24 @@
+/***************************************************************************
+
+ HTMLview.mcc - HTMLview MUI Custom Class
+ Copyright (C) 1997-2000 Allan Odgaard
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
+
+ $Id$
+
+***************************************************************************/
 
 #include "TreeClass.h"
 #include "TextClass.h"
@@ -121,7 +142,7 @@ VOID TreeClass::GetImages (struct GetImagesMessage &gmsg)
 
 BOOL TreeClass::HitTest (struct HitTestMessage &hmsg)
 {
-	LONG x = hmsg.X, y = hmsg.Y;
+	LONG y = hmsg.Y;
 	BOOL result = FALSE;
 	struct ChildsList *first = FirstChild;
 	while(first && !result)
@@ -177,7 +198,7 @@ BOOL TreeClass::Layout (struct LayoutMessage &lmsg)
 		Flags &= ~FLG_Virgin;
 	}
 
-	BOOL complete = Flags & FLG_AllElementsPresent, waiting = FALSE;
+	BOOL complete = Flags & FLG_AllElementsPresent;
 	struct ChildsList *first = FirstChild;
 	while(first)
 	{
@@ -256,7 +277,7 @@ BOOL TreeClass::UseMap (struct UseMapMessage &umsg)
 			def_match = TRUE;
 		first = first->Next;
 	}
-	return(def_match ? RC_ExactMatch : result);
+	return(def_match ? (BOOL)RC_ExactMatch : result);
 }
 
 BOOL TreeClass::Mark (struct MarkMessage &mmsg)
@@ -553,9 +574,18 @@ APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ...)
 VOID TreeClass::Restore(UBYTE *opencounts, ULONG len, APTR handle)
 {
 	UWORD *counts = (UWORD *)handle;
+
 	while(len--)
-		opencounts[*counts++] = *counts++;
-	delete handle;
+  {
+    UBYTE count1 = *counts;
+    counts++;
+    UBYTE count2 = *counts;
+
+    opencounts[count1] = count2;
+    counts++;
+  }
+	
+  delete handle;
 }
 
 LONG TreeClass::AllocPen(struct ColorMap *cmap, LONG t_rgb)

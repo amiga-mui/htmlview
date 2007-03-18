@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -25,15 +25,15 @@
 
 struct TNode
 {
-	TNode (STRPTR str, APTR data);
+	TNode(CONST_STRPTR str, CONST_APTR data);
 	virtual ~TNode ();
-	struct TNode *TInsert (STRPTR str, APTR data);
+	struct TNode *TInsert(CONST_STRPTR str, CONST_APTR data);
 
 	struct TNode *Left, *Right;
 	union
 	{
 		struct TNode *Middle;
-		APTR Data;
+		CONST_APTR Data;
 	};
 
 	UBYTE SplitChar, _pad[3];

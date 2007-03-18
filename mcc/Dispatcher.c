@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -115,6 +115,8 @@ HOOKPROTONH(DefaultLoadFunc, ULONG, Object* htmlview, struct HTMLview_LoadMsg* l
 		}
 		break;
 	}
+
+  return 0;
 }
 MakeStaticHook(DefaultLoadHook, DefaultLoadFunc);
 
@@ -156,7 +158,9 @@ HOOKPROTO(LayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
 			struct HTMLviewData *data = (struct HTMLviewData *)hook->h_Data;
 
 			BOOL frames = (data->Height != lmsg->lm_Layout.Height && data->HostObject && data->HostObject->Body && data->HostObject->Body->id() == tag_FRAMESET);
-			data->Height = lmsg->lm_Layout.Height;
+			
+      data->Height = lmsg->lm_Layout.Height;
+
 			if(data->Width != lmsg->lm_Layout.Width || frames || data->Share->Flags & FLG_NewConfig)
 			{
 				data->Width = lmsg->lm_Layout.Width;
@@ -278,7 +282,7 @@ DISPATCHER(_Dispatcher)
 					data->ihnode.ihn.ihn_Flags   = 0L;
 					data->ihnode.ihn.ihn_Method  = MUIM_HTMLview_ExtMessage;
 
-					sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", obj);
+					sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", (ULONG)obj);
 
 					struct TagItem *tag;
 					if((tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList)))
@@ -512,7 +516,7 @@ DISPATCHER(_Dispatcher)
 					data->TopChange = 0;
 				}
 
-				if(top < data->Height)
+				if(top < (LONG)data->Height)
 				{
 					APTR Cliphandle = NULL;
 					if(top)
@@ -903,7 +907,7 @@ DISPATCHER(_Dispatcher)
 			delete comp_url;
 
 			char str_args[10];
-			sprintf(str_args, "%lx", args);
+			sprintf(str_args, "%lx", (ULONG)args);
 
 			data->ParseThread = CreateNewProcTags(
 				NP_Entry, ParseThread,

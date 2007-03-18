@@ -1,3 +1,24 @@
+/***************************************************************************
+
+ HTMLview.mcc - HTMLview MUI Custom Class
+ Copyright (C) 1997-2000 Allan Odgaard
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
+
+ $Id$
+
+***************************************************************************/
 
 #include "TextClass.h"
 
@@ -32,7 +53,7 @@ class TextClass *TextClass::Find (struct FindMessage &fmsg)
 	}
 	else
 	{
-		if(Font && Bottom - Font->tf_YSize > fmsg.TopPos)
+		if(Font != NULL && Bottom - Font->tf_YSize > (LONG)fmsg.TopPos)
 		{
 			BYTE *map = fmsg.SearchMap;
 			LONG skip, len = fmsg.StrLength;
@@ -84,14 +105,14 @@ BOOL TextClass::HitTest (struct HitTestMessage &hmsg)
 			if((Flags & FLG_Text_Pre) && contents[length-1] == '\n')
 				length--;
 
-			ULONG top = line->Baseline - Font->tf_Baseline;
+			LONG top = line->Baseline - Font->tf_Baseline;
 			if(y < top)
 				break;
 
 			if(y < top+Font->tf_YSize && x >= line->Left)
 			{
 				width = MyTextLength(Font, contents, length);
-				if(x < line->Left + width)
+				if(x < (LONG)(line->Left + width))
 					return(TRUE);
 			}
 			contents += line->Length;
@@ -191,6 +212,8 @@ BOOL TextClass::Layout (struct LayoutMessage &lmsg)
 	}	while(length);
 
 	Flags |= FLG_WaitingForSize;
+
+  return TRUE;
 }
 
 VOID TextClass::AdjustPosition (LONG x, LONG y)
@@ -301,13 +324,14 @@ LONG TextClass::FindChar (LONG x, LONG y, BOOL newline)
 {
 	STRPTR contents = Contents;
 	struct TextLineInfo *line = LineInfo;
+
 	while(line)
 	{
 		ULONG length = line->Length, width;
 		if((Flags & FLG_Text_Pre) && contents[length-1] == '\n')
 			length--;
 
-		ULONG top = line->Baseline - Font->tf_Baseline;
+		LONG top = line->Baseline - Font->tf_Baseline;
 		if(y < top)
 			break;
 
@@ -317,9 +341,10 @@ LONG TextClass::FindChar (LONG x, LONG y, BOOL newline)
 			if(x >= line->Left)
 			{
 				width = MyTextLength(Font, contents, length);
-				if(x < line->Left + width)
-						result = MyTextFit(Font, contents, length, x - line->Left, 1);
-				else	result = line->Next ? length : -1;
+				if(x < (LONG)(line->Left + width))
+				  result = MyTextFit(Font, contents, length, x - line->Left, 1);
+				else
+          result = line->Next ? (LONG)length : -1;
 			}
 			return(result != -1 ? result + (contents - Contents) : -1);
 		}
@@ -386,13 +411,13 @@ VOID TextClass::MinMax (struct MinMaxMessage &mmsg)
 
 			if(Contents[l+i] == '\n')
 			{
-				mmsg.Min = max(mmsg.X, mmsg.Min);
+				mmsg.Min = max(mmsg.X, (ULONG)mmsg.Min);
 				mmsg.Newline();
 				l++;
 			}
 			l += i;
 		}
-		mmsg.Min = max(mmsg.X, mmsg.Min);
+		mmsg.Min = max(mmsg.X, (ULONG)mmsg.Min);
 	}
 	else
 	{
@@ -405,7 +430,7 @@ VOID TextClass::MinMax (struct MinMaxMessage &mmsg)
 			while(Contents[i+length] && Contents[i+length] != ' ')
 				length++;
 
-			mmsg.Min = max(mmsg.Indent + MyTextLength(mmsg.Font, Contents+i, length), mmsg.Min);
+			mmsg.Min = max(mmsg.Indent + MyTextLength(mmsg.Font, Contents+i, length), (ULONG)mmsg.Min);
 
 			i += length;
 			if(Contents[i] == ' ')
@@ -480,15 +505,15 @@ VOID TextClass::Parse(REG(a2, struct ParseMessage &pmsg))
 				if(*src == '#')
 				{
 					WORD t_char = 0;
-					BOOL scanning = TRUE;
 					UWORD i = 1;
-					do {
 
+					do
+          {
 						t_char *= 10;
 						t_char += src[i]-'0';
 						i++;
-
-					}	while(src[i] != ';' && i < 4);
+					}
+          while(src[i] != ';' && i < 4);
 
 					if(src[i++] == ';' && t_char < 256)
 					{

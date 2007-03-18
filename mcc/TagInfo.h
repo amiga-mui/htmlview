@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ BOOL IsWhitespace (REG(d0) UBYTE c);
 
 extern UBYTE TagEndTable [];
 extern UBYTE WhitespaceTable [];
-#define IsWhitespace(c) WhitespaceTable[c]
+#define IsWhitespace(c) WhitespaceTable[(ULONG)c]
 #define TagEnd(c) TagEndTable[c]
 
 extern struct TagInfo TagTable[];
@@ -43,19 +43,20 @@ extern struct TagInfo TagTable[];
 
 struct TagInfo
 {
-	STRPTR	Name;
-	UBYTE		Flags;
-	UBYTE		ID, Group;
-	APTR		GetData () { return this; }
+	CONST_STRPTR	Name;
+	CONST UBYTE		Flags;
+	CONST UBYTE		ID;
+  CONST UBYTE   Group;
+	CONST_APTR		GetData () { return this; }
 };
 
-#define FLG_Inline			(1 << 0)
-#define FLG_EndRequired    (1 << 1)
-#define FLG_NoNesting		(1 << 2)
-#define FLG_NoChilds			(1 << 3)
-#define FLG_Depreciated		(1 << 4)
-#define FLG_Blocklevel		(1 << 5)
-#define FLG_NoGroupNesting	(1 << 6)
+#define FLG_Inline			    (1<<0)
+#define FLG_EndRequired     (1<<1)
+#define FLG_NoNesting		    (1<<2)
+#define FLG_NoChilds			  (1<<3)
+#define FLG_Depreciated		  (1<<4)
+#define FLG_Blocklevel		  (1<<5)
+#define FLG_NoGroupNesting	(1<<6)
 
 enum
 {

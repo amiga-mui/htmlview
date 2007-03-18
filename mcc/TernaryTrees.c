@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@
 
 #define QToUpper(c) ((c >= 'a' && c <= 'z') ? c-('a'-'A') : c)
 
-TNode::TNode (STRPTR str, APTR data)
+TNode::TNode(CONST_STRPTR str, CONST_APTR data)
 {
 	if((SplitChar = *str))
 			Middle = new TNode(str+1, data);
@@ -42,7 +42,7 @@ TNode::~TNode ()
 	delete Right;
 }
 
-struct TNode *TNode::TInsert (STRPTR str, APTR data)
+struct TNode *TNode::TInsert(CONST_STRPTR str, CONST_APTR data)
 {
 	struct TNode *res;
 

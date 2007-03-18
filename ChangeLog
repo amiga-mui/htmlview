@@ -5,6 +5,13 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc/mcp: fixed another bunch of compiler warnings. Now compiling the mcc
+    should be quite silent which in fact will hopefully make it easier to hunt
+    the rest of the issues preventing the MCC from working. In addition, all files
+    should now contain the proper LGPL header.
+
 2007-03-17  Ilkka Lehtoranta <ilkleht@isoveli.org>
 
   * mcc: now compiles using GCC2. All user CPP con/destructor functions are now
