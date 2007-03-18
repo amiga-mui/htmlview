@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -570,7 +570,7 @@ DISPATCHER(DecoderDispatcher)
 
 			if(data->BytesInBuffer)
 			{
-				LONG size = min(data->BytesInBuffer, left);
+				LONG size = min((LONG)data->BytesInBuffer, left);
 				left -= size;
 				data->BytesInBuffer -= size;
 			}
@@ -697,14 +697,14 @@ struct Args
 
 struct DecoderInfo
 {
-	STRPTR Name;
-	BOOL(*MatchFunc)(UBYTE *);
+	CONST_STRPTR Name;
+	BOOL (*MatchFunc)(UBYTE *);
 	struct Library *Base;
 	struct IClass *Class;
 };
 
-BOOL MatchGIF (UBYTE *x) { return(*((ULONG *)x) == 'GIF8'); }
-BOOL MatchJPG (UBYTE *x) { return(*((ULONG *)x) == 0xFFD8FFE0 && (*((ULONG *)(((UBYTE *)x) + 6)) == 'JFIF')); }
+BOOL MatchGIF (UBYTE *x) { return(*((ULONG *)x) == MAKE_ID('G','I','F','8')); }
+BOOL MatchJPG (UBYTE *x) { return(*((ULONG *)x) == 0xFFD8FFE0 && (*((ULONG *)(((UBYTE *)x) + 6)) == MAKE_ID('J','F','I','F'))); }
 BOOL MatchPNG (UBYTE *x) { return(*((ULONG *)x) == 0x89504e47 && ((ULONG *)x)[1] == 0x0d0a1a0a); }
 BOOL MatchDT  (UBYTE *x) { return(TRUE); }
 #define GIFDecoder "gif.decoder"
@@ -718,26 +718,26 @@ struct DecoderInfo Decoders[] =
 	{ JPGDecoder, MatchJPG, NULL, NULL },
 	{ PNGDecoder, MatchPNG, NULL, NULL },
 	{ DTDecoder,  MatchDT,  NULL, NULL },
-	{ NULL }
+	{ NULL,       NULL,     NULL, NULL }
 };
 
-STRPTR DecoderPaths[] =
+CONST_STRPTR DecoderPaths[] =
 {
 	"MUI:Libs/MUI/HTMLview/",
-	"Libs:MUI/HTMLview/",
+	"LIBS:MUI/HTMLview/",
 	"MUI:HTMLview/",
-	"ProgDir:Decoders/",
-	"ProgDir:MUI/HTMLview/",
-	"Libs:Decoders/",
+	"PROGDIR:Decoders/",
+	"PROGDIR:MUI/HTMLview/",
+	"LIBS:Decoders/",
 	NULL
 };
 
 struct SignalSemaphore DecoderMutex;
 
-static struct Library *ClassOpen(STRPTR decoder)
+static struct Library *ClassOpen(CONST_STRPTR decoder)
 {
 	struct Library *result;
-	STRPTR *path = DecoderPaths;
+	CONST_STRPTR *path = DecoderPaths;
 
 	do {
 
@@ -745,7 +745,6 @@ static struct Library *ClassOpen(STRPTR decoder)
 		strcpy(name, *path++);
 		strcat(name, decoder);
 
-    #warning "was ist OldOpenLibrary???"
 		result = OpenLibrary(name, 0);
 
 	}	while(!result && *path);
@@ -825,7 +824,7 @@ extern "C"
 VOID DecoderThread(REG(a0, STRPTR arguments))
 {
 	struct Args *args;
-	sscanf(arguments, "%x", &args);
+	sscanf(arguments, "%x", (unsigned int*)&args);
 
 	BOOL result = FALSE;
 	struct ImageList *image = args->Img;
@@ -852,7 +851,6 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
 		loadmsg.lm_Read.Size = 10;
 		ULONG len = CallHookA(loadhook, args->Obj, &loadmsg);
 
-#ifndef __amigaos4__
 		Object *decoder = NewDecoderObject(buf,
 			IDA_StartBuffer,		buf,
 			IDA_BytesInBuffer,	len,
@@ -872,7 +870,6 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
 			result = DoMethod(decoder, IDM_Decode);
 			DisposeObject(decoder);
 		}
-#endif
 
 		loadmsg.lm_Type = HTMLview_Close;
 		CallHookA(loadhook, args->Obj, &loadmsg);
@@ -920,7 +917,7 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
 
 		struct Args *args = new struct Args(obj, data, image, lock, sigbit, FindTask(NULL));
 		char str_args[10];
-		sprintf(str_args, "%lx", args);
+		sprintf(str_args, "%lx", (ULONG)args);
 
 		STRPTR taskname = FBlit ? (char *)"HTMLview ImageDecoder" : args->TaskName;
 		if(CreateNewProcTags(

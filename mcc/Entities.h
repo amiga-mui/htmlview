@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -31,9 +31,9 @@ struct EntityInfo *GetEntityInfo (CONST_STRPTR entity);
 
 struct EntityInfo
 {
-	STRPTR	Name;
-	UBYTE		ByteCode;
-	APTR		GetData () { return this; }
+	CONST_STRPTR	Name;
+  CONST UBYTE		ByteCode;
+	CONST_APTR		GetData () { return this; }
 };
 
 #endif

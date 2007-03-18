@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -86,17 +86,17 @@ VOID ObtainShineShadowPens (struct ColorMap *cmap, ULONG rgb, LONG &shine, LONG 
 		bright_g = min(255, dark_g+32);
 		bright_b = min(255, dark_b+32);
 
-		dark_r = max(0, dark_r-64);
-		dark_g = max(0, dark_g-64);
-		dark_b = max(0, dark_b-64);
+		dark_r = max(0, (LONG)dark_r-64);
+		dark_g = max(0, (LONG)dark_g-64);
+		dark_b = max(0, (LONG)dark_b-64);
 	}
 	else
 	{
 		if(intencity < 32)
 		{
-			dark_r = max(0, bright_r);
-			dark_g = max(0, bright_g);
-			dark_b = max(0, bright_b);
+			dark_r = max(0, (LONG)bright_r);
+			dark_g = max(0, (LONG)bright_g);
+			dark_b = max(0, (LONG)bright_b);
 
 			bright_r = min(255, bright_r+64);
 			bright_g = min(255, bright_g+64);

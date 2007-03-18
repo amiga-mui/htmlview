@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
 
  HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
 
- $Id: Layout.h 2 2007-03-08 08:09:26Z damato $
+ $Id: rev.h,v 1.4 2005/04/11 03:04:38 tactica Exp $
 
 ***************************************************************************/
 

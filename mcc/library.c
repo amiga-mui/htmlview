@@ -169,7 +169,6 @@ VOID ClassExpungeFunc(UNUSED struct Library *base)
   LEAVE();
 }
 
-/////////////////////////////////////////////////////////////////////////////////
 // In this section we setup specfic C++ related things. In fact, we initialize
 // the vtables for various classes, including running certain constructors
 // defined by the C-runtime libraries involved

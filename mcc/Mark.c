@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -63,7 +63,7 @@ VOID MarkMessage::CloseTheClipboard ()
 	delete ClipBuffer;
 
 	ULONG len = ClipReq->io_Offset - 20;
-	ULONG IFF_Head[] = { 'FORM', (len + 13) & ~1, 'FTXT', 'CHRS', len };
+	ULONG IFF_Head[] = { MAKE_ID('F','O','R','M'), (len + 13) & ~1, MAKE_ID('F','T','X','T'), MAKE_ID('C','H','R','S'), len };
 
 	ClipReq->io_Offset	= 0;
 	ClipReq->io_Data		= (STRPTR)IFF_Head;
@@ -83,7 +83,7 @@ VOID MarkMessage::WriteLF ()
 	WriteText("\n", 1);
 }
 
-VOID MarkMessage::WriteText (STRPTR text, ULONG len)
+VOID MarkMessage::WriteText(CONST_STRPTR text, ULONG len)
 {
 	if(Copy)
 	{
@@ -97,8 +97,8 @@ VOID MarkMessage::WriteText (STRPTR text, ULONG len)
 		}
 		else
 		{
-			ClipReq->io_Data		= text;
-			ClipReq->io_Length	= len;
+			ClipReq->io_Data	 = (STRPTR)text;
+			ClipReq->io_Length = len;
 			DoIO(IOReq);
 		}
 	}

@@ -1,8 +1,8 @@
 /***************************************************************************
 
- TextEditor.mcc - Textediting MUI Custom Class
+ HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005-2007 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
+ HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
 
  $Id$
 
@@ -56,10 +56,10 @@ void SetupDebug(void)
 {
   char var[256];
 
-  kprintf("** TextEditor.mcp v" LIB_REV_STRING " startup ***********************\n");
+  kprintf("** HTMLview.mcp v" LIB_REV_STRING " startup ***********************\n");
   kprintf("Initializing runtime debugging:\n");
 
-	if(GetVar("texteditor.mcp.debug", var, sizeof(var), 0) > 0)
+	if(GetVar("htmlview.mcp.debug", var, sizeof(var), 0) > 0)
 	{
 		char *tok;
     char *debug = var;
@@ -163,7 +163,7 @@ void SetupDebug(void)
 		}
 	}
 
-	kprintf("set debug classes/flags (env:texteditor.mcp.debug): %08x/%08x\n", debug_classes, debug_flags);
+	kprintf("set debug classes/flags (env:htmlview.mcp.debug): %08x/%08x\n", debug_classes, debug_flags);
   kprintf("** Normal processing follows ***************************************\n");
 }
 

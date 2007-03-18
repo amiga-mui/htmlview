@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -78,7 +78,7 @@ VOID Layout (ULONG width, ULONG height, struct ScrollGroupData *data, struct MUI
 	}
 }
 
-HOOKPROTO(ScrollGroupLayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
+HOOKPROTONH(ScrollGroupLayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
 {
 	switch(lmsg->lm_Type)
 	{
@@ -100,6 +100,8 @@ HOOKPROTO(ScrollGroupLayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
 		}
 		return(TRUE);
 	}
+
+  return 0;
 }
 MakeHook(ScrollGroupLayoutHook, ScrollGroupLayoutCode);
 
@@ -108,7 +110,7 @@ ULONG GetConfigItemA (Object *obj, ULONG item, ULONG def_value, BOOL de_ref = FA
 
 DISPATCHER(ScrollGroupDispatcher)
 {
-	ULONG result = NULL;
+	ULONG result = 0;
 	struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(cl, obj);
 
 	switch(msg->MethodID)
@@ -133,12 +135,13 @@ DISPATCHER(ScrollGroupDispatcher)
 
 			struct TagItem tags[] =
 			{
-				MUIA_Group_LayoutHook, (ULONG)&ScrollGroupLayoutHook,
-				MUIA_Virtgroup_Input, FALSE,
-				Child, (ULONG)RightScroll,
-				Child, (ULONG)BottomScroll,
-				Child, (ULONG)Knob,
-				TAG_MORE, (ULONG)nmsg->ops_AttrList
+				{ MUIA_Group_LayoutHook, (ULONG)&ScrollGroupLayoutHook },
+				{ MUIA_Virtgroup_Input,  FALSE },
+				{ Child,                 (ULONG)RightScroll },
+				{ Child,                 (ULONG)BottomScroll },
+				{ Child,                 (ULONG)Knob },
+				{ TAG_MORE,              (ULONG)nmsg->ops_AttrList },
+        { TAG_DONE,              TAG_END }
 			};
 
 			if((obj = (Object *)DoSuperMethod(cl, obj, OM_NEW, tags, nmsg->ops_GInfo)))
@@ -353,15 +356,17 @@ DISPATCHER(ScrollGroupDispatcher)
 //			set(data->RightScroll, MUIA_Prop_Entries, height);
 
 			ULONG flags = data->Flags;
-			if(_width(data->HTMLview) < width)
-					flags |= FLG_BottomVisible;
-			else	flags &= ~FLG_BottomVisible;
+			if(_width(data->HTMLview) < (LONG)width)
+			  flags |= FLG_BottomVisible;
+			else
+        flags &= ~FLG_BottomVisible;
 
 			if(!(data->Flags & FLG_HorizAuto))
 			{
-				if(_height(data->HTMLview) < height)
-						flags |= FLG_RightVisible;
-				else	flags &= ~FLG_RightVisible;
+				if(_height(data->HTMLview) < (LONG)height)
+				  flags |= FLG_RightVisible;
+				else
+          flags &= ~FLG_RightVisible;
 			}
 
 			if(flags != data->Flags)

@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -81,7 +81,7 @@ VOID PrintTag (STRPTR tag)
 VOID ParseThread(REG(a0, STRPTR arguments))
 {
 	struct ParseThreadArgs *args;
-	if(sscanf(arguments, "%x", &args))
+	if(sscanf(arguments, "%x", (unsigned int *)&args))
 	{
 		struct Hook *loadhook = args->Data->LoadHook;
 

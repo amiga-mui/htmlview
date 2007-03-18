@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 #include "IM_Output.h"
 #include "General.h"
 
-#warning "FAST_DITHER aus!"
+#warning "FAST_DITHER is off, check!"
 //#define FAST_DITHER
 
 VOID TrueColourEngine::RenderLine (struct RGBPixel *dstline, ULONG y)
@@ -102,7 +102,7 @@ VOID LowColourNDEngine::RenderLine (struct RGBPixel *dstline, ULONG y)
 	UBYTE *chunky = ChunkyLine;
 
 	struct ColourManager *cmap = CMap;
-	for(WORD x = 0; x < DstWidth; x++)
+	for(ULONG x = 0; x < DstWidth; x++)
 		*chunky++ = cmap->Allocated[(*dstline++).Index()];
 
 	RenderObj.WriteLine(DstWidth, ChunkyLine, y);

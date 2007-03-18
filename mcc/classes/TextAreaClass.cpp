@@ -1,3 +1,24 @@
+/***************************************************************************
+
+ HTMLview.mcc - HTMLview MUI Custom Class
+ Copyright (C) 1997-2000 Allan Odgaard
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
+
+ $Id$
+
+***************************************************************************/
 
 #include "TextAreaClass.h"
 
@@ -70,7 +91,7 @@ BOOL TextAreaClass::Layout (struct LayoutMessage &lmsg)
 			Width = _minwidth(MUIGadget);
 			Height = _minheight(MUIGadget);
 
-			if(Width > lmsg.ScrWidth())
+			if(Width > (ULONG)lmsg.ScrWidth())
 				lmsg.EnsureNewline();
 
 			Left = lmsg.X;
@@ -87,6 +108,8 @@ BOOL TextAreaClass::Layout (struct LayoutMessage &lmsg)
 			Flags |= FLG_WaitingForSize;
 		}
 	}
+
+  return TRUE;
 }
 VOID TextAreaClass::AdjustPosition (LONG x, LONG y)
 {
@@ -102,7 +125,7 @@ VOID TextAreaClass::MinMax (struct MinMaxMessage &mmsg)
 	{
 		ULONG width = _minwidth(MUIGadget);
 		mmsg.X += width;
-		mmsg.Min = max(width, mmsg.Min);
+		mmsg.Min = max(width, (ULONG)mmsg.Min);
 	}
 }
 
@@ -117,12 +140,12 @@ VOID TextAreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
 	BOOL disabled = FALSE, readonly = FALSE;
 	struct ArgList args[] =
 	{
-		{ "NAME",		&Name,		ARG_STRING, NULL	},
+		{ "NAME",		  &Name,		  ARG_STRING, NULL	},
 		{ "DISABLED",	&disabled,	ARG_SWITCH, NULL	},
 		{ "READONLY",	&readonly,	ARG_SWITCH, NULL	},
-		{ "COLS",		&Columns,	ARG_NUMBER, NULL	},
-		{ "ROWS",		&Rows,		ARG_NUMBER, NULL	},
-		{ NULL, NULL, NULL, NULL }
+		{ "COLS",		  &Columns,	  ARG_NUMBER, NULL	},
+		{ "ROWS",		  &Rows,		  ARG_NUMBER, NULL	},
+		{ NULL,       NULL,       0,          NULL }
 	};
 
 	Rows = 10; Columns = 40;

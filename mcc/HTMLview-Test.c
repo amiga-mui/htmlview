@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -77,12 +77,14 @@ HOOKPROTONH(GotoURLCode, ULONG, Object* htmlview, STRPTR *url)
 	STRPTR target = (STRPTR)xget(htmlview, MUIA_HTMLview_Target);
 	
   DoMethod(htmlview, MUIM_HTMLview_GotoURL, *url, target);
+
+  return 0;
 }
 MakeStaticHook(GotoURLHook, GotoURLCode);
 
 Object *BuildApp(void)
 {
-	static STRPTR classes[] = { "HTMLview.mcc", "TextEditor.mcc", "BetterString.mcc", NULL };
+	static CONST_STRPTR classes[] = { "HTMLview.mcc", "TextEditor.mcc", "BetterString.mcc", NULL };
 	Object *app, *win, *urlstring, *gauge, *htmlview, *vscroll, *hscroll, *infotext;
 	Object *alien, *mcp, *scalos, *sysspeed, *konsollen, *p96;
 	Object *searchstr;
@@ -91,16 +93,16 @@ Object *BuildApp(void)
   ENTER();
 
 	if((app = ApplicationObject,
-		MUIA_Application_Author,		"Allan Odgaard",
-		MUIA_Application_Base,			"HTMLview-Demo",
-		MUIA_Application_Copyright,	"®1998 Allan Odgaard",
+		MUIA_Application_Author,		  "HTMLview.mcc Open Source Team",
+		MUIA_Application_Base,			  "HTMLview-Test",
+		MUIA_Application_Copyright,	  "(c) 2000-2007 HTMLview.mcc Open Source Team",
 		MUIA_Application_Description,	"HTML-display custom class",
-		MUIA_Application_Title,			"HTMLview",
-		MUIA_Application_Version,		"$VER: HTMLview V0.1ß (" __DATE__ ")",
-		//MUIA_Application_UsedClasses, classes,
+		MUIA_Application_Title,			  "HTMLview.mcc",
+		MUIA_Application_Version,		  "$VER: HTMLview-Test V0.1 (" __DATE__ ")",
+		MUIA_Application_UsedClasses, classes,
 
 		SubWindow, win = WindowObject,
-			MUIA_Window_ID, 'MAIN',
+			MUIA_Window_ID,    MAKE_ID('M','A','I','N'),
 			MUIA_Window_Title, "HTMLview-Demo",
 			MUIA_Window_DefaultObject, htmlview,
 			MUIA_Window_UseBottomBorderScroller, TRUE,
@@ -269,7 +271,7 @@ VOID MainLoop (Object *app)
 
   ENTER();
 
-	while(DoMethod(app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)
+	while((LONG)DoMethod(app, MUIM_Application_NewInput, &sigs) != MUIV_Application_ReturnID_Quit)
 	{
 		if(sigs)
 		{

@@ -863,7 +863,7 @@ static BOOL UserLibClose(struct Library *base)
 /*****************************************************************************************************/
 /*****************************************************************************************************/
 
-static BOOL UserLibExpunge(struct Library *base)
+static BOOL UserLibExpunge(UNUSED struct Library *base)
 {
   VOID ClassExpungeFunc(struct Library *base);
 

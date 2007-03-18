@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,7 @@ static BOOL GetFont (Object *Obj, ULONG item, CONST_STRPTR def_value, struct Tex
 	ULONG size;
 	char base[200];
 	STRPTR font = (STRPTR)GetConfigItem(item, def_value);
-	if(2 == sscanf(font, "%[^/]/%d", base, &size))
+	if(2 == sscanf(font, "%[^/]/%ld", base, &size))
 	{
 		strcat(base, ".font");
 		struct TextAttr ta = { base, size, 0, 0 };
@@ -159,7 +159,7 @@ BOOL SharedData::InitConfig ()
 	}
 
 	struct TextFont *font = Fonts[Font_Normal];
-	HDeltaFactor = MyTextLength(font, "n", 1);
+	HDeltaFactor = MyTextLength(font, (STRPTR)"n", 1);
 	VDeltaFactor = font->tf_YSize + 1;
 
 	if(newconfig)
