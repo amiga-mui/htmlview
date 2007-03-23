@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-03-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * #?/Debug.c: fixed wrong final output of debug classes and flags.
+
 2007-03-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc/mcp: fixed another bunch of compiler warnings. Now compiling the mcc
