@@ -149,7 +149,7 @@ ifeq ($(OS), os4)
 
   # Compiler/link/strip commands
   CC      = ppc-amigaos-gcc
-  CPP     = ppc-amigaos-g++
+  CXX     = ppc-amigaos-g++
   STRIP   = ppc-amigaos-strip
   OBJDUMP = ppc-amigaos-objdump
 
@@ -170,7 +170,7 @@ ifeq ($(OS), os3)
 
   # Compiler/link/strip commands
   CC      = m68k-amigaos-gcc
-  CPP     = m68k-amigaos-g++
+  CXX     = m68k-amigaos-g++
   STRIP   = m68k-amigaos-strip
   OBJDUMP = m68k-amigaos-objdump
 
@@ -188,7 +188,7 @@ ifeq ($(OS), mos)
 
   # Compiler/link/strip commands
   CC      = ppc-morphos-gcc
-  CPP     = ppc-morphos-g++
+  CXX     = ppc-morphos-g++
   STRIP   = ppc-morphos-strip
   OBJDUMP = ppc-morphos-objdump
 
@@ -206,7 +206,7 @@ ifeq ($(OS), aros)
 
   # Compiler/link/strip commands
   CC      = i686-aros-gcc
-  CPP     = i686-aros-g++
+  CXX     = i686-aros-g++
   STRIP   = i686-aros-strip
   OBJDUMP = i686-aros-objdump
 
@@ -397,11 +397,11 @@ $(BINDIR):
 
 $(OBJDIR)/%.o: %.c
 	@printf '\033[32mCompiling $<\033[0m\n'
-	@$(CPP) $(CFLAGS) $< -o $@
+	@$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o: %.cpp
 	@printf '\033[32mCompiling $<\033[0m\n'
-	@$(CPP) $(CFLAGS) $< -o $@
+	@$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/mccclass_68k.o: ../include/mccclass_68k.c
 	@printf '\033[32mCompiling $<\033[0m\n'
@@ -415,12 +415,12 @@ $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 
 $(MCCTARGET): $(M68KSTUBS) $(MCCOBJS)
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
-	@$(CPP) -nostartfiles $(LDFLAGS) -o $@.debug $(MCCOBJS) $(M68KSTUBS) $(LDLIBS)
+	@$(CXX) -nostartfiles $(LDFLAGS) -o $@.debug $(MCCOBJS) $(M68KSTUBS) $(LDLIBS)
 	@$(STRIP) -R .comment -S -o $@ $@.debug
 
 $(TESTTARGET): $(TESTOBJS) $(OBJDIR)/HTMLview-Test.o
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
-	@$(CPP) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS)
+	@$(CXX) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS)
 	@$(STRIP) -R .comment -S -o $@ $@.debug
 
 $(OBJDIR)/library.o: library.c ../include/mccheader.c \
