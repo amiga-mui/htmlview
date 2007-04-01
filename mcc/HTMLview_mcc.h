@@ -36,8 +36,6 @@
   * documented attributes and methods
   */
 
-/** Private 
-  */
 #define MUIM_HTMLview_ExtMessage          HTMLview_ID(1)		/* Private */
 
 /**
@@ -73,8 +71,6 @@
   */
 #define MUIM_HTMLview_GotoURL             HTMLview_ID(2)
 
-/** Private 
-  */
 #define MUIM_HTMLview_Period              HTMLview_ID(3)		/* Private */
 
 /**
@@ -144,16 +140,8 @@
   */
 #define MUIA_HTMLview_CurrentURL          HTMLview_ID(7)
 
-/** Private 
-  */
 #define MUIM_HTMLview_LoadImages          HTMLview_ID(8)    /* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_AddPart             HTMLview_ID(10)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_DrawImages          HTMLview_ID(11)	/* Private */
 
 /**
@@ -303,16 +291,8 @@
   */
 #define MUIM_HTMLview_Parsed              HTMLview_ID(16)
 
-/** Private 
-  */
 #define MUIM_HTMLview_PrivateGotoURL      HTMLview_ID(18)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_AbortAll            HTMLview_ID(19)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_LookupFrame         HTMLview_ID(20)	/* Private */
 
 /**
@@ -334,16 +314,8 @@
   */
 #define MUIA_HTMLview_Target              HTMLview_ID(21)
 
-/** Private 
-  */
 #define MUIA_HTMLview_FrameName           HTMLview_ID(22)	/* Private */
-
-/** Private 
-  */
 #define MUIA_HTMLview_MarginWidth         HTMLview_ID(23)	/* Private */
-
-/** Private 
-  */
 #define MUIA_HTMLview_MarginHeight        HTMLview_ID(24)	/* Private */
 
 /**
@@ -363,20 +335,9 @@
   */
 #define MUIM_HTMLview_Reload              HTMLview_ID(25)
 
-/** Private 
-  */
 #define MUIM_HTMLview_StartParser         HTMLview_ID(26)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_HandleEvent         HTMLview_ID(27)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_RemoveChildren      HTMLview_ID(28)	/* Private */
-
-/** Currently Undocumented
-  */
 #define MUIA_HTMLview_IPC                 HTMLview_ID(29)
 
 /**
@@ -446,8 +407,6 @@
   */
 #define MUIM_HTMLview_Search              HTMLview_ID(31)
 
-/** Private 
-  */
 #define MUIA_HTMLview_IntuiTicks          HTMLview_ID(32)	/* Private */
 
 /**
@@ -564,12 +523,7 @@
   */
 #define MUIA_HTMLview_Scrollbars          HTMLview_ID(35)
 
-/** Private 
-  */
 #define MUIM_HTMLview_StartRefreshTimer   HTMLview_ID(36)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_Refresh             HTMLview_ID(38)	/* Private */
 
 /**
@@ -611,8 +565,6 @@
   */
 #define MUIM_HTMLview_GetContextInfo      HTMLview_ID(39)
 
-/** Private 
-  */
 #define MUIM_HTMLview_HitTest             HTMLview_ID(40)	/* Private */
 
 /**
@@ -665,12 +617,7 @@
   */
 #define MUIA_HTMLview_ImageLoadHook       HTMLview_ID(44)
 
-/** Private 
-  */
 #define MUIM_HTMLview_AnimTick            HTMLview_ID(45)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_AddSingleAnim       HTMLview_ID(48)	/* Private */
 
 /**
@@ -710,12 +657,7 @@
   */
 #define MUIM_HTMLview_FlushImage          HTMLview_ID(50)
 
-/** Private 
-  */
 #define MUIA_HTMLview_SharedData          HTMLview_ID(51)	/* Private */
-
-/** Private 
-  */
 #define MUIM_HTMLview_ServerRequest       HTMLview_ID(52)	/* Private */
 
 /**
@@ -787,33 +729,11 @@
   * MUIM_HTMLview_PauseAnims
   */
 #define MUIM_HTMLview_ContinueAnims       HTMLview_ID(55)
-
-/** Currently Undocumented
-  */
 #define MUIM_HTMLview_Post                HTMLview_ID(56)	
-
-/** Private 
-  */
 #define MUIA_HTMLview_InstanceData        HTMLview_ID(57)	/* Private */
-
-/**
-  * See MUIA_HTMLview_Scrollbars
-  */
 #define MUIV_HTMLview_Scrollbars_Auto      0
-
-/**
-  * See MUIA_HTMLview_Scrollbars
-  */
 #define MUIV_HTMLview_Scrollbars_Yes       1
-
-/**
-  * See MUIA_HTMLview_Scrollbars
-  */
 #define MUIV_HTMLview_Scrollbars_No        2
-
-/**
-  * See MUIA_HTMLview_Scrollbars
-  */
 #define MUIV_HTMLview_Scrollbars_HorizAuto 3
 
 /* Structures */
@@ -824,19 +744,8 @@ struct MUIP_HTMLview_FlushImage
 	STRPTR URL;
 };
 
-/** 
-  * See MUIM_HTMLview_FlushImage 
-  */
 #define MUIV_HTMLview_FlushImage_All           0
-
-/** 
-  * See MUIM_HTMLview_FlushImage 
-  */
 #define MUIV_HTMLview_FlushImage_Displayed     1
-
-/** 
-  * See MUIM_HTMLview_FlushImage 
-  */
 #define MUIV_HTMLview_FlushImage_Nondisplayed  2
 
 struct MUIP_HTMLview_GetContextInfo
@@ -884,29 +793,10 @@ struct MUIP_HTMLview_Search
 	ULONG Flags;
 };
 
-/**
-  * See MUIM_HTMLview_Search 
-  */
 #define MUIF_HTMLview_Search_CaseSensitive (1 << 0)
-
-/**
-  * See MUIM_HTMLview_Search 
-  */
 #define MUIF_HTMLview_Search_DOSPattern    (1 << 1)
-
-/**
-  * See MUIM_HTMLview_Search 
-  */
 #define MUIF_HTMLview_Search_Backwards     (1 << 2)
-
-/**
-  * See MUIM_HTMLview_Search 
-  */
 #define MUIF_HTMLview_Search_FromTop       (1 << 3)
-
-/**
-  * See MUIM_HTMLview_Search 
-  */
 #define MUIF_HTMLview_Search_Next          (1 << 4)
 
 struct HTMLview_LoadMsg
