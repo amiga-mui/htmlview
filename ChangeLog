@@ -7,6 +7,7 @@ $URL$
 
 2007-06-10  Jens Langner <Jens.Langner@light-speed.de>
 
+  * mcp: adapted source to compile with new mccinit.c instead of mccheader.c
   * misc: integrated a large patch kindly provided by Jörg Strohmayer. Beside
     cleaning up the C++/C linkage some cleanups in the library init code should
     make htmlview.mcc less error prone. In addition, some fixes should finally

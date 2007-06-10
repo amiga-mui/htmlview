@@ -26,9 +26,17 @@
 #include "SDI_compiler.h"
 #include "SDI_hook.h"
 
-extern "C" DISPATCHERPROTO(ScrollGroupDispatcher);
-extern "C" struct MUI_CustomClass *ScrollGroupClass;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+DISPATCHERPROTO(ScrollGroupDispatcher);
+struct MUI_CustomClass *ScrollGroupClass;
+
+#ifdef __cplusplus
+}
+#endif
+ 
 #define MUIA_ScrollGroup_HTMLview         HTMLview_ID(100) /* Private */
 #define MUIA_ScrollGroup_Scrolling        HTMLview_ID(101) /* Private */
 #define MUIA_ScrollGroup_Smooth           HTMLview_ID(102) /* Private */
