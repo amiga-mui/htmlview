@@ -5,6 +5,16 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-06-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: integrated a large patch kindly provided by Jörg Strohmayer. Beside
+    cleaning up the C++/C linkage some cleanups in the library init code should
+    make htmlview.mcc less error prone. In addition, some fixes should finally
+    enable us to build a running version which we can base our future changes
+    on. However, still a lot work needs to be done to get HTMLview.mcc working
+    as well as integrating Gunther Nikl's image decoders source code into the
+    repository as well.
+
 2007-05-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * include/mccheader.c: reworked the LibOpen() and LibClose() functions to

@@ -25,54 +25,54 @@
 
 enum
 {
-	Col_Background,
-	Col_Text,
-	Col_Shine,
-	Col_Shadow,
-	Col_Halfshine,
-	Col_Halfshadow,
-	Col_Link,
-	Col_VLink,
-	Col_ALink,
+  Col_Background,
+  Col_Text,
+  Col_Shine,
+  Col_Shadow,
+  Col_Halfshine,
+  Col_Halfshadow,
+  Col_Link,
+  Col_VLink,
+  Col_ALink,
 
-	Col_NumberOf
+  Col_NumberOf
 };
 
 struct RenderMessage
 {
-	VOID Reset (ULONG minx, ULONG miny, ULONG maxx, ULONG maxy, LONG offsetx, LONG offsety, LONG left, LONG top, LONG *pens);
+  VOID Reset (ULONG minx, ULONG miny, ULONG maxx, ULONG maxy, LONG offsetx, LONG offsety, LONG left, LONG top, LONG *pens);
 
-	struct RastPort *ObtainDoubleBuffer (ULONG width, ULONG height);
-	VOID FlushDoubleBuffer ();
+  struct RastPort *ObtainDoubleBuffer (ULONG width, ULONG height);
+  VOID FlushDoubleBuffer ();
 
-	/* Doublebuffer info */
-	ULONG BufferWidth, BufferHeight;
-	struct RastPort *BufferRP;
+  /* Doublebuffer info */
+  ULONG BufferWidth, BufferHeight;
+  struct RastPort *BufferRP;
 
-	Object *HTMLview;
-	struct SharedData *Share;
+  Object *HTMLview;
+  struct SharedData *Share;
 
-	struct RastPort *RPort;
-	LONG MinX, MaxX, MinY, MaxY;
-	LONG OffsetX, OffsetY;
-	LONG Left, Top;
+  struct RastPort *RPort;
+  LONG MinX, MaxX, MinY, MaxY;
+  LONG OffsetX, OffsetY;
+  LONG Left, Top;
 
-	class SuperClass *TargetObj;
-	class BackFillClass *BackgroundObj;
+  class SuperClass *TargetObj;
+  class BackFillClass *BackgroundObj;
 
-	ULONG UL_Nesting;
+  ULONG UL_Nesting;
 
-	LONG Colours[Col_NumberOf];
+  LONG Colours[Col_NumberOf];
 
-	BOOL RedrawGadgets;
-	UBYTE Textstyles, Align;
+  BOOL RedrawGadgets;
+  UBYTE Textstyles, Align;
 
-	LONG CellBackgroundCol;
-	struct PictureFrame *CellPicture;
-	BOOL TableBorder;
-	UWORD OL_Type;
+  LONG CellBackgroundCol;
+  struct PictureFrame *CellPicture;
+  BOOL TableBorder;
+  UWORD OL_Type;
 
-	BOOL RedrawLink;
+  BOOL RedrawLink;
 };
 
 #endif

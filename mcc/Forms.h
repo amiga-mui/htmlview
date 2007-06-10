@@ -25,24 +25,24 @@
 
 struct FormElement
 {
-	FormElement (STRPTR name, STRPTR value);
-	~FormElement ();
+  FormElement (STRPTR name, STRPTR value);
+  ~FormElement ();
 
-	struct FormElement *Next;
-	STRPTR Name;
-	STRPTR Value;
+  struct FormElement *Next;
+  STRPTR Name;
+  STRPTR Value;
 };
 
 struct ExportFormMessage
 {
-	ExportFormMessage ();
-	~ExportFormMessage ();
-	VOID AddElement (STRPTR name, STRPTR value);
-	VOID GetElements (STRPTR buf);
+  ExportFormMessage ();
+  ~ExportFormMessage ();
+  VOID AddElement (STRPTR name, STRPTR value);
+  VOID GetElements (STRPTR buf);
 
-	struct FormElement *Elements;
-	struct FormElement *LastElement;
-	ULONG StrLength;
+  struct FormElement *Elements;
+  struct FormElement *LastElement;
+  ULONG StrLength;
 };
 
 #endif

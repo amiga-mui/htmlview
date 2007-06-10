@@ -28,16 +28,16 @@
 
 struct AppendGadgetMessage
 {
-	AppendGadgetMessage (Object *parent, struct HTMLviewData *data)
-	{
-		Parent = parent;
-		Data = data;
-		Form = NULL;
-	}
+  AppendGadgetMessage (Object *parent, struct HTMLviewData *data)
+  {
+    Parent = parent;
+    Data = data;
+    Form = NULL;
+  }
 
-	Object *Parent;
-	struct HTMLviewData *Data;
-	class FormClass *Form;
+  Object *Parent;
+  struct HTMLviewData *Data;
+  class FormClass *Form;
 };
 
 #endif

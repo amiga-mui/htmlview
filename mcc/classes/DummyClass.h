@@ -30,10 +30,10 @@
 
 class DummyClass : public TreeClass
 {
-	public:
-		DummyClass () : TreeClass() { ; }
+  public:
+    DummyClass () : TreeClass() { ; }
 
-		virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
 };
 
 #endif // DUMMYCLASS_H

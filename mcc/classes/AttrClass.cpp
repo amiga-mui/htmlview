@@ -27,17 +27,17 @@
 BOOL AttrClass::Layout (struct LayoutMessage &lmsg)
 {
   SuperClass::Layout(lmsg);
-	Flags |= FLG_Layouted;
+  Flags |= FLG_Layouted;
 
   return TRUE;
 }
 
 VOID AttrClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
-	pmsg.SetLock();
-	pmsg.AdvancedNextEndBracket();
+  pmsg.SetLock();
+  pmsg.AdvancedNextEndBracket();
 #ifdef OUTPUT
-	PrintTag(pmsg.Locked);
+  PrintTag(pmsg.Locked);
 #endif
 }
 

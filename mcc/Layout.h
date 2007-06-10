@@ -26,143 +26,143 @@
 /* For frame layout */
 enum
 {
-	Const_NoFrame = 0,
-	Const_Frame,
-	Const_ForceNoFrame
+  Const_NoFrame = 0,
+  Const_Frame,
+  Const_ForceNoFrame
 };
 
 struct FloadingImage
 {
-	FloadingImage (LONG top, LONG &left, LONG width, LONG height, class SuperClass *obj, class SuperClass *container)
-	{
-		Top = top;
-		Left = &left;
-		Width = width;
-		Height = height;
-		Obj = obj;
-		Container = container;
-	}
+  FloadingImage (LONG top, LONG &left, LONG width, LONG height, class SuperClass *obj, class SuperClass *container)
+  {
+    Top = top;
+    Left = &left;
+    Width = width;
+    Height = height;
+    Obj = obj;
+    Container = container;
+  }
 
-	struct FloadingImage *Next;
-	class SuperClass *Obj, *Container;
-	LONG Top, *Left, Width, Height;
+  struct FloadingImage *Next;
+  class SuperClass *Obj, *Container;
+  LONG Top, *Left, Width, Height;
 };
 
 struct ObjectNotify
 {
-	ObjectNotify (LONG &left, LONG &baseline, class SuperClass *obj)
-	{
-		Left = &left;
-		Baseline = &baseline;
-		Obj = obj;
-	}
+  ObjectNotify (LONG &left, LONG &baseline, class SuperClass *obj)
+  {
+    Left = &left;
+    Baseline = &baseline;
+    Obj = obj;
+  }
 
-	~ObjectNotify ()
-	{
-		delete Next;
-	}
+  ~ObjectNotify ()
+  {
+    delete Next;
+  }
 
-	struct ObjectNotify *Next;
-	LONG *Left, *Baseline;
-	class SuperClass *Obj;
+  struct ObjectNotify *Next;
+  LONG *Left, *Baseline;
+  class SuperClass *Obj;
 };
 
 struct GadgetList
 {
-	GadgetList (class SuperClass *obj)
-	{
-		GadgetObject = obj;
-	}
-	~GadgetList ()
-	{
-		delete Next;
-	}
+  GadgetList (class SuperClass *obj)
+  {
+    GadgetObject = obj;
+  }
+  ~GadgetList ()
+  {
+    delete Next;
+  }
 
-	struct GadgetList *Next;
-	class SuperClass *GadgetObject;
+  struct GadgetList *Next;
+  class SuperClass *GadgetObject;
 };
 
 enum
 {
-	Flush_Left = 1,
-	Flush_Right = 2,
-	Flush_All = 3
+  Flush_Left = 1,
+  Flush_Right = 2,
+  Flush_All = 3
 };
 
 struct LayoutMessage
 {
-	VOID Reset (ULONG width, ULONG height);
-	VOID Newline ();
-	BOOL IsAtNewline ();
-	LONG ScrWidth ();
-	VOID EnsureNewline ();
-	VOID AddYSpace (ULONG space);
-	LONG AddImage (struct FloadingImage *img, BOOL place);
-	VOID FlushImages (ULONG place);
-	VOID AddNotify (struct ObjectNotify *obj);
-	VOID UpdateBaseline (LONG height, LONG baseline);
-	VOID AddToGadgetList (class SuperClass *gadget);
-	VOID FlushGadgetList ();
-	VOID SetLineHeight (LONG height);
-	VOID CheckFloatingObjects ();
+  VOID Reset (ULONG width, ULONG height);
+  VOID Newline ();
+  BOOL IsAtNewline ();
+  LONG ScrWidth ();
+  VOID EnsureNewline ();
+  VOID AddYSpace (ULONG space);
+  LONG AddImage (struct FloadingImage *img, BOOL place);
+  VOID FlushImages (ULONG place);
+  VOID AddNotify (struct ObjectNotify *obj);
+  VOID UpdateBaseline (LONG height, LONG baseline);
+  VOID AddToGadgetList (class SuperClass *gadget);
+  VOID FlushGadgetList ();
+  VOID SetLineHeight (LONG height);
+  VOID CheckFloatingObjects ();
 
-	struct SharedData *Share;
+  struct SharedData *Share;
 
-	/* Linked lists of gadgets, MUI wants me to constantly re-position them... */
-	struct GadgetList *FirstGadget;
-	struct GadgetList *LastGadget;
+  /* Linked lists of gadgets, MUI wants me to constantly re-position them... */
+  struct GadgetList *FirstGadget;
+  struct GadgetList *LastGadget;
 
-	/* The host object, used for AddPart() and VLink() */
-	Object *HTMLview;
+  /* The host object, used for AddPart() and VLink() */
+  Object *HTMLview;
 
-	/* Objects to know about the ending coordinates */
-	struct ObjectNotify *Notify;
-	struct ObjectNotify *NotifyLast;
+  /* Objects to know about the ending coordinates */
+  struct ObjectNotify *Notify;
+  struct ObjectNotify *NotifyLast;
 
-	/* Visible frame */
-	LONG MinX, MaxX, MinY, MaxY;
-	LONG ScrHeight;
+  /* Visible frame */
+  LONG MinX, MaxX, MinY, MaxY;
+  LONG ScrHeight;
 
-	/* Margin, adjustable by frame-elements */
-	ULONG MarginWidth, MarginHeight;
+  /* Margin, adjustable by frame-elements */
+  ULONG MarginWidth, MarginHeight;
 
-	/* Indentation */
-	ULONG Indent;
-	ULONG ImageLeftIndent, ImageRightIndent;
-	ULONG LIIndent; /* How much should <LI> add? */
-	UWORD OL_Type;
+  /* Indentation */
+  ULONG Indent;
+  ULONG ImageLeftIndent, ImageRightIndent;
+  ULONG LIIndent; /* How much should <LI> add? */
+  UWORD OL_Type;
 
-	/* Current styles */
-	UBYTE Align;
-	UBYTE padding[1];
+  /* Current styles */
+  UBYTE Align;
+  UBYTE padding[1];
 
-	/* Current position */
-	LONG X, Y;
+  /* Current position */
+  LONG X, Y;
 
-	/* Flooding images */
-	struct FloadingImage *FLeft;
-	struct FloadingImage *FRight;
-	class SuperClass *Parent;
+  /* Flooding images */
+  struct FloadingImage *FLeft;
+  struct FloadingImage *FRight;
+  class SuperClass *Parent;
 
-	/* Reflects the current (text) line */
-	LONG Baseline, Bottom, MinLineHeight;
+  /* Reflects the current (text) line */
+  LONG Baseline, Bottom, MinLineHeight;
 
-	/* Total size of the page */
-	LONG Width, Height;
+  /* Total size of the page */
+  LONG Width, Height;
 
-	LONG TopChange;
+  LONG TopChange;
 
-	/* Current font */
-	struct TextFont *Font;
+  /* Current font */
+  struct TextFont *Font;
 
-	/* For table layout */
-	struct CellWidth *Widths;
-	ULONG *Heights, *RowOpenCounts;;
-	LONG Spacing, Padding, Columns;
-	BOOL TableBorder, Pass;
+  /* For table layout */
+  struct CellWidth *Widths;
+  ULONG *Heights, *RowOpenCounts;;
+  LONG Spacing, Padding, Columns;
+  BOOL TableBorder, Pass;
 
-	/* For frame layout */
-	BOOL LeftBorder, TopBorder;
+  /* For frame layout */
+  BOOL LeftBorder, TopBorder;
 };
 
 #endif

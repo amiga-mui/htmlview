@@ -27,25 +27,25 @@
 
 struct AnimInfo
 {
-	AnimInfo (Object *obj, struct HTMLviewData *data, struct PictureFrame *pic, struct ObjectList *receivers, struct AnimInfo *next);
-	~AnimInfo ();
-	ULONG Tick ();
-	ULONG Update (ULONG diff);
-	VOID Stop (Object *obj, struct AnimInfo *prev);
+  AnimInfo (Object *obj, struct HTMLviewData *data, struct PictureFrame *pic, struct ObjectList *receivers, struct AnimInfo *next);
+  ~AnimInfo ();
+  ULONG Tick ();
+  ULONG Update (ULONG diff);
+  VOID Stop (Object *obj, struct AnimInfo *prev);
 
-	struct AnimInfo *Next;
-	Object *Obj;
-	struct HTMLviewData *Data;
-	ULONG TimeLeft;
-	struct PictureFrame *FirstFrame, *CurrentFrame;
-	struct ObjectList *Receivers;
-	UBYTE *Mask;
-	struct BitMap *BMp, MaskBMp;
-	struct RastPort BMpRP, MaskRP;
-	struct DateStamp LastTime;
-	ULONG Flags;
+  struct AnimInfo *Next;
+  Object *Obj;
+  struct HTMLviewData *Data;
+  ULONG TimeLeft;
+  struct PictureFrame *FirstFrame, *CurrentFrame;
+  struct ObjectList *Receivers;
+  UBYTE *Mask;
+  struct BitMap *BMp, MaskBMp;
+  struct RastPort BMpRP, MaskRP;
+  struct DateStamp LastTime;
+  ULONG Flags;
 
-	struct DecodeItem *Decode;
+  struct DecodeItem *Decode;
 };
 
 #define AnimFLG_DeleteObjList (1 << 0)

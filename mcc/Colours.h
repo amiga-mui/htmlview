@@ -31,9 +31,9 @@ UBYTE *GetColourInfo (CONST_STRPTR name);
 
 struct ColourInfo
 {
-	CONST_STRPTR Name;
-	CONST UBYTE	 RGB[3];
-	CONST_APTR   GetData () { return RGB; }
+  CONST_STRPTR Name;
+  CONST UBYTE  RGB[3];
+  CONST_APTR   GetData () { return RGB; }
 };
 
 #endif

@@ -31,9 +31,9 @@ struct EntityInfo *GetEntityInfo (CONST_STRPTR entity);
 
 struct EntityInfo
 {
-	CONST_STRPTR	Name;
-  CONST UBYTE		ByteCode;
-	CONST_APTR		GetData () { return this; }
+  CONST_STRPTR  Name;
+  CONST UBYTE   ByteCode;
+  CONST_APTR    GetData () { return this; }
 };
 
 #endif

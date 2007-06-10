@@ -136,10 +136,11 @@ TESTTARGET= $(BINDIR)/HTMLview-Test
 WARN     = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG -O0
+DEBUGSYM = -gstabs
 CFLAGS   = -I. -I../mcp -I../include $(CPU) $(WARN) $(OPTFLAGS) \
-           $(DEBUG) -g -c
-LDFLAGS  = $(CPU)
-LDLIBS   = -lm
+           $(DEBUG) $(DEBUGSYM) -c
+LDFLAGS  = $(CPU) $(DEBUGSYM)
+LDLIBS   =
 
 # different options per target OS
 ifeq ($(OS), os4)
@@ -155,8 +156,9 @@ ifeq ($(OS), os4)
 
   # Compiler/Linker flags
   CRT      = newlib
-  CPU      = -mcpu=powerpc -Wa,-mregnames
-  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ -DNO_PPCINLINE_STDARG
+  CPU      = -mcpu=powerpc 
+  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
+              -Wa,-mregnames -DNO_PPCINLINE_STDARG
   LDFLAGS  += -mcrt=$(CRT)
 
   # additional object files required
@@ -268,7 +270,6 @@ MCCOBJS = \
           $(OBJDIR)/classes/ULClass.o \
           $(OBJDIR)/AllocateColours.o \
           $(OBJDIR)/Animation.o \
-          $(OBJDIR)/AppendGadget.o \
           $(OBJDIR)/Classes.o \
           $(OBJDIR)/Colours.o \
           $(OBJDIR)/Config.o \
@@ -283,10 +284,9 @@ MCCOBJS = \
           $(OBJDIR)/IM_Render.o \
           $(OBJDIR)/IM_Scale.o \
           $(OBJDIR)/ImageManager.o \
-          $(OBJDIR)/InitCleanup.o \
           $(OBJDIR)/Layout.o \
-          $(OBJDIR)/Map.o \
           $(OBJDIR)/Mark.o \
+          $(OBJDIR)/Memory.o \
           $(OBJDIR)/MinMax.o \
           $(OBJDIR)/ParseMessage.o \
           $(OBJDIR)/ParseThread.o \
@@ -344,7 +344,6 @@ TESTOBJS= $(OBJDIR)/HTMLview-Test.o \
           $(OBJDIR)/classes/ULClass.o \
           $(OBJDIR)/AllocateColours.o \
           $(OBJDIR)/Animation.o \
-          $(OBJDIR)/AppendGadget.o \
           $(OBJDIR)/Classes.o \
           $(OBJDIR)/Colours.o \
           $(OBJDIR)/Config.o \
@@ -359,10 +358,9 @@ TESTOBJS= $(OBJDIR)/HTMLview-Test.o \
           $(OBJDIR)/IM_Render.o \
           $(OBJDIR)/IM_Scale.o \
           $(OBJDIR)/ImageManager.o \
-          $(OBJDIR)/InitCleanup.o \
           $(OBJDIR)/Layout.o \
-          $(OBJDIR)/Map.o \
           $(OBJDIR)/Mark.o \
+          $(OBJDIR)/Memory.o \
           $(OBJDIR)/MinMax.o \
           $(OBJDIR)/ParseMessage.o \
           $(OBJDIR)/ParseThread.o \
@@ -415,15 +413,15 @@ $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 
 $(MCCTARGET): $(M68KSTUBS) $(MCCOBJS)
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
-	@$(CXX) -nostartfiles $(LDFLAGS) -o $@.debug $(MCCOBJS) $(M68KSTUBS) $(LDLIBS)
-	@$(STRIP) -R .comment -S -o $@ $@.debug
+	@$(CXX) -nostartfiles $(LDFLAGS) -o $@.debug $(MCCOBJS) $(M68KSTUBS) $(LDLIBS) -Wl,-Map,$@.map
+	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
 $(TESTTARGET): $(TESTOBJS) $(OBJDIR)/HTMLview-Test.o
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
-	@$(CXX) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS)
-	@$(STRIP) -R .comment -S -o $@ $@.debug
+	@$(CXX) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS) -Wl,-Map,$@.map
+	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
-$(OBJDIR)/library.o: library.c ../include/mccheader.c \
+$(OBJDIR)/library.o: library.cpp ../include/mccinit.c \
   HTMLview_mcc.h private.h rev.h
 
 locale.h: locale.c
@@ -446,7 +444,9 @@ catalogs: $(CATALOGS)
 
 .PHONY: clean
 clean:
-	-$(RM) $(MCCTARGET) $(MCCTARGET).debug $(TESTTARGET) $(TESTTARGET).debug $(MCCOBJS) $(TESTOBJS) $(M68KSTUBS)
+	-$(RM) $(MCCTARGET) $(MCCTARGET).debug $(MCCTARGET).map
+	-$(RM) $(TESTTARGET) $(TESTTARGET).debug $(TESTTARGET).map
+	-$(RM) $(MCCOBJS) $(TESTOBJS) $(M68KSTUBS)
 
 .PHONY: distclean
 distclean: clean

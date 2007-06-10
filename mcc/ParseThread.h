@@ -23,53 +23,51 @@
 #ifndef PARSETHREAD_H
 #define PARSETHREAD_H
 
-#include "SDI_compiler.h"
-
 /* Protos */
 
-VOID ParseThread(REG(a0, STRPTR arguments));
+VOID ParseThread(STRPTR arguments);
 
 /* Messages */
 
 struct ParseThreadArgs
 {
-	ParseThreadArgs (ULONG pageid, Object *htmlview, struct HTMLviewData *data, ULONG flags, STRPTR url, STRPTR postdata)
-	{
-		PageID = pageid;
-		HTMLview = htmlview;
-		Data = data;
-		Flags = flags;
-		URL = new char[strlen(url)+1];
-		strcpy(URL, url);
-		PostData = postdata;
+  ParseThreadArgs (ULONG pageid, Object *htmlview, struct HTMLviewData *data, ULONG flags, STRPTR url, STRPTR postdata)
+  {
+    PageID = pageid;
+    HTMLview = htmlview;
+    Data = data;
+    Flags = flags;
+    URL = new char[strlen(url)+1];
+    strcpy(URL, url);
+    PostData = postdata;
 
-	}
+  }
 
-	~ParseThreadArgs ()
-	{
-		delete URL;
-		delete PostData;
-	}
+  ~ParseThreadArgs ()
+  {
+    delete URL;
+    delete PostData;
+  }
 
-	ULONG PageID;
-	Object *HTMLview;
-	struct HTMLviewData *Data;
-	ULONG Flags;
-	STRPTR URL;
-	STRPTR PostData;
+  ULONG PageID;
+  Object *HTMLview;
+  struct HTMLviewData *Data;
+  ULONG Flags;
+  STRPTR URL;
+  STRPTR PostData;
 };
 
 
 struct ParseInfoMsg
 {
-	struct Message nm_node;
-	ULONG Class;
-	ULONG Unique;
-	union
-	{
-		struct { struct ParseMessage *PMsg; class HostClass *Object; } Startup;
-		struct { struct ParseMessage *PMsg; class HostClass *Object; } Shutdown;
-	};
+  struct Message nm_node;
+  ULONG Class;
+  ULONG Unique;
+  union
+  {
+    struct { struct ParseMessage *PMsg; class HostClass *Object; } Startup;
+    struct { struct ParseMessage *PMsg; class HostClass *Object; } Shutdown;
+  };
 };
 
 #define ParseMsg_Startup  0

@@ -28,60 +28,60 @@
 
 class TrueColourEngine : virtual public ScaleEngine
 {
-	public:
-		TrueColourEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
+  public:
+    TrueColourEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
       : ScaleEngine(scr, width, height, data)
-		{
-		}
+    {
+    }
 
-		virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
-		virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { TrueColourEngine::RenderLine(dstline, y); }
+    virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
+    virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { TrueColourEngine::RenderLine(dstline, y); }
 };
 /*
 class HighColourEngine : public TrueColourEngine, public DitherEngine
 {
-	public:
-		HighColourEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data) : DitherEngine(scr, width, height, data), TrueColourEngine(scr, width, height, data)
-		{
-		}
+  public:
+    HighColourEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data) : DitherEngine(scr, width, height, data), TrueColourEngine(scr, width, height, data)
+    {
+    }
 
-		virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency) { Dither = TRUE; return(TrueColourEngine::SetDimensions(width, height, interlaced, animdelay, disposal, leftofs, topofs, background, transparency)); }
-		virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
-		virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { TrueColourEngine::RenderLine(dstline, y); }
-		virtual VOID FlushBuffers () { DitherEngine::FlushBuffers(); }
+    virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency) { Dither = TRUE; return(TrueColourEngine::SetDimensions(width, height, interlaced, animdelay, disposal, leftofs, topofs, background, transparency)); }
+    virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
+    virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { TrueColourEngine::RenderLine(dstline, y); }
+    virtual VOID FlushBuffers () { DitherEngine::FlushBuffers(); }
 };
 */
 class LowColourNDEngine : virtual public ScaleEngine
 {
-	public:
-		LowColourNDEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
+  public:
+    LowColourNDEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
       : ScaleEngine(scr, width, height, data)
-		{
-		}
+    {
+    }
 
-		virtual ~LowColourNDEngine ();
-		virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency);
-		virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
-		virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { LowColourNDEngine::RenderLine(dstline, y); }
+    virtual ~LowColourNDEngine ();
+    virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency);
+    virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
+    virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { LowColourNDEngine::RenderLine(dstline, y); }
 
-	protected:
-		class ColourManager *CMap;
-		UBYTE *ChunkyLine;
+  protected:
+    class ColourManager *CMap;
+    UBYTE *ChunkyLine;
 };
 
 class LowColourEngine : public LowColourNDEngine, public DitherEngine
 {
-	public:
-		LowColourEngine(struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
+  public:
+    LowColourEngine(struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
       : ScaleEngine(scr, width, height, data),
         LowColourNDEngine(scr, width, height, data),
         DitherEngine(scr, width, height, data)
-		{ }
+    { }
 
-		virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency) { Dither = TRUE; return(LowColourNDEngine::SetDimensions(width, height, interlaced, animdelay, disposal, leftofs, topofs, background, transparency)); }
-		virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
-		virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { LowColourNDEngine::RenderLine(dstline, y); }
-		virtual VOID FlushBuffers () { DitherEngine::FlushBuffers(); }
+    virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency) { Dither = TRUE; return(LowColourNDEngine::SetDimensions(width, height, interlaced, animdelay, disposal, leftofs, topofs, background, transparency)); }
+    virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y);
+    virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) { LowColourNDEngine::RenderLine(dstline, y); }
+    virtual VOID FlushBuffers () { DitherEngine::FlushBuffers(); }
 };
 
 #endif

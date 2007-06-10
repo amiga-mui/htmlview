@@ -29,9 +29,9 @@
 
 class CommentClass : public AttrClass
 {
-	public:
-		CommentClass () : AttrClass() { ; }
-		VOID Parse (REG(a2, struct ParseMessage &pmsg));
+  public:
+    CommentClass () : AttrClass() { ; }
+    VOID Parse (REG(a2, struct ParseMessage &pmsg));
 };
 
 #endif // COMMENTCLASS_H

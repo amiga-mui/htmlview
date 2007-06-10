@@ -25,18 +25,18 @@
 
 struct TNode
 {
-	TNode(CONST_STRPTR str, CONST_APTR data);
-	virtual ~TNode ();
-	struct TNode *TInsert(CONST_STRPTR str, CONST_APTR data);
+  TNode(CONST_STRPTR str, CONST_APTR data);
+  virtual ~TNode ();
+  struct TNode *TInsert(CONST_STRPTR str, CONST_APTR data);
 
-	struct TNode *Left, *Right;
-	union
-	{
-		struct TNode *Middle;
-		CONST_APTR Data;
-	};
+  struct TNode *Left, *Right;
+  union
+  {
+    struct TNode *Middle;
+    CONST_APTR Data;
+  };
 
-	UBYTE SplitChar, _pad[3];
+  UBYTE SplitChar, _pad[3];
 };
 
 APTR TFind (struct TNode *root, CONST_STRPTR str, UBYTE *table);
@@ -44,15 +44,15 @@ APTR TFind (struct TNode *root, CONST_STRPTR str, UBYTE *table);
 template <class T>
 VOID BinaryInsert (struct TNode *&tree, T *elements, ULONG from, ULONG to)
 {
-	ULONG diff = (to-from) / 2;
+  ULONG diff = (to-from) / 2;
 
-	tree = tree->TInsert(elements[from+diff].Name, elements[from+diff].GetData());
-	if(from < to)
-	{
-		if(diff)
-			BinaryInsert(tree, elements, from, from+diff-1);
-		BinaryInsert(tree, elements, from+diff+1, to);
-	}
+  tree = tree->TInsert(elements[from+diff].Name, elements[from+diff].GetData());
+  if(from < to)
+  {
+    if(diff)
+      BinaryInsert(tree, elements, from, from+diff-1);
+    BinaryInsert(tree, elements, from+diff+1, to);
+  }
 }
 
 #endif

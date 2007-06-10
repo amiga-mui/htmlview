@@ -28,80 +28,80 @@
 
 struct ObjectList
 {
-	ObjectList (class SuperClass *obj)
-	{
-		Obj = obj;
-	}
+  ObjectList (class SuperClass *obj)
+  {
+    Obj = obj;
+  }
 
-	~ObjectList ()
-	{
-		delete Next;
-	}
+  ~ObjectList ()
+  {
+    delete Next;
+  }
 
-	struct ObjectList *Next;
-	class SuperClass *Obj;
+  struct ObjectList *Next;
+  class SuperClass *Obj;
 };
 
 struct ImageList
 {
-	ImageList (STRPTR imagename, ULONG width, ULONG height, class SuperClass *obj)
-	{
-		ImageName = imagename;
-		Width = width;
-		Height = height;
-		Objects = new struct ObjectList(obj);
-		ObjectsLast = Objects;
-	}
+  ImageList (STRPTR imagename, ULONG width, ULONG height, class SuperClass *obj)
+  {
+    ImageName = imagename;
+    Width = width;
+    Height = height;
+    Objects = new struct ObjectList(obj);
+    ObjectsLast = Objects;
+  }
 
-	~ImageList ()
-	{
-		delete Next;
-		delete Objects;
-		delete ImageName;
-	}
+  ~ImageList ()
+  {
+    delete Next;
+    delete Objects;
+    delete ImageName;
+  }
 
-	VOID AddImage (STRPTR imagename, ULONG width, ULONG height, class SuperClass *obj)
-	{
-		if(!strcmp(imagename, ImageName) && Width == width && Height == height)
-		{
-			ObjectsLast->Next = new struct ObjectList(obj);
-			ObjectsLast = ObjectsLast->Next;
+  VOID AddImage (STRPTR imagename, ULONG width, ULONG height, class SuperClass *obj)
+  {
+    if(!strcmp(imagename, ImageName) && Width == width && Height == height)
+    {
+      ObjectsLast->Next = new struct ObjectList(obj);
+      ObjectsLast = ObjectsLast->Next;
 
-			delete imagename;
-		}
-		else
-		{
-			if(Next)
-					Next->AddImage(imagename, width, height, obj);
-			else	Next = new struct ImageList(imagename, width, height, obj);
-		}
-	}
+      delete imagename;
+    }
+    else
+    {
+      if(Next)
+          Next->AddImage(imagename, width, height, obj);
+      else  Next = new struct ImageList(imagename, width, height, obj);
+    }
+  }
 
-	struct ImageList *Next;
-	STRPTR ImageName;
-	ULONG Width, Height;
-	struct ObjectList *Objects;
-	struct ObjectList *ObjectsLast;
+  struct ImageList *Next;
+  STRPTR ImageName;
+  ULONG Width, Height;
+  struct ObjectList *Objects;
+  struct ObjectList *ObjectsLast;
 };
 
 
 struct GetImagesMessage
 {
-	GetImagesMessage (Object *htmlview)
-	{
-		HTMLview = htmlview;
-		Images = NULL;
-	}
+  GetImagesMessage (Object *htmlview)
+  {
+    HTMLview = htmlview;
+    Images = NULL;
+  }
 
-	VOID AddImage (STRPTR imagename, ULONG width, ULONG height, class SuperClass *obj)
-	{
-		if(Images)
-				Images->AddImage(imagename, width, height, obj);
-		else	Images = new struct ImageList(imagename, width, height, obj);
-	}
+  VOID AddImage (STRPTR imagename, ULONG width, ULONG height, class SuperClass *obj)
+  {
+    if(Images)
+        Images->AddImage(imagename, width, height, obj);
+    else  Images = new struct ImageList(imagename, width, height, obj);
+  }
 
-	Object *HTMLview;
-	struct ImageList *Images;
+  Object *HTMLview;
+  struct ImageList *Images;
 };
 
 #endif

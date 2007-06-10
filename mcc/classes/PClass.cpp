@@ -28,58 +28,58 @@
 
 BOOL PClass::Layout (struct LayoutMessage &lmsg)
 {
-	if(Flags & FLG_Virgin)
-	{
-		lmsg.EnsureNewline();
-		if(lmsg.MinY != lmsg.Y)
-		{
-			lmsg.UpdateBaseline(lmsg.Font->tf_YSize+1, lmsg.Font->tf_Baseline);
-			lmsg.Newline();
-		}
-	}
+  if(Flags & FLG_Virgin)
+  {
+    lmsg.EnsureNewline();
+    if(lmsg.MinY != lmsg.Y)
+    {
+      lmsg.UpdateBaseline(lmsg.Font->tf_YSize+1, lmsg.Font->tf_Baseline);
+      lmsg.Newline();
+    }
+  }
 
-	UBYTE oldalign = lmsg.Align;
-	if(Alignment)
-		lmsg.Align = Alignment;
+  UBYTE oldalign = lmsg.Align;
+  if(Alignment)
+    lmsg.Align = Alignment;
 
-	if(TreeClass::Layout(lmsg))
-		lmsg.EnsureNewline();
+  if(TreeClass::Layout(lmsg))
+    lmsg.EnsureNewline();
 
-	lmsg.Align = oldalign;
+  lmsg.Align = oldalign;
 
    return TRUE;
 }
 
 BOOL PClass::Mark (struct MarkMessage &mmsg)
 {
-	if(mmsg.Enabled())
-	{
-		if(!mmsg.Newline)
-			mmsg.WriteLF();
-		mmsg.WriteLF();
-		mmsg.Newline = TRUE;
-	}
-	return(TreeClass::Mark(mmsg));
+  if(mmsg.Enabled())
+  {
+    if(!mmsg.Newline)
+      mmsg.WriteLF();
+    mmsg.WriteLF();
+    mmsg.Newline = TRUE;
+  }
+  return(TreeClass::Mark(mmsg));
 }
 
 VOID PClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
-	pmsg.SetLock();
-	pmsg.NextEndBracket();
+  pmsg.SetLock();
+  pmsg.NextEndBracket();
 #ifdef OUTPUT
-	PrintTag(pmsg.Locked);
+  PrintTag(pmsg.Locked);
 #endif
 
-	struct ArgList args[] =
-	{
-		{ "ALIGN",	&Alignment,		ARG_KEYWORD, AlignKeywords },
-		{ NULL,     NULL,          0,           NULL }
-	};
+  struct ArgList args[] =
+  {
+    { "ALIGN",  &Alignment,   ARG_KEYWORD, AlignKeywords },
+    { NULL,     NULL,          0,           NULL }
+  };
 
-	Alignment = (ULONG)-1;
-	ScanArgs(pmsg.Locked, args);
-	Alignment++;
+  Alignment = (ULONG)-1;
+  ScanArgs(pmsg.Locked, args);
+  Alignment++;
 
-	TreeClass::Parse(pmsg);
+  TreeClass::Parse(pmsg);
 }
 

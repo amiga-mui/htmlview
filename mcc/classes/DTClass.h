@@ -29,9 +29,9 @@
 
 class DTClass : public DummyClass
 {
-	public:
-		DTClass () : DummyClass() { Flags |= FLG_Newline; Group = group_Definition; }
-		BOOL Layout (struct LayoutMessage &lmsg);
+  public:
+    DTClass () : DummyClass() { Flags |= FLG_Newline; Group = group_Definition; }
+    BOOL Layout (struct LayoutMessage &lmsg);
 };
 
 #endif // DTCLASS_H
