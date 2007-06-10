@@ -136,9 +136,10 @@ PREFTARGET= $(BINDIR)/HTMLview-Prefs
 WARN     = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG -O0
+DEBUGSYM = -gstabs
 CFLAGS   = -I. -I../mcc -I../include $(CPU) $(WARN) $(OPTFLAGS) \
-           $(DEBUG) -g -c
-LDFLAGS  = $(CPU)
+           $(DEBUG) $(DEBUGSYM) -c
+LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -lm
 
 # different options per target OS
@@ -154,8 +155,9 @@ ifeq ($(OS), os4)
 
   # Compiler/Linker flags
   CRT      = newlib
-  CPU      = -mcpu=powerpc -Wa,-mregnames
-  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ -DNO_PPCINLINE_STDARG
+  CPU      = -mcpu=powerpc
+  CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
+              -DNO_PPCINLINE_STDARG -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
 
   # additional object files required
@@ -265,15 +267,15 @@ $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 
 $(MCPTARGET): $(M68KSTUBS) $(MCPOBJS)
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
-	@$(CC) -nostartfiles $(LDFLAGS) -o $@.debug $(MCPOBJS) $(M68KSTUBS) $(LDLIBS)
-	@$(STRIP) -R .comment -S -o $@ $@.debug
+	@$(CC) -nostartfiles $(LDFLAGS) -o $@.debug $(MCPOBJS) $(M68KSTUBS) $(LDLIBS) -Wl,-Map,$@.map
+	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
 $(PREFTARGET): $(PREFOBJS) $(OBJDIR)/Preference.o
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
-	@$(CC) $(LDFLAGS) -o $@.debug $(PREFOBJS) $(LDLIBS)
-	@$(STRIP) -R .comment -S -o $@ $@.debug
+	@$(CC) $(LDFLAGS) -o $@.debug $(PREFOBJS) $(LDLIBS) -Wl,-Map,$@.map
+	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
-$(OBJDIR)/library.o: library.c ../include/mccheader.c \
+$(OBJDIR)/library.o: library.c ../include/mccinit.c \
   ../mcc/HTMLview_mcc.h private.h icon.bh HTMLview_mcp.h rev.h
 
 locale.h: locale.c
@@ -296,7 +298,9 @@ catalogs: $(CATALOGS)
 
 .PHONY: clean
 clean:
-	-$(RM) $(MCPTARGET) $(MCPTARGET).debug $(PREFTARGET) $(PREFTARGET).debug $(MCPOBJS) $(PREFOBJS) $(M68KSTUBS)
+	-$(RM) $(MCPTARGET) $(MCPTARGET).debug $(MCPTARGET).map
+	-$(RM) $(PREFTARGET) $(PREFTARGET).debug $(PREFTARGET).map
+	-$(RM) $(MCPOBJS) $(PREFOBJS) $(M68KSTUBS)
 
 .PHONY: distclean
 distclean: clean
