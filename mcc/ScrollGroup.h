@@ -30,8 +30,8 @@
 extern "C" {
 #endif
 
-DISPATCHERPROTO(ScrollGroupDispatcher);
-struct MUI_CustomClass *ScrollGroupClass;
+extern DISPATCHERPROTO(ScrollGroupDispatcher);
+extern struct MUI_CustomClass *ScrollGroupClass;
 
 #ifdef __cplusplus
 }
