@@ -29,66 +29,66 @@
 
 class DitherEngine : virtual public ScaleEngine
 {
-	public:
-		DitherEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
+  public:
+    DitherEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data)
      : ScaleEngine(scr, width, height, data)
-		{ }
+    { }
 
-		virtual VOID FlushBuffers ();
+    virtual VOID FlushBuffers ();
 
-	protected:
+  protected:
 
-		VOID SpreadLToR (struct RGBPixel *line, struct RGBPixel *below, LONG br, LONG bg, LONG bb)
-		{
-		#ifdef FAST
-			(*line).Add(br, bg, bb);
-		#else
-			if(br || bg || bb)
-			{
-				LONG tr, tg, tb, r, g, b;
+    VOID SpreadLToR (struct RGBPixel *line, struct RGBPixel *below, LONG br, LONG bg, LONG bb)
+    {
+    #ifdef FAST
+      (*line).Add(br, bg, bb);
+    #else
+      if(br || bg || bb)
+      {
+        LONG tr, tg, tb, r, g, b;
 
-				tr = 7*br >> 4; tg = 7*bg >> 4; tb = 7*bb >> 4;
-				(*line).Add(tr, tg, tb);
-				r = br - tr; g = bg - tg; b = bb - tb;
+        tr = 7*br >> 4; tg = 7*bg >> 4; tb = 7*bb >> 4;
+        (*line).Add(tr, tg, tb);
+        r = br - tr; g = bg - tg; b = bb - tb;
 
-				tr = 5*br >> 4; tg = 5*bg >> 4; tb = 5*bb >> 4;
-				below[-1].Add(tr, tg, tb);
-				r -= tr; g -= tg; b -= tb;
+        tr = 5*br >> 4; tg = 5*bg >> 4; tb = 5*bb >> 4;
+        below[-1].Add(tr, tg, tb);
+        r -= tr; g -= tg; b -= tb;
 
-				tr = 3*br >> 4; tg = 3*bg >> 4; tb = 3*bb >> 4;
-				(*below++).Add(tr, tg, tb);
-				r -= tr; g -= tg; b -= tb;
+        tr = 3*br >> 4; tg = 3*bg >> 4; tb = 3*bb >> 4;
+        (*below++).Add(tr, tg, tb);
+        r -= tr; g -= tg; b -= tb;
 
-				(*below).Add(r, g, b);
-			}
-		#endif
-		}
+        (*below).Add(r, g, b);
+      }
+    #endif
+    }
 
-		VOID SpreadRToL (struct RGBPixel *line, struct RGBPixel *below, LONG br, LONG bg, LONG bb)
-		{
-		#ifdef FAST
-			(*line).Add(br, bg, bb);
-		#else
-			if(br || bg || bb)
-			{
-				LONG tr, tg, tb, r, g, b;
+    VOID SpreadRToL (struct RGBPixel *line, struct RGBPixel *below, LONG br, LONG bg, LONG bb)
+    {
+    #ifdef FAST
+      (*line).Add(br, bg, bb);
+    #else
+      if(br || bg || bb)
+      {
+        LONG tr, tg, tb, r, g, b;
 
-				tr = 7*br >> 4; tg = 7*bg >> 4; tb = 7*bb >> 4;
-				(*line).Add(tr, tg, tb);
-				r = br - tr; g = bg - tg; b = bb - tb;
+        tr = 7*br >> 4; tg = 7*bg >> 4; tb = 7*bb >> 4;
+        (*line).Add(tr, tg, tb);
+        r = br - tr; g = bg - tg; b = bb - tb;
 
-				tr = 5*br >> 4; tg = 5*bg >> 4; tb = 5*bb >> 4;
-				below[+1].Add(tr, tg, tb);
-				r -= tr; g -= tg; b -= tb;
+        tr = 5*br >> 4; tg = 5*bg >> 4; tb = 5*bb >> 4;
+        below[+1].Add(tr, tg, tb);
+        r -= tr; g -= tg; b -= tb;
 
-				tr = 3*br >> 4; tg = 3*bg >> 4; tb = 3*bb >> 4;
-				(*below).Add(tr, tg, tb);
-				r -= tr; g -= tg; b -= tb;
+        tr = 3*br >> 4; tg = 3*bg >> 4; tb = 3*bb >> 4;
+        (*below).Add(tr, tg, tb);
+        r -= tr; g -= tg; b -= tb;
 
-				(*--below).Add(r, g, b);
-			}
-		#endif
-		}
+        (*--below).Add(r, g, b);
+      }
+    #endif
+    }
 };
 
 #endif

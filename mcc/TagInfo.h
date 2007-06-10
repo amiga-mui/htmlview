@@ -28,14 +28,14 @@
 struct TagInfo *GetTagInfo (STRPTR tag);
 
 /*
-BOOL NotTagEnd (REG(d0) UBYTE c);
-BOOL IsWhitespace (REG(d0) UBYTE c);
+BOOL NotTagEnd (UBYTE c);
+BOOL IsWhitespace (UBYTE c);
 */
 
 extern UBYTE TagEndTable [];
 extern UBYTE WhitespaceTable [];
-#define IsWhitespace(c) WhitespaceTable[(ULONG)c]
-#define TagEnd(c) TagEndTable[c]
+#define IsWhitespace(c) WhitespaceTable[(unsigned char)c]
+#define TagEnd(c)       TagEndTable[(unsigned char)c]
 
 extern struct TagInfo TagTable[];
 
@@ -43,99 +43,99 @@ extern struct TagInfo TagTable[];
 
 struct TagInfo
 {
-	CONST_STRPTR	Name;
-	CONST UBYTE		Flags;
-	CONST UBYTE		ID;
+  CONST_STRPTR  Name;
+  CONST UBYTE   Flags;
+  CONST UBYTE   ID;
   CONST UBYTE   Group;
-	CONST_APTR		GetData () { return this; }
+  CONST_APTR    GetData () { return this; }
 };
 
-#define FLG_Inline			    (1<<0)
+#define FLG_Inline          (1<<0)
 #define FLG_EndRequired     (1<<1)
-#define FLG_NoNesting		    (1<<2)
-#define FLG_NoChilds			  (1<<3)
-#define FLG_Depreciated		  (1<<4)
-#define FLG_Blocklevel		  (1<<5)
-#define FLG_NoGroupNesting	(1<<6)
+#define FLG_NoNesting       (1<<2)
+#define FLG_NoChilds        (1<<3)
+#define FLG_Depreciated     (1<<4)
+#define FLG_Blocklevel      (1<<5)
+#define FLG_NoGroupNesting  (1<<6)
 
 enum
 {
-	group_Normal = 0,
-	group_Definition,
-	group_Tablecell,
-	group_NumberOf
+  group_Normal = 0,
+  group_Definition,
+  group_Tablecell,
+  group_NumberOf
 };
 
 enum
 {
-	tag_COMMENT = 0,
-	tag_A,
-	tag_ADDRESS,
-	tag_AREA,
-	tag_B,
-	tag_BASE,
-	tag_BIG,
-	tag_BLOCKQUOTE,
-	tag_BODY,
-	tag_BR,
-	tag_CENTER,
-	tag_CITE,
-	tag_CODE,
-	tag_DD,
-	tag_DFN,
-	tag_DIR,
-	tag_DIV,
-	tag_DL,
-	tag_DT,
-	tag_EM,
-	tag_FONT,
-	tag_FORM,
-	tag_FRAME,
-	tag_FRAMESET,
-	tag_H1,
-	tag_H2,
-	tag_H3,
-	tag_H4,
-	tag_H5,
-	tag_H6,
-	tag_HEAD,
-	tag_HR,
-	tag_HTML,
-	tag_I,
-	tag_IMG,
-	tag_INPUT,
-	tag_ISINDEX,
-	tag_LI,
-	tag_MAP,
-	tag_MENU,
-	tag_META,
-	tag_NOFRAMES,
-	tag_OL,
-	tag_OPTION,
-	tag_P,
-	tag_PRE,
-	tag_Q,
-	tag_S,
-	tag_SAMP,
-	tag_SCRIPT,
-	tag_SELECT,
-	tag_SMALL,
-	tag_STRIKE,
-	tag_STRONG,
-	tag_SUB,
-	tag_SUP,
-	tag_TABLE,
-	tag_TD,
-	tag_TEXTAREA,
-	tag_TH,
-	tag_TITLE,
-	tag_TR,
-	tag_TT,
-	tag_U,
-	tag_UL,
-	tag_Text,
-	tag_Unknown,
-	tag_NumberOf
+  tag_COMMENT = 0,
+  tag_A,
+  tag_ADDRESS,
+  tag_AREA,
+  tag_B,
+  tag_BASE,
+  tag_BIG,
+  tag_BLOCKQUOTE,
+  tag_BODY,
+  tag_BR,
+  tag_CENTER,
+  tag_CITE,
+  tag_CODE,
+  tag_DD,
+  tag_DFN,
+  tag_DIR,
+  tag_DIV,
+  tag_DL,
+  tag_DT,
+  tag_EM,
+  tag_FONT,
+  tag_FORM,
+  tag_FRAME,
+  tag_FRAMESET,
+  tag_H1,
+  tag_H2,
+  tag_H3,
+  tag_H4,
+  tag_H5,
+  tag_H6,
+  tag_HEAD,
+  tag_HR,
+  tag_HTML,
+  tag_I,
+  tag_IMG,
+  tag_INPUT,
+  tag_ISINDEX,
+  tag_LI,
+  tag_MAP,
+  tag_MENU,
+  tag_META,
+  tag_NOFRAMES,
+  tag_OL,
+  tag_OPTION,
+  tag_P,
+  tag_PRE,
+  tag_Q,
+  tag_S,
+  tag_SAMP,
+  tag_SCRIPT,
+  tag_SELECT,
+  tag_SMALL,
+  tag_STRIKE,
+  tag_STRONG,
+  tag_SUB,
+  tag_SUP,
+  tag_TABLE,
+  tag_TD,
+  tag_TEXTAREA,
+  tag_TH,
+  tag_TITLE,
+  tag_TR,
+  tag_TT,
+  tag_U,
+  tag_UL,
+  tag_Text,
+  tag_Unknown,
+  tag_NumberOf
 };
 
 #endif

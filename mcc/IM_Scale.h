@@ -31,31 +31,31 @@
 
 class ScaleEngine
 {
-	public:
-		ScaleEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data);
-		virtual ~ScaleEngine ();
-		virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency);
+  public:
+    ScaleEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data);
+    virtual ~ScaleEngine ();
+    virtual BOOL SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency);
 
-		virtual struct RGBPixel *GetLineBuffer (ULONG y, BOOL lastpass);
-		virtual VOID DrawLineBuffer (struct RGBPixel *srcline, ULONG y, ULONG height);
-		virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y) = 0;
-		virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) = 0;
-		virtual VOID FlushBuffers ();
+    virtual struct RGBPixel *GetLineBuffer (ULONG y, BOOL lastpass);
+    virtual VOID DrawLineBuffer (struct RGBPixel *srcline, ULONG y, ULONG height);
+    virtual VOID RenderLine (struct RGBPixel *dstline, ULONG y) = 0;
+    virtual VOID RenderLineND (struct RGBPixel *dstline, ULONG y) = 0;
+    virtual VOID FlushBuffers ();
 
-		class RenderEngine RenderObj;
+    class RenderEngine RenderObj;
 
-	protected:
-		struct RGBPixel *ScaleX (struct RGBPixel *srcline, ULONG y);
+  protected:
+    struct RGBPixel *ScaleX (struct RGBPixel *srcline, ULONG y);
 
-		ULONG OrgWidth, OrgHeight;
-		ULONG ScaleWidth, ScaleHeight;
-		ULONG DstWidth, DstHeight;
-		ULONG SrcWidth, SrcHeight;
-		struct RGBPixel *SrcBuffer, *SrcLineA, *SrcLineB, *SrcLastLine;
-		struct RGBPixel *ScaleBuffer, *XScaledLineA, *XScaledLineB;
-		struct RGBPixel *DstBuffer, *DstLineA, *DstLineB, *DstLastLine;
-		struct Screen *Scr;
-		BOOL Interlaced, Dither, NotFirstFrame, LastPass;
+    ULONG OrgWidth, OrgHeight;
+    ULONG ScaleWidth, ScaleHeight;
+    ULONG DstWidth, DstHeight;
+    ULONG SrcWidth, SrcHeight;
+    struct RGBPixel *SrcBuffer, *SrcLineA, *SrcLineB, *SrcLastLine;
+    struct RGBPixel *ScaleBuffer, *XScaledLineA, *XScaledLineB;
+    struct RGBPixel *DstBuffer, *DstLineA, *DstLineB, *DstLastLine;
+    struct Screen *Scr;
+    BOOL Interlaced, Dither, NotFirstFrame, LastPass;
 };
 
 #endif

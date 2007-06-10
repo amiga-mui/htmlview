@@ -51,119 +51,121 @@ struct MUI_PulseNode
 {
   struct MUI_InputHandlerNode ihn;
 
-	VOID Start (Object *obj);
-	BOOL Stop (Object *obj);
+  VOID Start (Object *obj);
+  BOOL Stop (Object *obj);
 
-	BOOL Running;
+  BOOL Running;
 };
 
 struct MUIP_HTMLview_Post
 {
-	ULONG MethodID;
-	STRPTR URL, Target, Data, EncodingType;
+  ULONG MethodID;
+  STRPTR URL, Target, Data, EncodingType;
 };
 
 struct MUIP_HTMLview_LoadImages
 {
-	ULONG MethodID;
-	struct ImageList *Images;
+  ULONG MethodID;
+  struct ImageList *Images;
 };
 
 struct MUIP_HTMLview_LookupFrame
 {
-	ULONG MethodID;
-	STRPTR Name;
+  ULONG MethodID;
+  STRPTR Name;
 };
 
 struct MUIP_HTMLview_HitTest
 {
-	ULONG MethodID;
-	struct HitTestMessage *HMsg;
+  ULONG MethodID;
+  struct HitTestMessage *HMsg;
 };
 
 struct MUIP_HTMLview_AddSingleAnim
 {
-	ULONG MethodID;
-	struct PictureFrame *picture;
-	class SuperClass *receiver;
+  ULONG MethodID;
+  struct PictureFrame *picture;
+  class SuperClass *receiver;
 };
 
 struct MUIP_HTMLview_ServerRequest
 {
-	ULONG MethodID;
-	STRPTR Argument;
+  ULONG MethodID;
+  STRPTR Argument;
 };
 
 /* InstanceData */
 
 struct HTMLviewData
 {
-	ULONG Flags;
-	struct SharedData *Share;
+  ULONG Flags;
+  struct SharedData *Share;
 
-	struct LayoutMessage LayoutMsg;
-	struct RenderMessage RenderMsg;
+  struct LayoutMessage LayoutMsg;
+  struct RenderMessage RenderMsg;
 
-	struct Hook *LoadHook, *ImageLoadHook;
+  struct Hook *LoadHook, *ImageLoadHook;
 
-	ULONG Left, Top, Width, Height, XOffset, YOffset, VirtWidth, VirtHeight;
-	ULONG TopChange;
-	struct MUI_PulseNode Period, RefreshTimer;
+  ULONG Left, Top, Width, Height, XOffset, YOffset, VirtWidth, VirtHeight;
+  ULONG TopChange;
+  struct MUI_PulseNode Period, RefreshTimer;
 
-	struct MsgPort *MessagePort;
-	struct MUI_PulseNode ihnode;
+  struct MsgPort *MessagePort;
+  struct MUI_PulseNode ihnode;
 
-	struct Process *ParseThread;
-	struct ParseMessage *PMsg;
+  struct Process *ParseThread;
+  struct ParseMessage *PMsg;
 
-	/* Images waiting to get decoded... */
-	struct ImageList *Images, *ImagesLeft;
-	ULONG RunningDecoderThreads;
+  /* Images waiting to get decoded... */
+  struct ImageList *Images, *ImagesLeft;
+  ULONG RunningDecoderThreads;
 
-	/* The object to redraw, during MUIM_Draw */
-	class SuperClass *RedrawObj;
+  /* The object to redraw, during MUIM_Draw */
+  class SuperClass *RedrawObj;
 
-	class HostClass *HostObject;
-	ULONG ParseCount;
-	ULONG PageID;
-	STRPTR Title;
+  class HostClass *HostObject;
+  ULONG ParseCount;
+  ULONG PageID;
+  STRPTR Title;
 
-	STRPTR URLBase;	/* Domain */
-	STRPTR Page;		/* Page name */
-	STRPTR Local;		/* Relative to page */
-	STRPTR URL;			/* Entire URL */
+  STRPTR URLBase; /* Domain */
+  STRPTR Page;    /* Page name */
+  STRPTR Local;   /* Relative to page */
+  STRPTR URL;     /* Entire URL */
 
-	STRPTR FrameName;	/* The name of this frame */
-	STRPTR Target;		/* Temporary target name */
+  STRPTR FrameName; /* The name of this frame */
+  STRPTR Target;    /* Temporary target name */
 
-	STRPTR PostData;		/* These fields are set by MUIM_HTMLview_Post, */
-	STRPTR EncodingType;	/* and read by MUIM_HTMLview_StartParser */
+  STRPTR PostData;    /* These fields are set by MUIM_HTMLview_Post, */
+  STRPTR EncodingType;  /* and read by MUIM_HTMLview_StartParser */
 
-	STRPTR LastURL, ActiveURL;
-	class SuperClass *ActiveURLObj;
-	ULONG Qualifier;
+  STRPTR LastURL, ActiveURL;
+  class SuperClass *ActiveURLObj;
+  ULONG Qualifier;
 
-	LONG HScrollDiff, VScrollDiff;
+  LONG HScrollDiff, VScrollDiff;
 
-	char ParseThreadName[32];
+  char ParseThreadName[32];
 
-	ULONG Parsed;
+  ULONG Parsed;
 
-	/* Resulting structure for GetContextInfo */
-	struct MUIR_HTMLview_GetContextInfo ContextInfo;
+  /* Resulting structure for GetContextInfo */
+  struct MUIR_HTMLview_GetContextInfo ContextInfo;
 };
 
-#define FLG_RootObj				    (1<<0)
-#define FLG_HostObjNotUsed		(1<<1)
-#define FLG_ReAllocColours		(1<<2)
-#define FLG_NotResized			  (1<<3)
-#define FLG_Shown					    (1<<4)
-#define FLG_ActiveLink			  (1<<5)
-#define FLG_Reload				    (1<<6)
-#define FLG_NoBackfill			  (1<<7)
-#define FLG_RemoveChildren		(1<<9)
-#define FLG_DiscreteInput		  (1<<10)
-#define FLG_MarkingEnabled		(1<<11)
-#define FLG_RedrawMarked		  (1<<12)
+#define FLG_RootObj           (1<<0)
+#define FLG_HostObjNotUsed    (1<<1)
+#define FLG_ReAllocColours    (1<<2)
+#define FLG_NotResized        (1<<3)
+#define FLG_Shown             (1<<4)
+#define FLG_ActiveLink        (1<<5)
+#define FLG_Reload            (1<<6)
+#define FLG_NoBackfill        (1<<7)
+#define FLG_RemoveChildren    (1<<9)
+#define FLG_DiscreteInput     (1<<10)
+#define FLG_MarkingEnabled    (1<<11)
+#define FLG_RedrawMarked      (1<<12)
+
+extern "C" DISPATCHERPROTO(_Dispatcher);
 
 #endif

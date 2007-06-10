@@ -26,11 +26,11 @@
 
 VOID DummyClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
-	pmsg.SetLock();
-	pmsg.NextEndBracket();
+  pmsg.SetLock();
+  pmsg.NextEndBracket();
 #ifdef OUTPUT
-	PrintTag(pmsg.Locked);
+  PrintTag(pmsg.Locked);
 #endif
 
-	TreeClass::Parse(pmsg);
+  TreeClass::Parse(pmsg);
 }

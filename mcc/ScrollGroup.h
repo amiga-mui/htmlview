@@ -26,28 +26,28 @@
 #include "SDI_compiler.h"
 #include "SDI_hook.h"
 
-DISPATCHERPROTO(ScrollGroupDispatcher);
-extern struct MUI_CustomClass *ScrollGroupClass;
+extern "C" DISPATCHERPROTO(ScrollGroupDispatcher);
+extern "C" struct MUI_CustomClass *ScrollGroupClass;
 
 #define MUIA_ScrollGroup_HTMLview         HTMLview_ID(100) /* Private */
-#define	MUIA_ScrollGroup_Scrolling        HTMLview_ID(101) /* Private */
-#define	MUIA_ScrollGroup_Smooth           HTMLview_ID(102) /* Private */
-#define	MUIA_ScrollGroup_Frames           HTMLview_ID(103) /* Private */
-#define	MUIM_ScrollGroup_NewWidth         HTMLview_ID(104) /* Private */
-#define	MUIM_ScrollGroup_NewHeight        HTMLview_ID(105) /* Private */
+#define MUIA_ScrollGroup_Scrolling        HTMLview_ID(101) /* Private */
+#define MUIA_ScrollGroup_Smooth           HTMLview_ID(102) /* Private */
+#define MUIA_ScrollGroup_Frames           HTMLview_ID(103) /* Private */
+#define MUIM_ScrollGroup_NewWidth         HTMLview_ID(104) /* Private */
+#define MUIM_ScrollGroup_NewHeight        HTMLview_ID(105) /* Private */
 #define ScrollGroup_NumberOf              HTMLview_ID(106)
 
 struct ScrollGroupData
 {
-	Object *HTMLview;
+  Object *HTMLview;
   Object *Knob;
-	Object *RightScroll;
+  Object *RightScroll;
   Object *BottomScroll;
-	ULONG   Flags;
-	struct MUI_EventHandlerNode Events;
-	LONG    KnobPressX;
+  ULONG   Flags;
+  struct MUI_EventHandlerNode Events;
+  LONG    KnobPressX;
   LONG    KnobPressY;
-	LONG    VScrollValue;
+  LONG    VScrollValue;
   LONG    HScrollValue;
 };
 

@@ -25,21 +25,21 @@
 
 struct UseMapMessage
 {
-	UseMapMessage (LONG x, LONG y)
-	{
-		X = x;
-		Y = y;
-	}
+  UseMapMessage (LONG x, LONG y)
+  {
+    X = x;
+    Y = y;
+  }
 
-	LONG X, Y;
-	STRPTR URL, Target;
+  LONG X, Y;
+  STRPTR URL, Target;
 };
 
 enum
 {
-	RC_NoMatch = 0,
-	RC_Default,
-	RC_ExactMatch,
+  RC_NoMatch = 0,
+  RC_Default,
+  RC_ExactMatch,
 };
 
 #endif

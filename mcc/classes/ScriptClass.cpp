@@ -26,16 +26,16 @@
 
 VOID ScriptClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
-	pmsg.SetLock();
+  pmsg.SetLock();
 #ifdef OUTPUT
-	PrintTag("<SCRIPT>");
+  PrintTag("<SCRIPT>");
 #endif
 
-	do {
+  do {
 
-		pmsg.NextEndBracket();
-		if(*pmsg.Current != '<')
-			pmsg.NextStartBracket();
+    pmsg.NextEndBracket();
+    if(*pmsg.Current != '<')
+      pmsg.NextStartBracket();
 
-	} while (pmsg.Fetch(10) && strnicmp(pmsg.Current+1, "/SCRIPT>", 7));
+  } while (pmsg.Fetch(10) && strnicmp(pmsg.Current+1, "/SCRIPT>", 7));
 }

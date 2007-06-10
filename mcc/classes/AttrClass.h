@@ -29,12 +29,12 @@
 
 class AttrClass : public SuperClass
 {
-	public:
-		AttrClass () : SuperClass() { Flags |= FLG_Attribute; }
-		virtual ~AttrClass () { ; }
+  public:
+    AttrClass () : SuperClass() { Flags |= FLG_Attribute; }
+    virtual ~AttrClass () { ; }
 
-		virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
-		virtual BOOL Layout (struct LayoutMessage &lmsg);
+    virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    virtual BOOL Layout (struct LayoutMessage &lmsg);
 };
 
 #endif // ATTRCLASS_H

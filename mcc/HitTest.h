@@ -25,24 +25,24 @@
 
 struct HitTestMessage
 {
-	HitTestMessage (LONG x, LONG y, class TreeClass *host)
-	{
-		X = x;
-		Y = y;
-		Obj = NULL;
-		Host = host;
-		Img = NULL;
-		ServerMap = FALSE;
-	}
+  HitTestMessage (LONG x, LONG y, class TreeClass *host)
+  {
+    X = x;
+    Y = y;
+    Obj = NULL;
+    Host = host;
+    Img = NULL;
+    ServerMap = FALSE;
+  }
 
-	LONG X, Y;
-	LONG OffsetX, OffsetY;
-	BOOL ServerMap;
-	STRPTR URL, Target, ImgSrc, Frame, Background;
-	Object *FrameObj;
-	class SuperClass *Obj;
-	class TreeClass *Host;
-	class ImgClass *Img;
+  LONG X, Y;
+  LONG OffsetX, OffsetY;
+  BOOL ServerMap;
+  STRPTR URL, Target, ImgSrc, Frame, Background;
+  Object *FrameObj;
+  class SuperClass *Obj;
+  class TreeClass *Host;
+  class ImgClass *Img;
 };
 
 #endif

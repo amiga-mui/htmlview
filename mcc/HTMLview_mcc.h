@@ -36,7 +36,7 @@
   * documented attributes and methods
   */
 
-#define MUIM_HTMLview_ExtMessage          HTMLview_ID(1)		/* Private */
+#define MUIM_HTMLview_ExtMessage          HTMLview_ID(1)    /* Private */
 
 /**
   * Go to the specified URL, and use a named frame as target.
@@ -71,7 +71,7 @@
   */
 #define MUIM_HTMLview_GotoURL             HTMLview_ID(2)
 
-#define MUIM_HTMLview_Period              HTMLview_ID(3)		/* Private */
+#define MUIM_HTMLview_Period              HTMLview_ID(3)    /* Private */
 
 /**
   * The title of the page. 
@@ -141,8 +141,8 @@
 #define MUIA_HTMLview_CurrentURL          HTMLview_ID(7)
 
 #define MUIM_HTMLview_LoadImages          HTMLview_ID(8)    /* Private */
-#define MUIM_HTMLview_AddPart             HTMLview_ID(10)	/* Private */
-#define MUIM_HTMLview_DrawImages          HTMLview_ID(11)	/* Private */
+#define MUIM_HTMLview_AddPart             HTMLview_ID(10) /* Private */
+#define MUIM_HTMLview_DrawImages          HTMLview_ID(11) /* Private */
 
 /**
   * Setup a hook used for (page)-loading.
@@ -258,7 +258,7 @@
   *
   * EXAMPLE
   *      
-  *	// Setup a notify that will just load the link that the user press 
+  * // Setup a notify that will just load the link that the user press 
   *      
   * DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_ClickedURL, MUIV_Everytime,
   *          MUIV_Notify_Self, 3, MUIM_HTMLview_GotoURL, MUIV_TriggerValue, NULL);
@@ -291,9 +291,9 @@
   */
 #define MUIM_HTMLview_Parsed              HTMLview_ID(16)
 
-#define MUIM_HTMLview_PrivateGotoURL      HTMLview_ID(18)	/* Private */
-#define MUIM_HTMLview_AbortAll            HTMLview_ID(19)	/* Private */
-#define MUIM_HTMLview_LookupFrame         HTMLview_ID(20)	/* Private */
+#define MUIM_HTMLview_PrivateGotoURL      HTMLview_ID(18) /* Private */
+#define MUIM_HTMLview_AbortAll            HTMLview_ID(19) /* Private */
+#define MUIM_HTMLview_LookupFrame         HTMLview_ID(20) /* Private */
 
 /**
   * When following an anchor, then the HTMLview-object will set this tag to 
@@ -314,9 +314,9 @@
   */
 #define MUIA_HTMLview_Target              HTMLview_ID(21)
 
-#define MUIA_HTMLview_FrameName           HTMLview_ID(22)	/* Private */
-#define MUIA_HTMLview_MarginWidth         HTMLview_ID(23)	/* Private */
-#define MUIA_HTMLview_MarginHeight        HTMLview_ID(24)	/* Private */
+#define MUIA_HTMLview_FrameName           HTMLview_ID(22) /* Private */
+#define MUIA_HTMLview_MarginWidth         HTMLview_ID(23) /* Private */
+#define MUIA_HTMLview_MarginHeight        HTMLview_ID(24) /* Private */
 
 /**
   * Reload the current page.
@@ -335,9 +335,9 @@
   */
 #define MUIM_HTMLview_Reload              HTMLview_ID(25)
 
-#define MUIM_HTMLview_StartParser         HTMLview_ID(26)	/* Private */
-#define MUIM_HTMLview_HandleEvent         HTMLview_ID(27)	/* Private */
-#define MUIM_HTMLview_RemoveChildren      HTMLview_ID(28)	/* Private */
+#define MUIM_HTMLview_StartParser         HTMLview_ID(26) /* Private */
+#define MUIM_HTMLview_HandleEvent         HTMLview_ID(27) /* Private */
+#define MUIM_HTMLview_RemoveChildren      HTMLview_ID(28) /* Private */
 #define MUIA_HTMLview_IPC                 HTMLview_ID(29)
 
 /**
@@ -407,7 +407,7 @@
   */
 #define MUIM_HTMLview_Search              HTMLview_ID(31)
 
-#define MUIA_HTMLview_IntuiTicks          HTMLview_ID(32)	/* Private */
+#define MUIA_HTMLview_IntuiTicks          HTMLview_ID(32) /* Private */
 
 /**
   * This tag will give a reasonable delta factor for a horizontal scrollbar.
@@ -523,8 +523,8 @@
   */
 #define MUIA_HTMLview_Scrollbars          HTMLview_ID(35)
 
-#define MUIM_HTMLview_StartRefreshTimer   HTMLview_ID(36)	/* Private */
-#define MUIM_HTMLview_Refresh             HTMLview_ID(38)	/* Private */
+#define MUIM_HTMLview_StartRefreshTimer   HTMLview_ID(36) /* Private */
+#define MUIM_HTMLview_Refresh             HTMLview_ID(38) /* Private */
 
 /**
   * Returns info about the context of the (x, y) coordinate.
@@ -565,7 +565,7 @@
   */
 #define MUIM_HTMLview_GetContextInfo      HTMLview_ID(39)
 
-#define MUIM_HTMLview_HitTest             HTMLview_ID(40)	/* Private */
+#define MUIM_HTMLview_HitTest             HTMLview_ID(40) /* Private */
 
 /**
   * The URL of the page. 
@@ -617,8 +617,8 @@
   */
 #define MUIA_HTMLview_ImageLoadHook       HTMLview_ID(44)
 
-#define MUIM_HTMLview_AnimTick            HTMLview_ID(45)	/* Private */
-#define MUIM_HTMLview_AddSingleAnim       HTMLview_ID(48)	/* Private */
+#define MUIM_HTMLview_AnimTick            HTMLview_ID(45) /* Private */
+#define MUIM_HTMLview_AddSingleAnim       HTMLview_ID(48) /* Private */
 
 /**
   * Get the number of pictures which are currently being loaded/decoded.
@@ -657,8 +657,8 @@
   */
 #define MUIM_HTMLview_FlushImage          HTMLview_ID(50)
 
-#define MUIA_HTMLview_SharedData          HTMLview_ID(51)	/* Private */
-#define MUIM_HTMLview_ServerRequest       HTMLview_ID(52)	/* Private */
+#define MUIA_HTMLview_SharedData          HTMLview_ID(51) /* Private */
+#define MUIM_HTMLview_ServerRequest       HTMLview_ID(52) /* Private */
 
 /**
   * Get the page ID of the currently displayed page.
@@ -701,7 +701,7 @@
   * 
   * MUIM_HTMLview_ContinueAnims
   */
-#define MUIM_HTMLview_PauseAnims          HTMLview_ID(54)	
+#define MUIM_HTMLview_PauseAnims          HTMLview_ID(54) 
 
 /**
   * This will continue animations which were previously paused with 
@@ -729,8 +729,8 @@
   * MUIM_HTMLview_PauseAnims
   */
 #define MUIM_HTMLview_ContinueAnims       HTMLview_ID(55)
-#define MUIM_HTMLview_Post                HTMLview_ID(56)	
-#define MUIA_HTMLview_InstanceData        HTMLview_ID(57)	/* Private */
+#define MUIM_HTMLview_Post                HTMLview_ID(56) 
+#define MUIA_HTMLview_InstanceData        HTMLview_ID(57) /* Private */
 #define MUIV_HTMLview_Scrollbars_Auto      0
 #define MUIV_HTMLview_Scrollbars_Yes       1
 #define MUIV_HTMLview_Scrollbars_No        2
@@ -740,8 +740,8 @@
 
 struct MUIP_HTMLview_FlushImage
 {
-	ULONG MethodID;
-	STRPTR URL;
+  ULONG MethodID;
+  STRPTR URL;
 };
 
 #define MUIV_HTMLview_FlushImage_All           0
@@ -750,47 +750,47 @@ struct MUIP_HTMLview_FlushImage
 
 struct MUIP_HTMLview_GetContextInfo
 {
-	ULONG MethodID;
-	LONG X, Y;
+  ULONG MethodID;
+  LONG X, Y;
 };
 
 struct MUIR_HTMLview_GetContextInfo
 {
-	STRPTR URL, Target, Img, Frame, Background;
-	Object *FrameObj;
-	ULONG ImageWidth, ImageHeight, ImageSize, ImageOffsetX, ImageOffsetY;
-	STRPTR ImageAltText;
+  STRPTR URL, Target, Img, Frame, Background;
+  Object *FrameObj;
+  ULONG ImageWidth, ImageHeight, ImageSize, ImageOffsetX, ImageOffsetY;
+  STRPTR ImageAltText;
 };
 
 struct MUIP_HTMLview_GotoURL
 {
-	ULONG MethodID;
-	STRPTR URL, Target;
+  ULONG MethodID;
+  STRPTR URL, Target;
 };
 
 struct MUIP_HTMLview_AddPart
 {
-	ULONG MethodID;
-	STRPTR File;
+  ULONG MethodID;
+  STRPTR File;
 };
 
 struct MUIP_HTMLview_VLink
 {
-	ULONG MethodID;
-	STRPTR URL;
+  ULONG MethodID;
+  STRPTR URL;
 };
 
 struct MUIP_HTMLview_Parsed
 {
-	ULONG MethodID;
-	ULONG Parsed;
+  ULONG MethodID;
+  ULONG Parsed;
 };
 
 struct MUIP_HTMLview_Search
 {
-	ULONG MethodID;
-	STRPTR String;
-	ULONG Flags;
+  ULONG MethodID;
+  STRPTR String;
+  ULONG Flags;
 };
 
 #define MUIF_HTMLview_Search_CaseSensitive (1 << 0)
@@ -801,22 +801,22 @@ struct MUIP_HTMLview_Search
 
 struct HTMLview_LoadMsg
 {
-	LONG lm_Type;
+  LONG lm_Type;
 
-	union
-	{
-		struct { STRPTR URL; ULONG Flags; } lm_Open;
-		struct { STRPTR Buffer; LONG Size; } lm_Read;
-		struct { STRPTR Buffer; LONG Size; } lm_Write;
-		struct { ; } lm_Close;
-	};
+  union
+  {
+    struct { STRPTR URL; ULONG Flags; } lm_Open;
+    struct { STRPTR Buffer; LONG Size; } lm_Read;
+    struct { STRPTR Buffer; LONG Size; } lm_Write;
+    struct { ; } lm_Close;
+  };
 
-	ULONG lm_PageID;
-	APTR lm_Userdata;
-	Object *lm_App;
+  ULONG lm_PageID;
+  APTR lm_Userdata;
+  Object *lm_App;
 
-	ULONG PostLength;
-	STRPTR EncodingType;
+  ULONG PostLength;
+  STRPTR EncodingType;
 };
 
 #define MUIF_HTMLview_LoadMsg_Reload      (1 << 0)
@@ -829,10 +829,10 @@ struct HTMLview_LoadMsg
 
 enum
 {
-	HTMLview_Open = 0,
-	HTMLview_Read,
-	HTMLview_Close,
-	HTMLview_Write
+  HTMLview_Open = 0,
+  HTMLview_Read,
+  HTMLview_Close,
+  HTMLview_Write
 };
 
 #endif

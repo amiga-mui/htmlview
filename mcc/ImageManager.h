@@ -31,113 +31,129 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
 
 struct ImageCacheItem
 {
-	ImageCacheItem (STRPTR url, struct PictureFrame *pic);
-	~ImageCacheItem ();
+  ImageCacheItem (STRPTR url, struct PictureFrame *pic);
+  ~ImageCacheItem ();
 
-	struct ImageCacheItem *Next;
-	STRPTR URL;
-	struct PictureFrame *Picture;
+  struct ImageCacheItem *Next;
+  STRPTR URL;
+  struct PictureFrame *Picture;
 };
 
 class ImageCache
 {
-	public:
-		ImageCache (ULONG maxsize);
-		~ImageCache ();
-		VOID AddImage (STRPTR url, struct PictureFrame *pic);
-		struct PictureFrame *FindImage (STRPTR url, ULONG width, ULONG height);
-		VOID FlushCache (STRPTR url = NULL);
+  public:
+    ImageCache (ULONG maxsize);
+    ~ImageCache ();
+    VOID AddImage (STRPTR url, struct PictureFrame *pic);
+    struct PictureFrame *FindImage (STRPTR url, ULONG width, ULONG height);
+    VOID FlushCache (STRPTR url = NULL);
 
-		struct ImageCacheItem *FirstEntry, *LastEntry;
-		ULONG CurrentSize, MaxSize;
+    struct ImageCacheItem *FirstEntry, *LastEntry;
+    ULONG CurrentSize, MaxSize;
 };
 
 enum
 {
-	StatusPending = 0,
-	StatusDecoding,
-	StatusError,
-	StatusAborted,
-	StatusDone
+  StatusPending = 0,
+  StatusDecoding,
+  StatusError,
+  StatusAborted,
+  StatusDone
 };
 
 struct DecodeItem
 {
-	DecodeItem (Object *obj, struct HTMLviewData *data, struct ImageList *image);
+  DecodeItem (Object *obj, struct HTMLviewData *data, struct ImageList *image);
 
-	struct DecodeItem *Prev, *Next;
-	class DecodeQueueManager *DecodeQueue;
+  struct DecodeItem *Prev, *Next;
+  class DecodeQueueManager *DecodeQueue;
 
-	UWORD Status, _pad;
-	BOOL Abort, Started;
-	struct PictureFrame *Picture;
-	struct AnimInfo *Anim;
-	ULONG CurrentY, LastY;
-	ULONG CurrentPass, LastPass;
+  UWORD Status, _pad;
+  BOOL Abort, Started;
+  struct PictureFrame *Picture;
+  struct AnimInfo *Anim;
+  ULONG CurrentY, LastY;
+  ULONG CurrentPass, LastPass;
 
-	Object *Obj;
-	ULONG PageID;
-	struct ImageList *Images;
-	struct HTMLviewData *Data;
-	struct Task *Thread;
+  Object *Obj;
+  ULONG PageID;
+  struct ImageList *Images;
+  struct HTMLviewData *Data;
+  struct Task *Thread;
 
-	VOID Enter () { ObtainSemaphore(&Mutex); }
-	VOID Leave () { ReleaseSemaphore(&Mutex); }
-	struct SignalSemaphore Mutex;
+  VOID Enter () { ObtainSemaphore(&Mutex); }
+  VOID Leave () { ReleaseSemaphore(&Mutex); }
+  struct SignalSemaphore Mutex;
 
-	VOID Start (struct PictureFrame *pic);
-	BOOL Update ();
+  VOID Start (struct PictureFrame *pic);
+  BOOL Update ();
 };
 
 class DecodeQueueManager
 {
-	public:
-		DecodeQueueManager ()
-		{
-			InitSemaphore(&Mutex);
-		}
+  public:
+    DecodeQueueManager ()
+    {
+      InitSemaphore(&Mutex);
+    }
 
-		~DecodeQueueManager ();
-		VOID InsertElm (struct DecodeItem *item);
-		VOID RemoveElm (struct DecodeItem *item);
-		ULONG DumpQueue ();
-		VOID InvalidateQueue (Object *obj);
+    ~DecodeQueueManager ();
+    VOID InsertElm (struct DecodeItem *item);
+    VOID RemoveElm (struct DecodeItem *item);
+    ULONG DumpQueue ();
+    VOID InvalidateQueue (Object *obj);
 
-		BOOL IsEmpty ()
-		{
-			return(Queue ? FALSE : TRUE);
-		}
+    BOOL IsEmpty ()
+    {
+      return(Queue ? FALSE : TRUE);
+    }
 
-	protected:
-		struct DecodeItem *Queue;
-		struct SignalSemaphore Mutex;
+  protected:
+    struct DecodeItem *Queue;
+    struct SignalSemaphore Mutex;
 };
 
 enum
 {
-	IDA_HTMLviewTags = TAG_USER | 0x1000,
+  IDA_HTMLviewTags = TAG_USER | 0x1000,
 
-	IDA_StatusStruct,		/* struct DecodeQueue * */
-	IDA_HTMLview,			/* Object * */
-	IDA_LoadHook,			/* struct Hook * */
-	IDA_LoadMsg,			/* struct HTMLview_LoadMsg * */
-	IDA_StartBuffer,		/* UBYTE [10] */
-	IDA_BytesInBuffer,	/* ULONG */
+  IDA_StatusStruct,   /* struct DecodeQueue * */
+  IDA_HTMLview,     /* Object * */
+  IDA_LoadHook,     /* struct Hook * */
+  IDA_LoadMsg,      /* struct HTMLview_LoadMsg * */
+  IDA_StartBuffer,    /* UBYTE [10] */
+  IDA_BytesInBuffer,  /* ULONG */
 
-	IDA_NumberOf
+  IDA_NumberOf
 };
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
+#endif
 
 struct DecoderData
 {
-	Object *HTMLview;
-	struct Hook *LoadHook;
-	struct HTMLview_LoadMsg *LoadMsg;
-	struct DecodeItem *StatusItem;
-	struct Screen *Scr;
-	class ScaleEngine *ImgObj;
-	UBYTE *StartBuffer;
-	ULONG BytesInBuffer, Gamma;
-	BOOL NoTransparency;
+  Object *HTMLview;
+  struct Hook *LoadHook;
+  struct HTMLview_LoadMsg *LoadMsg;
+  struct DecodeItem *StatusItem;
+  struct Screen *Scr;
+  class ScaleEngine *ImgObj;
+  UBYTE *StartBuffer;
+  ULONG BytesInBuffer, Gamma;
+  BOOL NoTransparency;
 };
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
+  #endif
+#endif
 
 #endif

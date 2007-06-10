@@ -35,24 +35,24 @@
 
 struct PictureFrame
 {
-	PictureFrame (ULONG width, ULONG height, ULONG leftofs, ULONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags);
-	~PictureFrame ();
-	VOID LockPicture ();
-	VOID UnLockPicture ();
-	ULONG Size ();
-	BOOL MatchSize (ULONG width, ULONG height);
+  PictureFrame (ULONG width, ULONG height, ULONG leftofs, ULONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags);
+  ~PictureFrame ();
+  VOID LockPicture ();
+  VOID UnLockPicture ();
+  ULONG Size ();
+  BOOL MatchSize (ULONG width, ULONG height);
 
-	struct PictureFrame *Next;
-	LONG Width, Height, Depth; /* Depth is only > 1 when interleaved */
-	ULONG LeftOfs, TopOfs;
-	ULONG AnimDelay, LoopCnt, Disposal;
-	ULONG ScrWidth, ScrHeight;
-	struct RGBPixel Background;
-	struct BitMap *BMp;
-	UBYTE *Mask, *AlphaMask;
-	class ColourManager *CMap;
-	ULONG LockCnt;
-	ULONG Flags;
+  struct PictureFrame *Next;
+  LONG Width, Height, Depth; /* Depth is only > 1 when interleaved */
+  ULONG LeftOfs, TopOfs;
+  ULONG AnimDelay, LoopCnt, Disposal;
+  ULONG ScrWidth, ScrHeight;
+  struct RGBPixel Background;
+  struct BitMap *BMp;
+  UBYTE *Mask, *AlphaMask;
+  class ColourManager *CMap;
+  ULONG LockCnt;
+  ULONG Flags;
 };
 
 #define PicFLG_Full     (1 << 0)
@@ -62,24 +62,24 @@ struct PictureFrame
 
 class RenderEngine
 {
-	public:
-		RenderEngine (struct Screen *scr, struct DecoderData *data);
-		~RenderEngine ();
+  public:
+    RenderEngine (struct Screen *scr, struct DecoderData *data);
+    ~RenderEngine ();
 
-		VOID SetCMap (class ColourManager *cmap);
-		VOID WriteLine (ULONG width, struct RGBPixel *line, ULONG y);
-		VOID WriteLine (ULONG width, UBYTE *chunky, ULONG y);
-		BOOL AllocateFrame (ULONG width, ULONG height, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency, ULONG flags);
-		VOID WriteMask (struct RGBPixel *srcline, ULONG width, ULONG y);
-		VOID Multiply (ULONG width, ULONG y, ULONG height);
+    VOID SetCMap (class ColourManager *cmap);
+    VOID WriteLine (ULONG width, struct RGBPixel *line, ULONG y);
+    VOID WriteLine (ULONG width, UBYTE *chunky, ULONG y);
+    BOOL AllocateFrame (ULONG width, ULONG height, ULONG animdelay, ULONG disposal, ULONG leftofs, ULONG topofs, struct RGBPixel *background, ULONG transparency, ULONG flags);
+    VOID WriteMask (struct RGBPixel *srcline, ULONG width, ULONG y);
+    VOID Multiply (ULONG width, ULONG y, ULONG height);
 
-	protected:
-		struct PictureFrame *FirstFrame;
-		struct PictureFrame *LastFrame;
-		struct Screen *Scr;
-		struct DecoderData *Data;
-		struct RastPort TmpRP, BMpRP;
-		UBYTE *Mask, *AlphaMask;
+  protected:
+    struct PictureFrame *FirstFrame;
+    struct PictureFrame *LastFrame;
+    struct Screen *Scr;
+    struct DecoderData *Data;
+    struct RastPort TmpRP, BMpRP;
+    UBYTE *Mask, *AlphaMask;
 };
 
 #endif

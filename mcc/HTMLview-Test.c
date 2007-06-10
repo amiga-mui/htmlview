@@ -414,6 +414,8 @@ int main(void)
 }
 
 extern "C" {
+
+// C++ virtual table init functions
 extern void _INIT_4_InitMem(void);
 extern void _INIT_5_CMapMutex(void);
 extern void _INIT_6_CharTables(void);
@@ -421,29 +423,40 @@ extern void _INIT_7_BuildTagTree(void);
 extern void _INIT_7_BuildColourTree(void);
 extern void _INIT_7_BuildEntityTree(void);
 extern void _INIT_7_PrepareDecoders(void);
+//extern void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
+//extern void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
+
 __attribute__((constructor)) void AAA_call_constructors(void)
 {
-   //_INIT_4_InitMem();
-   _INIT_5_CMapMutex();
-   _INIT_6_CharTables();
-   _INIT_7_BuildTagTree();
-   _INIT_7_BuildColourTree();
-   _INIT_7_BuildEntityTree();
-   _INIT_7_PrepareDecoders();
+  // call the virtual tables setup in the
+  // correct priority
+  _INIT_4_InitMem();
+  _INIT_5_CMapMutex();
+  _INIT_6_CharTables();
+  _INIT_7_BuildTagTree();
+  _INIT_7_BuildColourTree();
+  _INIT_7_BuildEntityTree();
+  _INIT_7_PrepareDecoders();
+//    _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
+//    _Z41__static_initialization_and_destruction_0ii(1, 65535);
 }
 
-void _EXIT_4_CleanupMem(void);
-void _EXIT_7_FlushDecoders(void);
-void _EXIT_7_DisposeTagTree(void);
-void _EXIT_7_DisposeColourTree(void);
-void _EXIT_7_DisposeEntityTree(void);
+// C++ virtual table exit/cleanup functions
+extern void _EXIT_4_CleanupMem(void);
+extern void _EXIT_7_FlushDecoders(void);
+extern void _EXIT_7_DisposeTagTree(void);
+extern void _EXIT_7_DisposeColourTree(void);
+extern void _EXIT_7_DisposeEntityTree(void);
+
 __attribute__((destructor)) void ____call_destructors(void)
 {
-   _EXIT_7_FlushDecoders();
-   _EXIT_7_DisposeTagTree();
-   _EXIT_7_DisposeColourTree();
-   _EXIT_7_DisposeEntityTree();
-   //_EXIT_4_CleanupMem();
+  // cleanup the virtual tables of various
+  // classes
+  _EXIT_7_FlushDecoders();
+  _EXIT_7_DisposeTagTree();
+  _EXIT_7_DisposeColourTree();
+  _EXIT_7_DisposeEntityTree();
+  _EXIT_4_CleanupMem();
 }
 
 #if defined(__libnix__)

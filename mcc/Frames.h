@@ -25,21 +25,21 @@
 
 enum
 {
-	NoFrameBorder = 0,
-	FrameBorder,
-	OuterBox
+  NoFrameBorder = 0,
+  FrameBorder,
+  OuterBox
 };
 
 struct DivideBordersMessage
 {
-	DivideBordersMessage ()
-	{
-		LeftBorder = OuterBox;
-		TopBorder = OuterBox;
-	}
+  DivideBordersMessage ()
+  {
+    LeftBorder = OuterBox;
+    TopBorder = OuterBox;
+  }
 
-	/* Result */
-	BOOL LeftBorder, TopBorder;
+  /* Result */
+  BOOL LeftBorder, TopBorder;
 };
 
 #endif

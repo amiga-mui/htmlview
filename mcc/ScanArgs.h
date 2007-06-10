@@ -27,23 +27,23 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args);
 
 struct ArgList
 {
-	const char *Name;
-	APTR Storage;
-	ULONG Type;
-	const char **KeywordList;
+  const char *Name;
+  APTR Storage;
+  ULONG Type;
+  const char *const *KeywordList;
 };
 
 enum
 {
-	ARG_STRING,
-	ARG_NUMBER,
-	ARG_COLOUR,
-	ARG_URL,
-	ARG_VALUE,
-	ARG_MULTIVALUE,
-	ARG_KEYWORD,
-	ARG_SWITCH,
-	ARG_BOOLEAN
+  ARG_STRING,
+  ARG_NUMBER,
+  ARG_COLOUR,
+  ARG_URL,
+  ARG_VALUE,
+  ARG_MULTIVALUE,
+  ARG_KEYWORD,
+  ARG_SWITCH,
+  ARG_BOOLEAN
 };
 
 #endif

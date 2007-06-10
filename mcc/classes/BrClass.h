@@ -29,15 +29,15 @@
 
 class BrClass : public AttrClass
 {
-	public:
-		BrClass () : AttrClass() { Flags |= FLG_Newline; }
-		VOID Parse (REG(a2, struct ParseMessage &pmsg));
-		VOID MinMax (struct MinMaxMessage &mmsg);
-		BOOL Layout (struct LayoutMessage &lmsg);
-		BOOL Mark (struct MarkMessage &mmsg);
+  public:
+    BrClass () : AttrClass() { Flags |= FLG_Newline; }
+    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID MinMax (struct MinMaxMessage &mmsg);
+    BOOL Layout (struct LayoutMessage &lmsg);
+    BOOL Mark (struct MarkMessage &mmsg);
 
-	protected:
-		WORD Clear;
+  protected:
+    WORD Clear;
 };
 
 #endif // BRCLASS_H

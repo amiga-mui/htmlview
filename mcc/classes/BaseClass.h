@@ -29,12 +29,12 @@
 
 class BaseClass : public AttrClass
 {
-	public:
-		BaseClass () : AttrClass() { ; }
-		~BaseClass () { delete URL; delete Target; }
-		VOID Parse (REG(a2, struct ParseMessage &pmsg));
+  public:
+    BaseClass () : AttrClass() { ; }
+    ~BaseClass () { delete URL; delete Target; }
+    VOID Parse (REG(a2, struct ParseMessage &pmsg));
 
-		STRPTR URL, Target;
+    STRPTR URL, Target;
 };
 
 #endif // BASECLASS_H

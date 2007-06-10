@@ -27,11 +27,11 @@
 #define PIXEL_SIZE 4
 #define PIXEL_FORMAT 1
 /*
-#define RECTFMT_RGB			0
-#define RECTFMT_RGBA			1
-#define RECTFMT_ARGB			2
-#define RECTFMT_LUT8			3
-#define RECTFMT_GREY8		4
+#define RECTFMT_RGB     0
+#define RECTFMT_RGBA      1
+#define RECTFMT_ARGB      2
+#define RECTFMT_LUT8      3
+#define RECTFMT_GREY8   4
 */
 
 
@@ -41,93 +41,109 @@ VOID ReleaseCMap (class ColourManager *cmap);
 
 inline VOID Round (UBYTE &col, LONG &add)
 {
-/*	if(add > 0)
-	{
-		if(col + add > 255)
-			add = 255 - col;
-	}
-	else
-	{
-		if(col + add < 0)
-			add = -col;
-	}
-	col += add;*/
+/*  if(add > 0)
+  {
+    if(col + add > 255)
+      add = 255 - col;
+  }
+  else
+  {
+    if(col + add < 0)
+      add = -col;
+  }
+  col += add;*/
 
-	WORD sum;
-//	col = add > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
-	col = (sum = col+add) & 0xff00 ? (add > 0 ? 255 : 0) : sum;
+  WORD sum;
+//  col = add > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
+  col = (sum = col+add) & 0xff00 ? (add > 0 ? 255 : 0) : sum;
 }
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
+#endif
 
 struct RGBPixel
 {
-	UBYTE R, G, B, A;
+  UBYTE R, G, B, A;
 
-	VOID Init (ULONG *rgb)
-	{
-		R = *rgb++ >> 24;
-		G = *rgb++ >> 24;
-		B = *rgb >> 24;
-	}
+  VOID Init (ULONG *rgb)
+  {
+    R = *rgb++ >> 24;
+    G = *rgb++ >> 24;
+    B = *rgb >> 24;
+  }
 
-//	VOID Add (LONG &r, LONG &g, LONG &b)
-	VOID Add (LONG r, LONG g, LONG b)
-	{
-		LONG sum;
-		sum = R+r;
-		R = r > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
-		sum = G+g;
-		G = g > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
-		sum = B+b;
-		B = b > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
+//  VOID Add (LONG &r, LONG &g, LONG &b)
+  VOID Add (LONG r, LONG g, LONG b)
+  {
+    LONG sum;
+    sum = R+r;
+    R = r > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
+    sum = G+g;
+    G = g > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
+    sum = B+b;
+    B = b > 0 ? (sum > 255 ? 255 : sum) : (sum < 0 ? 0 : sum);
 
-/*		R = (sum = R+r) & 0xff00 ? (r > 0 ? 255 : 0) : sum;
-		G = (sum = G+g) & 0xff00 ? (g > 0 ? 255 : 0) : sum;
-		B = (sum = B+b) & 0xff00 ? (b > 0 ? 255 : 0) : sum;
+/*    R = (sum = R+r) & 0xff00 ? (r > 0 ? 255 : 0) : sum;
+    G = (sum = G+g) & 0xff00 ? (g > 0 ? 255 : 0) : sum;
+    B = (sum = B+b) & 0xff00 ? (b > 0 ? 255 : 0) : sum;
 */
-/*		Round(R, r);
-		Round(G, g);
-		Round(B, b);
-*/	}
+/*    Round(R, r);
+    Round(G, g);
+    Round(B, b);
+*/  }
 
-	ULONG Index ()
-	{
-		return((R & 0xe0) | (G & 0xe0) >> 3 | B >> 6);
-	}
+  ULONG Index ()
+  {
+    return((R & 0xe0) | (G & 0xe0) >> 3 | B >> 6);
+  }
 
-	ULONG RGB ()
-	{
-		return(*(ULONG *)&R);
-	}
+  ULONG RGB ()
+  {
+    return(*(ULONG *)&R);
+  }
 
-	ULONG Scale (UBYTE factor)
-	{
-		return(
-			(R*factor / 255) << 24 |
-			(G*factor / 255) << 16 |
-			(B*factor / 255) <<  8);
-	}
+  ULONG Scale (UBYTE factor)
+  {
+    return(
+      (R*factor / 255) << 24 |
+      (G*factor / 255) << 16 |
+      (B*factor / 255) <<  8);
+  }
 
-	VOID SetRGB (ULONG RGBA)
-	{
-		*(ULONG *)&R = RGBA;
-	}
+  VOID SetRGB (ULONG RGBA)
+  {
+    *(ULONG *)&R = RGBA;
+  }
 
-	VOID SetR (LONG r) { R = r > 255 ? 255 : (r < 0 ? 0 : r); }
-	VOID SetG (LONG g) { G = g > 255 ? 255 : (g < 0 ? 0 : g); }
-	VOID SetB (LONG b) { B = b > 255 ? 255 : (b < 0 ? 0 : b); }
+  VOID SetR (LONG r) { R = r > 255 ? 255 : (r < 0 ? 0 : r); }
+  VOID SetG (LONG g) { G = g > 255 ? 255 : (g < 0 ? 0 : g); }
+  VOID SetB (LONG b) { B = b > 255 ? 255 : (b < 0 ? 0 : b); }
 };
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
+  #endif
+#endif
 
 class ColourManager
 {
-	public:
-		ColourManager (struct Screen *scr);
-		~ColourManager ();
+  public:
+    ColourManager (struct Screen *scr);
+    ~ColourManager ();
 
-		class ColourManager *Next, *Prev;
-		LONG Allocated[256];
-		struct RGBPixel CValues[256];
-		ULONG LockCnt;
-		struct ColorMap *ColourMap;
+    class ColourManager *Next, *Prev;
+    LONG Allocated[256];
+    struct RGBPixel CValues[256];
+    ULONG LockCnt;
+    struct ColorMap *ColourMap;
 };
 
 #endif

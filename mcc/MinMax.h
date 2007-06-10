@@ -25,43 +25,43 @@
 
 struct CountCellsMessage
 {
-	ULONG Columns;
-	ULONG Rows;
-	ULONG RowCount;
-	UWORD OpenRows;
-	UWORD RowSpan[64];
+  ULONG Columns;
+  ULONG Rows;
+  ULONG RowCount;
+  UWORD OpenRows;
+  UWORD RowSpan[64];
 };
 
 struct CellWidth
 {
-	ULONG Min, Max, Percent, Relative;
-	ULONG Width; // Result!
-	BOOL Fixed;
+  ULONG Min, Max, Percent, Relative;
+  ULONG Width; // Result!
+  BOOL Fixed;
 };
 
 struct MinMaxMessage
 {
-	MinMaxMessage (struct TextFont **fonts, struct LayoutMessage *lmsg, struct CellWidth *widths = NULL);
-	VOID Reset ();
-	VOID Newline ();
+  MinMaxMessage (struct TextFont **fonts, struct LayoutMessage *lmsg, struct CellWidth *widths = NULL);
+  VOID Reset ();
+  VOID Newline ();
 
-	LONG Min, Max;
-	ULONG X, Columns;
+  LONG Min, Max;
+  ULONG X, Columns;
 
-	ULONG *RowOpenCounts;
-	struct CellWidth *Widths;
+  ULONG *RowOpenCounts;
+  struct CellWidth *Widths;
 
-	ULONG Indent;
-	ULONG ImageLeftIndent, ImageRightIndent;
+  ULONG Indent;
+  ULONG ImageLeftIndent, ImageRightIndent;
 
-	struct TextFont *Font;
-	struct TextFont **Fonts;
+  struct TextFont *Font;
+  struct TextFont **Fonts;
 
-	LONG Spacing, Padding;
-	BOOL TableBorder, Pass;
+  LONG Spacing, Padding;
+  BOOL TableBorder, Pass;
 
-	/* Mainly for accessing the image cache... */
-	struct LayoutMessage *LMsg;
+  /* Mainly for accessing the image cache... */
+  struct LayoutMessage *LMsg;
 };
 
 #endif

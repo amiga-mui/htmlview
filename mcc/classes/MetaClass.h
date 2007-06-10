@@ -29,9 +29,9 @@
 
 class MetaClass : public AttrClass
 {
-	public:
-		MetaClass () : AttrClass() { ; }
-		VOID Parse (REG(a2, struct ParseMessage &pmsg));
+  public:
+    MetaClass () : AttrClass() { ; }
+    VOID Parse (REG(a2, struct ParseMessage &pmsg));
 };
 
 #endif // METACLASS_H

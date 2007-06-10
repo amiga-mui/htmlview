@@ -28,64 +28,64 @@
 
 struct SharedData
 {
-	SharedData (struct IClass *cl, Object *obj, struct HTMLviewData *data);
+  SharedData (struct IClass *cl, Object *obj, struct HTMLviewData *data);
 
-	VOID Setup (struct Screen *scr);
-	BOOL InitConfig ();
-	VOID Cleanup ();
-	VOID FreeConfig ();
-	VOID StopAnims (Object *obj);
-	struct AnimInfo *AddAnim (Object *obj, struct HTMLviewData *data, struct PictureFrame *picture, struct ObjectList *receivers);
+  VOID Setup (struct Screen *scr);
+  BOOL InitConfig ();
+  VOID Cleanup ();
+  VOID FreeConfig ();
+  VOID StopAnims (Object *obj);
+  struct AnimInfo *AddAnim (Object *obj, struct HTMLviewData *data, struct PictureFrame *picture, struct ObjectList *receivers);
 
-	/* Root object and it's instance data */
-	Object *Obj;
-	struct HTMLviewData *Data;
+  /* Root object and it's instance data */
+  Object *Obj;
+  struct HTMLviewData *Data;
 
-	/* Eventhandler note */
-	struct MUI_EventHandlerNode Events;
+  /* Eventhandler note */
+  struct MUI_EventHandlerNode Events;
 
-	/* Imagedecode-pulse and gif-anim timer */
-	struct MUI_PulseNode ImageTimer, AnimTimer;
+  /* Imagedecode-pulse and gif-anim timer */
+  struct MUI_PulseNode ImageTimer, AnimTimer;
 
-	/* Listitem graphics */
-	Object *ListItemMarkers;
-	struct BitMap *LI_BMp;
-	UBYTE *LI_Mask;
-	ULONG LI_Width, LI_Height;
+  /* Listitem graphics */
+  Object *ListItemMarkers;
+  struct BitMap *LI_BMp;
+  UBYTE *LI_Mask;
+  ULONG LI_Width, LI_Height;
 
-	/* Our screen */
-	struct Screen *Scr;
+  /* Our screen */
+  struct Screen *Scr;
 
-	/* The fonts we've opened */
-	struct TextFont *Fonts[Font_NumberOf];
+  /* The fonts we've opened */
+  struct TextFont *Fonts[Font_NumberOf];
 
-	/* Key for page scroll + percent to scroll */
-	struct InputXpression PageScrollKey;
-	ULONG PageScrollMove;
+  /* Key for page scroll + percent to scroll */
+  struct InputXpression PageScrollKey;
+  ULONG PageScrollMove;
 
-	/* Pens that we've allocated */
-	LONG Pens[Col_NumberOf];
+  /* Pens that we've allocated */
+  LONG Pens[Col_NumberOf];
 
-	/* This is our decode-queue */
-	class DecodeQueueManager DecodeQueue;
+  /* This is our decode-queue */
+  class DecodeQueueManager DecodeQueue;
 
-	/* Running anims */
-	struct AnimInfo *Anims;
+  /* Running anims */
+  struct AnimInfo *Anims;
 
-	/* This is just for the MUIA_HTMLview_ImagesInDecodeQueue */
-	ULONG ImagesInDecodeQueue;
+  /* This is just for the MUIA_HTMLview_ImagesInDecodeQueue */
+  ULONG ImagesInDecodeQueue;
 
-	/* Image cache */
-	class ImageCache *ImageStorage;
+  /* Image cache */
+  class ImageCache *ImageStorage;
 
-	/* Image settings */
-	ULONG GammaCorrection, DitherType, ImageCacheSize;
+  /* Image settings */
+  ULONG GammaCorrection, DitherType, ImageCacheSize;
 
-	/* Scroll deltas */
-	ULONG HDeltaFactor, VDeltaFactor;
+  /* Scroll deltas */
+  ULONG HDeltaFactor, VDeltaFactor;
 
-	/* Various flags */
-	ULONG Flags;
+  /* Various flags */
+  ULONG Flags;
 };
 
 #define FLG_CustomColours     (1 << 0)
