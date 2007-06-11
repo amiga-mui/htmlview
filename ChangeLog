@@ -5,6 +5,11 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-06-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * TreeClass.cpp: fixed incorrect va_arg() usage which ended up in an incorrect
+    memory access crash. Now HTMLview-Test should at least run again.
+
 2007-06-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * mcp: adapted source to compile with new mccinit.c instead of mccheader.c
