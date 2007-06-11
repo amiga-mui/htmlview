@@ -31,6 +31,8 @@
 
 #include "SDI_stdarg.h"
 
+#include "Debug.h"
+
 TreeClass::~TreeClass ()
 {
   struct ChildsList *prev, *first = FirstChild;
@@ -333,6 +335,8 @@ VOID TreeClass::MinMax (struct MinMaxMessage &mmsg)
 
 VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
+  ENTER();
+
 //  StackCheck();
 
   Flags |= FLG_ArgumentsRead;
@@ -392,6 +396,8 @@ VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
               pmsg.OpenCounts[ID]--;
               pmsg.OpenGroups[Group]--;
             }
+
+            LEAVE();
             return;
           }
 
@@ -454,7 +460,7 @@ VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
           if(weak_nl && space)
             pmsg.PendingSpace = TRUE;
 
-          newobj = new class TextClass();
+          newobj = new TextClass();
           STRPTR current = pmsg.Current;
           pmsg.Current = pmsg.Locked + length;
           newobj->Parse(pmsg);
@@ -517,6 +523,8 @@ VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
   if(handle)
     Restore(pmsg.OpenCounts, 1, handle);
+
+  LEAVE();
 }
 
 VOID TreeClass::Render (struct RenderMessage &rmsg)
@@ -554,24 +562,26 @@ VOID TreeClass::SetCol(LONG &storage, LONG pen)
 
 APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ...)
 {
+  ENTER();
+
   va_list ap;
+  va_start(ap, len);
 
   UWORD *result = new UWORD[2*len];
   UWORD *res = result;
 
-  va_start(ap, len);
-
   while(len--)
   {
-    ULONG *actual = va_arg(ap, ULONG *);
+    ULONG actual = va_arg(ap, ULONG);
 
-    *res++ = pmsg.OpenCounts[*actual];
-    *res++ = *actual;
-    pmsg.OpenCounts[*actual] = 0;
+    *res++ = pmsg.OpenCounts[actual];
+    *res++ = actual;
+    pmsg.OpenCounts[actual] = 0;
   }
 
   va_end(ap);
 
+  RETURN(result);
   return(result);
 }
 
