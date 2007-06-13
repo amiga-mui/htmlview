@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-06-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * #?/Debug.c: unified the _DPRINTF() functions for all platforms.
+
 2007-06-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * TreeClass.cpp: fixed incorrect va_arg() usage which ended up in an incorrect
