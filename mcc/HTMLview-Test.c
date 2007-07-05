@@ -171,7 +171,7 @@ Object *BuildApp(void)
 #ifndef __MORPHOS__
 //				Child, ScrollgroupObject,
 				Child, NewObject(ScrollGroupClass->mcc_Class, NULL,
-					MUIA_ScrollGroup_Contents,*/ htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
+					MUIA_ScrollGroup_Contents, htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
 						End,
 					End,
 #endif
@@ -222,13 +222,13 @@ Object *BuildApp(void)
 
 		DoMethod(urlstring, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, htmlview, 2, MUIM_HTMLview_GotoURL, MUIV_TriggerValue);
 
-/**/		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Top,		MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_First,	MUIV_TriggerValue);
+		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Top,		MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_First,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Height,					MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_Visible,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Height,	MUIV_EveryTime, vscroll, 3, MUIM_Set, MUIA_Prop_Entries,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Left,		MUIV_EveryTime, hscroll, 3, MUIM_Set, MUIA_Prop_First,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Width,					MUIV_EveryTime, hscroll, 3, MUIM_Set, MUIA_Prop_Visible,	MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_Virtgroup_Width,		MUIV_EveryTime, hscroll, 3, MUIM_Set, MUIA_Prop_Entries,	MUIV_TriggerValue);
-/**/
+
 		DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_CurrentURL, MUIV_EveryTime, infotext, 3, MUIM_Set, MUIA_Text_Contents, MUIV_TriggerValue);
 //		DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_ClickedURL, MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_HTMLview_GotoURL, MUIV_TriggerValue);
 		DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_ClickedURL, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_CallHook, &GotoURLHook, MUIV_TriggerValue);
