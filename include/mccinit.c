@@ -337,14 +337,14 @@ STATIC uint32 _manager_Release(struct LibraryManagerInterface *Self)
 
 STATIC CONST APTR lib_manager_vectors[] =
 {
-  _manager_Obtain,
-  _manager_Release,
-  NULL,
-  NULL,
-  LibOpen,
-  LibClose,
-  LibExpunge,
-  NULL,
+  (APTR)_manager_Obtain,
+  (APTR)_manager_Release,
+  (APTR)NULL,
+  (APTR)NULL,
+  (APTR)LibOpen,
+  (APTR)LibClose,
+  (APTR)LibExpunge,
+  (APTR)NULL,
   (APTR)-1
 };
 
@@ -370,11 +370,11 @@ ULONG _MCCClass_Release(UNUSED struct Interface *Self)
 
 STATIC CONST APTR main_vectors[] =
 {
-  _MCCClass_Obtain,
-  _MCCClass_Release,
-  NULL,
-  NULL,
-  MCC_Query,
+  (APTR)_MCCClass_Obtain,
+  (APTR)_MCCClass_Release,
+  (APTR)NULL,
+  (APTR)NULL,
+  (APTR)MCC_Query,
   (APTR)-1
 };
 
@@ -503,7 +503,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
 
   #if defined(__amigaos4__) && defined(__NEWLIB__)
   if((NewlibBase = OpenLibrary("newlib.library", 3)) &&
-     GETINTERFACE(INewlib, NewlibBase))
+     GETINTERFACE(INewlib, struct Interface*, NewlibBase))
   #endif
   {       
     #if defined(MIN_STACKSIZE) && !defined(__amigaos4__)
@@ -544,14 +544,14 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
 
       // now that this library/class is going to be initialized for the first time
       // we go and open all necessary libraries on our own
-      if((DOSBase = (APTR)OpenLibrary("dos.library", 36)) &&
-         GETINTERFACE(IDOS, DOSBase))
-      if((GfxBase = (APTR)OpenLibrary("graphics.library", 36)) &&
-         GETINTERFACE(IGraphics, GfxBase))
-      if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
-         GETINTERFACE(IIntuition, IntuitionBase))
-      if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) &&
-         GETINTERFACE(IUtility, UtilityBase))
+      if((DOSBase = (struct Library *)OpenLibrary("dos.library", 36)) &&
+         GETINTERFACE(IDOS, struct DOSIFace*, DOSBase))
+      if((GfxBase = (struct Library *)OpenLibrary("graphics.library", 36)) &&
+         GETINTERFACE(IGraphics, struct GraphicsIFace*, GfxBase))
+      if((IntuitionBase = (struct Library *)OpenLibrary("intuition.library", 36)) &&
+         GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
+      if((UtilityBase = (struct Library *)OpenLibrary("utility.library", 36)) &&
+         GETINTERFACE(IUtility, struct UtilityIFace*, UtilityBase))
       {
         // we have to please the internal utilitybase
         // pointers of libnix and clib2
@@ -567,7 +567,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
         #endif
 
         if((MUIMasterBase = OpenLibrary(MUIMASTER_NAME, MASTERVERSION)) &&
-           GETINTERFACE(IMUIMaster, MUIMasterBase))
+           GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
         {
           #if defined(PRECLASSINIT)
           if(PreClassInit())
