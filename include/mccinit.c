@@ -22,6 +22,9 @@
                      allows to call a function within a new stack frame
                      initiated by StackSwap(). This should make the whole
                      stack swapping mechanism more safe.
+  1.6   24.07.2007 : corrected an else-branch which only exists if CLASSINIT
+                     is defined and added an UNUSED extension to the Expunge()
+                     function in case the base parameter is not used.
 
  About:
 
@@ -341,14 +344,14 @@ STATIC uint32 _manager_Release(struct LibraryManagerInterface *Self)
 
 STATIC CONST APTR lib_manager_vectors[] =
 {
-  (APTR)_manager_Obtain,
-  (APTR)_manager_Release,
-  (APTR)NULL,
-  (APTR)NULL,
-  (APTR)LibOpen,
-  (APTR)LibClose,
-  (APTR)LibExpunge,
-  (APTR)NULL,
+  _manager_Obtain,
+  _manager_Release,
+  NULL,
+  NULL,
+  LibOpen,
+  LibClose,
+  LibExpunge,
+  NULL,
   (APTR)-1
 };
 
@@ -374,11 +377,11 @@ ULONG _MCCClass_Release(UNUSED struct Interface *Self)
 
 STATIC CONST APTR main_vectors[] =
 {
-  (APTR)_MCCClass_Obtain,
-  (APTR)_MCCClass_Release,
-  (APTR)NULL,
-  (APTR)NULL,
-  (APTR)MCC_Query,
+  _MCCClass_Obtain,
+  _MCCClass_Release,
+  NULL,
+  NULL,
+  MCC_Query,
   (APTR)-1
 };
 
@@ -578,14 +581,14 @@ static ULONG mccLibInit(struct LibraryHeader *base)
 {
   // now that this library/class is going to be initialized for the first time
   // we go and open all necessary libraries on our own
-  if((DOSBase = OpenLibrary("dos.library", 36)) &&
-     GETINTERFACE(IDOS, struct DOSIFace*, DOSBase))
-  if((GfxBase = OpenLibrary("graphics.library", 36)) &&
-     GETINTERFACE(IGraphics, struct GraphicsIFace*, GfxBase))
-  if((IntuitionBase = OpenLibrary("intuition.library", 36)) &&
-     GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
-  if((UtilityBase = OpenLibrary("utility.library", 36)) &&
-     GETINTERFACE(IUtility, struct UtilityIFace*, UtilityBase))
+  if((DOSBase = (APTR)OpenLibrary("dos.library", 36)) &&
+     GETINTERFACE(IDOS, DOSBase))
+  if((GfxBase = (APTR)OpenLibrary("graphics.library", 36)) &&
+     GETINTERFACE(IGraphics, GfxBase))
+  if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
+     GETINTERFACE(IIntuition, IntuitionBase))
+  if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) &&
+     GETINTERFACE(IUtility, UtilityBase))
   {
     // we have to please the internal utilitybase
     // pointers of libnix and clib2
@@ -601,7 +604,7 @@ static ULONG mccLibInit(struct LibraryHeader *base)
     #endif
 
     if((MUIMasterBase = OpenLibrary(MUIMASTER_NAME, MASTERVERSION)) &&
-       GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
+       GETINTERFACE(IMUIMaster, MUIMasterBase))
     {
       #if defined(PRECLASSINIT)
       if(PreClassInit())
@@ -634,8 +637,10 @@ static ULONG mccLibInit(struct LibraryHeader *base)
               // make sure we return TRUE
               return TRUE;
             }
+            #if defined(CLASSINIT)
             else
               E(DBF_STARTUP, "ClassInit(%s) failed", CLASS);
+            #endif
 
             // if we pass this point than an error
             // occurred and we have to cleanup
@@ -688,7 +693,7 @@ static ULONG mccLibInit(struct LibraryHeader *base)
 }
 
 /* expunge everything we previously opened and call user definable functions */
-static ULONG mccLibExpunge(struct LibraryHeader *base)
+static ULONG mccLibExpunge(UNUSED struct LibraryHeader *base)
 {
   // in case the user specified that he has an own class
   // expunge function we call it right here, not caring about
@@ -803,7 +808,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
 
   #if defined(__amigaos4__) && defined(__NEWLIB__)
   if((NewlibBase = OpenLibrary("newlib.library", 3)) &&
-     GETINTERFACE(INewlib, struct Interface*, NewlibBase))
+     GETINTERFACE(INewlib, NewlibBase))
   #endif
   {       
     BOOL success = FALSE;
