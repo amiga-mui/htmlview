@@ -77,6 +77,12 @@ static VOID ClassExpunge(UNUSED struct Library *base);
 static ULONG initCPP(void);
 static VOID cleanupCPP(void);
 
+/******************************************************************************/
+/* include the lib startup code for the mcc/mcp  (and muimaster inlines)      */
+/******************************************************************************/
+
+#include "mccinit.c"
+
 static BOOL ClassInit(UNUSED struct Library *base)
 {
   ENTER();
@@ -251,4 +257,3 @@ static VOID cleanupCPP(void)
 
 } // extern "C"
 
-#include "mccinit.c"

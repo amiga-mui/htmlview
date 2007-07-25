@@ -16,7 +16,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor_mcc
 
- $Id: mcc_common.h 285 2007-01-27 15:34:01Z damato $
+ $Id: mcc_common.h 143 2005-06-24 18:10:57Z gnikl $
 
 ***************************************************************************/
 
@@ -49,14 +49,14 @@
 #define NewObject IIntuition->NewObject
 #endif
 
-#define GETINTERFACE(iface, type, base)	(iface = (type)GetInterface((struct Library *)(base), "main", 1L, NULL))
+#define GETINTERFACE(iface, base)	(iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
 #define DROPINTERFACE(iface)			(DropInterface((struct Interface *)iface), iface = NULL)
 
 #else
 
 #include <clib/alib_protos.h>
 
-#define GETINTERFACE(iface, type, base)	TRUE
+#define GETINTERFACE(iface, base)	TRUE
 #define DROPINTERFACE(iface)
 
 #endif /* ! __amigaos4__ */
