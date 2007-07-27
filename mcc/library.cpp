@@ -48,6 +48,8 @@
 #define USERLIBID     CLASS " " LIB_REV_STRING CPU " (" LIB_DATE ") " LIB_COPYRIGHT
 #define MASTERVERSION 19
 
+#define CLASSINIT
+#define CLASSEXPUNGE
 #define MIN_STACKSIZE 8192
 
 struct Library *LayersBase = NULL;
@@ -66,21 +68,22 @@ struct DiskfontIFace*     IDiskfont = NULL;
 struct DataTypesIFace*    IDataTypes = NULL;
 #endif
 
-#define CLASSINIT
+/******************************************************************************/
+/* define the functions used by the startup code ahead of including mccinit.c */
+/******************************************************************************/
 static BOOL ClassInit(UNUSED struct Library *base);
-
-#define CLASSEXPUNGE
 static VOID ClassExpunge(UNUSED struct Library *base);
-
 static ULONG initCPP(void);
 static VOID cleanupCPP(void);
 
 /******************************************************************************/
 /* include the lib startup code for the mcc/mcp  (and muimaster inlines)      */
 /******************************************************************************/
-
 #include "mccinit.c"
 
+/******************************************************************************/
+/* define all implementations of our user functions                           */
+/******************************************************************************/
 static BOOL ClassInit(UNUSED struct Library *base)
 {
   ENTER();
