@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-07-27 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc: fixed broken compilation due to recent changes.
+
 2007-07-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * #?/library.c: now really uses the 3 parameter version of GETINTERFACE()
