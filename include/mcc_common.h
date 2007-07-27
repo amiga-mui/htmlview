@@ -1,8 +1,8 @@
 /***************************************************************************
 
- TextEditor.mcc - Textediting MUI Custom Class
+ HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005 by TextEditor Open Source Team
+ Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -14,9 +14,9 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- TextEditor class Support Site:  http://www.sf.net/projects/texteditor_mcc
+ HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
 
- $Id: mcc_common.h 143 2005-06-24 18:10:57Z gnikl $
+ $Id: README 3 2007-03-11 09:31:30Z damato $
 
 ***************************************************************************/
 
@@ -49,14 +49,14 @@
 #define NewObject IIntuition->NewObject
 #endif
 
-#define GETINTERFACE(iface, base)	(iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
+#define GETINTERFACE(iface, type, base)	(iface = (type)GetInterface((struct Library *)(base), "main", 1L, NULL))
 #define DROPINTERFACE(iface)			(DropInterface((struct Interface *)iface), iface = NULL)
 
 #else
 
 #include <clib/alib_protos.h>
 
-#define GETINTERFACE(iface, base)	TRUE
+#define GETINTERFACE(iface, type, base)	TRUE
 #define DROPINTERFACE(iface)
 
 #endif /* ! __amigaos4__ */

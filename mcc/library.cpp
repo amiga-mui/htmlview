@@ -66,8 +66,6 @@ struct DiskfontIFace*     IDiskfont = NULL;
 struct DataTypesIFace*    IDataTypes = NULL;
 #endif
 
-extern "C" {
-
 #define CLASSINIT
 static BOOL ClassInit(UNUSED struct Library *base);
 
@@ -183,6 +181,7 @@ static VOID ClassExpunge(UNUSED struct Library *base)
 // defined by the C-runtime libraries involved
 // Here we
 
+extern "C" {
 
 // prototypes for the C++ virtual tables setup/cleanup
 // functions automatically defined by the C++ compiler of GCC
@@ -210,6 +209,8 @@ extern void _EXIT_7_DisposeEntityTree(void);
 #if defined(__MORPHOS__)
 #include "libnix.c"
 #endif
+
+} // extern "C"
 
 static ULONG initCPP(void)
 {
@@ -248,12 +249,3 @@ static VOID cleanupCPP(void)
   run_destructors();
   #endif
 }
-
-/******************************************************************************/
-/*                                                                            */
-/* include the lib startup code for the mcc/mcp  (and muimaster inlines)      */
-/*                                                                            */
-/******************************************************************************/
-
-} // extern "C"
-
