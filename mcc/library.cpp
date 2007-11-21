@@ -31,8 +31,13 @@
 /*                                                                            */
 /******************************************************************************/
 
+extern "C" {
 #include "constructors.h"
+};
 #include "ScrollGroup.h"
+#ifdef USEMUISTRINGS
+#include "StringClass.h"
+#endif
 
 #include "private.h"
 #include "rev.h"
@@ -41,7 +46,7 @@
 #define REVISION      LIB_REVISION
 
 #define CLASS         MUIC_HTMLview
-#define SUPERCLASS    MUIC_Area
+#define SUPERCLASS    MUIC_Virtgroup
 
 #define INSTDATA      HTMLviewData
 
@@ -88,30 +93,32 @@ static BOOL ClassInit(UNUSED struct Library *base)
 {
   ENTER();
 
-  if((LayersBase = OpenLibrary("layers.library", 36)) &&
-    GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
-  if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
-    GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
-  if((CxBase = OpenLibrary("commodities.library", 36)) &&
-    GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
-  if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
-    GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
-  if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
-    GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
-  if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
-    GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
+  if(initCPP())
   {
-    // setup our sub custom classes
-    if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher))))
+    if((LayersBase = OpenLibrary("layers.library", 36)) &&
+      GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
+    if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
+      GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
+    if((CxBase = OpenLibrary("commodities.library", 36)) &&
+      GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
+    if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
+      GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
+    if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
+      GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
+    if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
+      GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
     {
-      // before we can use our class we have to
-      // setup all C++ specfic tasks
-      if(initCPP())
+  	  if (ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher)))
       {
-        RETURN(TRUE);
-        return TRUE;
+		  #ifdef USEMUISTRINGS
+	  	  if (StringClass = MUI_CreateCustomClass(NULL, MUIC_String, NULL, sizeof(StringData), ENTRY(StringDispatcher)))
+          #endif
+    	  {
+  	    	return(TRUE);
+	        return TRUE;
+    	  }
       }
-    }
+	}
   }
 
   ClassExpunge(base);
@@ -124,14 +131,19 @@ static VOID ClassExpunge(UNUSED struct Library *base)
 {
   ENTER();
 
+  #ifdef USEMUISTRINGS
+  if(StringClass)
+  {
+    MUI_DeleteCustomClass(StringClass);
+    StringClass = NULL;
+  }
+  #endif
+
   if(ScrollGroupClass)
   {
     MUI_DeleteCustomClass(ScrollGroupClass);
     ScrollGroupClass = NULL;
   }
-
-  // cleanup the CPP stuff
-  cleanupCPP();
 
   if(CyberGfxBase)
   {
@@ -175,9 +187,10 @@ static VOID ClassExpunge(UNUSED struct Library *base)
     LayersBase = NULL;
   }
 
+  cleanupCPP();
+
   LEAVE();
 }
-
 
 // In this section we setup specfic C++ related things. In fact, we initialize
 // the vtables for various classes, including running certain constructors
@@ -199,6 +212,7 @@ extern void _INIT_7_BuildEntityTree(void);
 extern void _INIT_7_PrepareDecoders(void);
 //extern void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
 //extern void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
+//extern void _INIT_5_ParseThreadSemaphore();
 
 // C++ virtual table exit/cleanup functions
 extern void _EXIT_4_CleanupMem(void);
@@ -233,6 +247,7 @@ static ULONG initCPP(void)
   _INIT_7_PrepareDecoders();
 //    _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
 //    _Z41__static_initialization_and_destruction_0ii(1, 65535);
+//  _INIT_5_ParseThreadSemaphore();
 
   return 1;
 }

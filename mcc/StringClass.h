@@ -16,40 +16,31 @@
 
  HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
 
- $Id$
+ $Id: ScrollGroup.h 44 2007-06-10 18:51:25Z damato $
 
 ***************************************************************************/
 
-#include "MetaClass.h"
-#include "HostClass.h"
+#ifndef STRINGCLASS_H
+#define STRINGCLASS_H
 
-#include "ParseMessage.h"
-#include "ScanArgs.h"
-#include <stdio.h>
+#include "SDI_compiler.h"
+#include "SDI_hook.h"
 
-VOID MetaClass::Parse(REG(a2, struct ParseMessage &pmsg))
-{
-  AttrClass::Parse(pmsg);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-  STRPTR http = NULL, content = NULL;
-  struct ArgList args[] =
-  {
-    { "HTTP-EQUIV", &http,    ARG_STRING, NULL },
-    { "CONTENT",    &content, ARG_STRING, NULL },
-    { NULL,           NULL,       0,          NULL }
-  };
-  ScanArgs(pmsg.Locked, args);
+extern DISPATCHERPROTO(StringDispatcher);
+extern struct MUI_CustomClass *StringClass;
 
-  if(http && content && !stricmp(http, "REFRESH") && !pmsg.NoFrames)
-  {
-    FLOAT delay;
-    int offset = 0;
-    if(sscanf(content, "%f%*[,; ]%*[URLurl]=%n", &delay, &offset) == 1 && offset)
-    {
-      strcpy(pmsg.Host->RefreshURL = new char[strlen(content+offset)+1], content+offset);
-      pmsg.Host->RefreshTime = (ULONG)(delay*1000);
-    }
-  }
-  delete http;
-  delete content;
+#ifdef __cplusplus
 }
+#endif
+ 
+struct StringData
+{
+  struct RastPort rp;
+  ULONG Columns;
+};
+
+#endif

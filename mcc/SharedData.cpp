@@ -69,7 +69,7 @@ VOID SharedData::Setup (struct Screen *scr)
 
   Scr = scr;
   InitConfig();
-  DoMethod(_win(Obj), MUIM_Window_AddEventHandler, &Events);
+  DoMethod(_win(Obj), MUIM_Window_AddEventHandler, (ULONG)&Events);
 
   LEAVE();
 }
@@ -78,7 +78,7 @@ VOID SharedData::Cleanup ()
 {
   ENTER();
 
-  DoMethod(_win(Obj), MUIM_Window_RemEventHandler, &Events);
+  DoMethod(_win(Obj), MUIM_Window_RemEventHandler, (ULONG)&Events);
   FreeConfig();
 
   AnimTimer.Stop(Obj);

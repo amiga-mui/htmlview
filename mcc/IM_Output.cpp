@@ -20,8 +20,6 @@
 
 ***************************************************************************/
 
-#include <string.h>
-#include <stdio.h>
 #include <exec/types.h>
 
 #include "SDI_compiler.h"

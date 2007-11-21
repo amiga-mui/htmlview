@@ -159,7 +159,7 @@ static struct EntityInfo *TFind (struct TNode *node, CONST_STRPTR str)
   return (struct EntityInfo *)node;
 }
 
-struct TNode *EntityTree;
+struct TNode *EntityTree = NULL;
 
 extern "C" VOID _INIT_7_BuildEntityTree ();
 VOID _INIT_7_BuildEntityTree ()

@@ -297,6 +297,7 @@ MCCOBJS = \
           $(OBJDIR)/TagInfo.o \
           $(OBJDIR)/TernaryTrees.o \
           $(OBJDIR)/URLHandling.o \
+          $(OBJDIR)/StringClass.o \
           $(OBJDIR)/Debug.o
 
 TESTOBJS= $(OBJDIR)/HTMLview-Test.o \
@@ -371,6 +372,7 @@ TESTOBJS= $(OBJDIR)/HTMLview-Test.o \
           $(OBJDIR)/TagInfo.o \
           $(OBJDIR)/TernaryTrees.o \
           $(OBJDIR)/URLHandling.o \
+          $(OBJDIR)/StringClass.o \
           $(OBJDIR)/Debug.o
 
 # available catalog translations

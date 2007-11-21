@@ -22,7 +22,6 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <stdio.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 
@@ -48,9 +47,10 @@ VOID StackCheck ()
   StackUsage = max(StackUsage, (ULONG)FindTask(NULL)->tc_SPUpper-StackReg());
 }*/
 
-/*  struct SignalSemaphore mutex;
+static struct SignalSemaphore mutex;
 
-VOID _INIT_7_Semaphore ()
+/*extern "C" VOID _INIT_5_ParseThreadSemaphore();
+VOID _INIT_5_ParseThreadSemaphore()
 {
   memset(&mutex, 0, sizeof(struct SignalSemaphore));
   InitSemaphore(&mutex);
@@ -75,14 +75,14 @@ VOID PrintTag (STRPTR tag)
 
 //#undef OUTPUT
 
-
-
-
-VOID ParseThread(REG(a0, STRPTR arguments))
+//VOID ParseThread(REG(a0, STRPTR arguments ))
+VOID ParseThread(REG(a0,STRPTR arguments))
 {
-  struct ParseThreadArgs *args;
-  if(sscanf(arguments, "%x", (unsigned int *)&args))
+  //if(sscanf(arguments, "%x", (unsigned int *)&args))
+  if(1)
   {
+    struct ParseThreadArgs *args = (struct ParseThreadArgs *)arguments;
+
     struct Hook *loadhook = args->Data->LoadHook;
 
     struct MsgPort *myport;
@@ -115,6 +115,10 @@ VOID ParseThread(REG(a0, STRPTR arguments))
 
         if(pmsg.Fetch(32) && *pmsg.Current != '<')
           pmsg.NextStartBracket();
+
+        /*ObtainSemaphore(&mutex);
+		kprintf("PARSETHREAD %lx FOR OBJ %lx MSGPORT %lx ARGS %lx\n",FindTask(NULL),args->HTMLview,args->Data->MessagePort,args);
+        ReleaseSemaphore(&mutex);*/
 
         class HostClass *obj = new class HostClass(args->HTMLview, args->Data);
         msg.Class = ParseMsg_Startup;
@@ -165,6 +169,7 @@ VOID ParseThread(REG(a0, STRPTR arguments))
       }
       DeleteMsgPort(myport);
     }
+
     delete args;
   }
 //  kprintf("ParseStack: %ld\n", StackUsage);

@@ -39,7 +39,7 @@
 #include "private.h"
 #include "ScrollGroup.h"
 
-struct MUI_CustomClass* mcc = NULL;
+struct MUI_CustomClass* ThisClass = NULL;
 
 struct Library* LayersBase = NULL;
 struct Library* KeymapBase = NULL;
@@ -171,7 +171,7 @@ Object *BuildApp(void)
 #ifndef __MORPHOS__
 //				Child, ScrollgroupObject,
 				Child, NewObject(ScrollGroupClass->mcc_Class, NULL,
-					MUIA_ScrollGroup_Contents, htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
+					MUIA_ScrollGroup_Contents, htmlview = (Object *)NewObject(ThisClass->mcc_Class, NULL,
 						End,
 					End,
 #endif
@@ -179,7 +179,7 @@ Object *BuildApp(void)
 
 				Child, ColGroup(2),
 					MUIA_Group_Spacing, 0,
-					Child, htmlview = (Object *)NewObject(mcc->mcc_Class, NULL,
+					Child, htmlview = (Object *)NewObject(ThisClass->mcc_Class, NULL,
 						VirtualFrame,
 						MUIA_HTMLview_DiscreteInput, FALSE,
 						MUIA_HTMLview_Contents, "<html><Body><Center><H1>Hej med dig<hr>test",
@@ -284,8 +284,14 @@ VOID MainLoop (Object *app)
   LEAVE();
 }
 
+#if defined(__libnix__)
+ void *mempool;
+#endif
+
 int main(void)
 {
+  mempool = CreatePool(MEMF_CLEAR | MEMF_SEM_PROTECTED, 12*1024, 6*1024);
+
   #if defined(__amigaos4__)
   if((IntuitionBase = OpenLibrary("intuition.library", 38)) &&
      GETINTERFACE(IIntuition, struct IntuitionIFace*, IntuitionBase))
@@ -324,7 +330,7 @@ int main(void)
     if((MUIMasterBase = OpenLibrary("muimaster.library", MUIMASTER_VMIN)) &&
       GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
     {
-		  mcc = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(HTMLviewData), ENTRY(_Dispatcher));
+		  ThisClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(HTMLviewData), ENTRY(_Dispatcher));
 			ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher));
 
   		Object *app;
@@ -335,7 +341,7 @@ int main(void)
 	  	}
 
   		MUI_DeleteCustomClass(ScrollGroupClass);
-			MUI_DeleteCustomClass(mcc);
+			MUI_DeleteCustomClass(ThisClass);
     }
 
     if(MUIMasterBase)
@@ -409,6 +415,7 @@ int main(void)
     }
 	}
 
+
   RETURN(0);
   return 0;
 }
@@ -460,7 +467,7 @@ __attribute__((destructor)) void ____call_destructors(void)
 }
 
 #if defined(__libnix__)
-static void *mempool;
+//static void *mempool;
 
 void *malloc(size_t size)
 {

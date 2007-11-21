@@ -28,6 +28,11 @@
 #include "ScanArgs.h"
 #include "ScrollGroup.h"
 #include "SharedData.h"
+#include <stdio.h>
+
+#undef NewObject
+extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+#undef MUI_NewObject
 
 VOID FrameClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
@@ -35,22 +40,25 @@ VOID FrameClass::AppendGadget (struct AppendGadgetMessage &amsg)
   {
     ScrollGroup = (Object *)NewObject(ScrollGroupClass->mcc_Class, NULL,
       MUIA_ScrollGroup_Scrolling, Scrolling,
-      MUIA_ScrollGroup_Smooth, amsg.Data->Share->Flags & FLG_SmoothPageScroll,
+      MUIA_ScrollGroup_Smooth,   amsg.Data->Share->Flags & FLG_SmoothPageScroll,
       MUIA_ScrollGroup_HTMLview, HTMLview = (Object *)NewObject(OCLASS(amsg.Parent), NULL,
-        MUIA_HTMLview_SharedData, amsg.Data->Share,
-        MUIA_HTMLview_LoadHook, amsg.Data->LoadHook,
-        MUIA_HTMLview_FrameName, Name,
-        MUIA_HTMLview_MarginWidth, MarginWidth,
-        MUIA_HTMLview_MarginHeight, MarginHeight,
+        MUIA_HTMLview_SharedData, 	 amsg.Data->Share,
+        MUIA_HTMLview_LoadHook, 	 amsg.Data->LoadHook,
+        MUIA_HTMLview_ImageLoadHook, amsg.Data->ImageLoadHook,
+        MUIA_HTMLview_FrameName, 	 Name,
+        MUIA_HTMLview_MarginWidth,   MarginWidth,
+        MUIA_HTMLview_MarginHeight,  MarginHeight,
         MUIA_HTMLview_DiscreteInput, amsg.Data->Flags & FLG_DiscreteInput,
         End,
       End;
+
+	//kprintf("SCROLLGROUP FRAME %lx\n",ScrollGroup);
 
     if(!ScrollGroup)
       ScrollGroup = HTMLview = RectangleObject, MUIA_Background, MUII_TextBack, End;
 
     if(ScrollGroup)
-      DoMethod(amsg.Parent, OM_ADDMEMBER, ScrollGroup);
+      DoMethod(amsg.Parent, OM_ADDMEMBER, (ULONG)ScrollGroup);
   }
 }
 
@@ -59,7 +67,7 @@ Object *FrameClass::LookupFrame (STRPTR name, class HostClass *hclass)
   Object *result;
   if((result = HTMLview))
   {
-    if((Name && !stricmp(Name, name)) || (result = (Object *)DoMethod(HTMLview, MUIM_HTMLview_LookupFrame, name)))
+    if((Name && !stricmp(Name, name)) || (result = (Object *)DoMethod(HTMLview, MUIM_HTMLview_LookupFrame, (ULONG)name)))
       hclass->DefaultFrame = HTMLview;
   }
   return(result);
@@ -85,7 +93,7 @@ Object *FrameClass::HandleMUIEvent (struct MUIP_HandleEvent *emsg)
   Object *result = NULL;
   if(HTMLview)
   {
-    DoMethod(HTMLview, MUIM_HTMLview_HandleEvent, emsg->imsg, emsg->muikey);
+    DoMethod(HTMLview, MUIM_HTMLview_HandleEvent, (ULONG)emsg->imsg, emsg->muikey);
     if(emsg->imsg->Class == IDCMP_MOUSEBUTTONS && emsg->imsg->Code == IECODE_LBUTTON)
     {
       LONG  x = emsg->imsg->MouseX - _left(HTMLview),
@@ -109,7 +117,7 @@ BOOL FrameClass::HitTest (struct HitTestMessage &hmsg)
     hmsg.Y -= Top;
     hmsg.Frame = (char *)xget(HTMLview, MUIA_HTMLview_URL);
     hmsg.FrameObj = HTMLview;
-    result = (BOOL)DoMethod(HTMLview, MUIM_HTMLview_HitTest, &hmsg);
+    result = (BOOL)DoMethod(HTMLview, MUIM_HTMLview_HitTest, (ULONG)&hmsg);
     hmsg.X += Left;
     hmsg.Y += Top;
   }
@@ -165,8 +173,8 @@ BOOL FrameClass::Layout (struct LayoutMessage &lmsg)
     if(!(Flags & FLG_Frame_PageLoaded))
     {
       STRPTR url;
-      if(Src && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, Src)))
-        DoMethod(HTMLview, MUIM_HTMLview_PrivateGotoURL, url, Name);
+      if(Src && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, (ULONG)Src)))
+        DoMethod(HTMLview, MUIM_HTMLview_PrivateGotoURL, (ULONG)url, (ULONG)Name);
       Flags |= FLG_Frame_PageLoaded;
     }
     Flags |= FLG_Layouted;

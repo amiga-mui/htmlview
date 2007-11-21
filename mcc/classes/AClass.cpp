@@ -79,9 +79,9 @@ VOID AClass::Render (struct RenderMessage &rmsg)
   if(!(Flags & FLG_A_QueryDone))
   {
     STRPTR url;
-    if(URL && (url = (STRPTR)DoMethod(rmsg.HTMLview, MUIM_HTMLview_AddPart, URL)))
+    if(URL && (url = (STRPTR)DoMethod(rmsg.HTMLview, MUIM_HTMLview_AddPart, (ULONG)URL)))
     {
-      if(DoMethod(rmsg.HTMLview, MUIM_HTMLview_VLink, url))
+      if(DoMethod(rmsg.HTMLview, MUIM_HTMLview_VLink, (ULONG)url))
         Flags |= FLG_A_Visited;
       delete url;
     }

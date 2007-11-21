@@ -20,7 +20,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include <exec/types.h>
@@ -103,6 +102,8 @@ struct TagInfo TagTable[] =
 UBYTE TagEndTable [256];
 UBYTE WhitespaceTable [256];
 
+typedef unsigned char uint8;
+
 extern "C" VOID _INIT_6_CharTables ();
 VOID _INIT_6_CharTables ()
 {
@@ -154,7 +155,7 @@ BOOL NotTagEnd (REG(d0) UBYTE c)
 }
 */
 
-struct TNode *TagTree;
+struct TNode *TagTree = NULL;
 
 extern "C" VOID _INIT_7_BuildTagTree ();
 VOID _INIT_7_BuildTagTree ()

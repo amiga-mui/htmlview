@@ -23,7 +23,6 @@
 #ifndef CLASSES_H
 #define CLASSES_H
 
-#include <stdio.h>
 #include <intuition/classusr.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>

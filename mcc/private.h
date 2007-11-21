@@ -166,6 +166,9 @@ struct HTMLviewData
 #define FLG_MarkingEnabled    (1<<11)
 #define FLG_RedrawMarked      (1<<12)
 
+#define STACKSIZEPPC 32768
+#define STACKSIZE68K 16384
+
 extern "C" DISPATCHERPROTO(_Dispatcher);
 
 #endif

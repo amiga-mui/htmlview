@@ -22,7 +22,6 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <datatypes/datatypes.h>
 #include <datatypes/pictureclass.h>

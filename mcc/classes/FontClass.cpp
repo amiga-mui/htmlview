@@ -27,6 +27,7 @@
 #include "ParseMessage.h"
 #include "ScanArgs.h"
 #include "SharedData.h"
+#include <stdio.h>
 
 VOID FontClass::AllocateColours (struct ColorMap *cmap)
 {

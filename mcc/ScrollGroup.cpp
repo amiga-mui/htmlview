@@ -20,7 +20,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
 #include <libraries/mui.h>
@@ -32,6 +31,10 @@
 #include "private.h"
 #include "HTMLview_mcp.h"
 
+#undef NewObject
+extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+#undef MUI_NewObject
+
 ULONG GetConfigItemA (Object *obj, ULONG item, ULONG def_value, BOOL de_ref = FALSE);
 
 extern "C" {
@@ -39,7 +42,7 @@ extern "C" {
 /*****************************************************************************************************/
 /*****************************************************************************************************/
 
-struct MUI_CustomClass *ScrollGroupClass;
+struct MUI_CustomClass *ScrollGroupClass = NULL;
 
 VOID Layout (ULONG width, ULONG height, struct ScrollGroupData *data, struct MUI_LayoutMsg *lmsg = NULL)
 {
@@ -102,7 +105,10 @@ HOOKPROTONH(ScrollGroupLayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lms
 
     case MUILM_LAYOUT:
     {
-      struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(OCLASS(obj), obj);
+      //struct ScrollGroupData *data = (struct ScrollGroupData *)hook->h_Data;
+      //struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(OCLASS(obj), obj);
+      struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(ScrollGroupClass->mcc_Class, obj);
+
       Layout(lmsg->lm_Layout.Width, lmsg->lm_Layout.Height, data, lmsg);
     }
     return(TRUE);
@@ -114,10 +120,26 @@ MakeHook(ScrollGroupLayoutHook, ScrollGroupLayoutCode);
 
 #define GetConfigVal(o, i, v) GetConfigItemA(o, i, (ULONG)v, TRUE)
 
+static inline LONG mmin(LONG a,LONG b) __attribute((always_inline));
+static inline LONG mmax(LONG a,LONG b) __attribute((always_inline));
+
+static inline LONG mmin(LONG a,LONG b)
+{
+	return a>b ? b : a;
+}
+
+static inline LONG mmax(LONG a,LONG b)
+{
+	return a>b ? a : b;
+}
+
 DISPATCHER(ScrollGroupDispatcher)
 {
   ULONG result = 0;
-  struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(cl, obj);
+  struct ScrollGroupData *data;
+
+  if (msg->MethodID!=OM_NEW)
+  	data = (struct ScrollGroupData *)INST_DATA(cl, obj);
 
   switch(msg->MethodID)
   {
@@ -150,23 +172,24 @@ DISPATCHER(ScrollGroupDispatcher)
         { TAG_DONE,              TAG_END }
       };
 
-      if((obj = (Object *)DoSuperMethod(cl, obj, OM_NEW, tags, nmsg->ops_GInfo)))
+      if((obj = (Object *)DoSuperMethod(cl, obj, OM_NEW, (ULONG)tags, (ULONG)nmsg->ops_GInfo)))
       {
-        struct ScrollGroupData *data = (struct ScrollGroupData *)INST_DATA(cl, obj);
+        data = (struct ScrollGroupData *)INST_DATA(cl, obj);
 
         data->HTMLview = HTMLview;
         data->Knob = Knob;
         data->RightScroll = RightScroll;
         data->BottomScroll = BottomScroll;
 
-        DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Left,        MUIV_EveryTime, BottomScroll, 3, MUIM_Set, MUIA_Prop_First,     MUIV_TriggerValue);
-        DoMethod(HTMLview, MUIM_Notify, MUIA_Width,             MUIV_EveryTime, BottomScroll, 3, MUIM_Set, MUIA_Prop_Visible,   MUIV_TriggerValue);
-        DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Top,       MUIV_EveryTime, RightScroll,  3, MUIM_Set, MUIA_Prop_First,     MUIV_TriggerValue);
-        DoMethod(HTMLview, MUIM_Notify, MUIA_Height,              MUIV_EveryTime, RightScroll,  3, MUIM_Set, MUIA_Prop_Visible,   MUIV_TriggerValue);
-        DoMethod(HTMLview, MUIM_Notify, MUIA_HTMLview_Prop_VDeltaFactor, MUIV_EveryTime, RightScroll,  3, MUIM_Set, MUIA_Prop_DeltaFactor, MUIV_TriggerValue);
-        DoMethod(HTMLview, MUIM_Notify, MUIA_HTMLview_Prop_HDeltaFactor, MUIV_EveryTime, BottomScroll, 3, MUIM_Set, MUIA_Prop_DeltaFactor, MUIV_TriggerValue);
-        DoMethod(RightScroll, MUIM_Notify, MUIA_Prop_First,       MUIV_EveryTime, HTMLview,   3, MUIM_Set, MUIA_Virtgroup_Top,    MUIV_TriggerValue);
-        DoMethod(BottomScroll,  MUIM_Notify, MUIA_Prop_First,       MUIV_EveryTime, HTMLview,   3, MUIM_Set, MUIA_Virtgroup_Left, MUIV_TriggerValue);
+        //kprintf("---SCROLLGROUP %lx %lx\n",obj,HTMLview);
+        DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Left,        MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_First,     MUIV_TriggerValue);
+        DoMethod(HTMLview, MUIM_Notify, MUIA_Width,             MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_Visible,   MUIV_TriggerValue);
+        DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Top,       MUIV_EveryTime, (ULONG)RightScroll,  3, MUIM_Set, MUIA_Prop_First,     MUIV_TriggerValue);
+        DoMethod(HTMLview, MUIM_Notify, MUIA_Height,              MUIV_EveryTime, (ULONG)RightScroll,  3, MUIM_Set, MUIA_Prop_Visible,   MUIV_TriggerValue);
+        DoMethod(HTMLview, MUIM_Notify, MUIA_HTMLview_Prop_VDeltaFactor, MUIV_EveryTime, (ULONG)RightScroll,  3, MUIM_Set, MUIA_Prop_DeltaFactor, MUIV_TriggerValue);
+        DoMethod(HTMLview, MUIM_Notify, MUIA_HTMLview_Prop_HDeltaFactor, MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_DeltaFactor, MUIV_TriggerValue);
+        DoMethod(RightScroll, MUIM_Notify, MUIA_Prop_First,       MUIV_EveryTime, (ULONG)HTMLview,   3, MUIM_Set, MUIA_Virtgroup_Top,    MUIV_TriggerValue);
+        DoMethod(BottomScroll,  MUIM_Notify, MUIA_Prop_First,       MUIV_EveryTime, (ULONG)HTMLview,   3, MUIM_Set, MUIA_Virtgroup_Left, MUIV_TriggerValue);
 
         if((tag = FindTagItem(MUIA_ScrollGroup_Smooth, nmsg->ops_AttrList)) && tag->ti_Data)
           data->Flags |= FLG_SmoothScroll;
@@ -178,18 +201,18 @@ DISPATCHER(ScrollGroupDispatcher)
             case MUIV_HTMLview_Scrollbars_Yes:
               data->Flags |= FLG_RightVisible | FLG_BottomVisible;
             case MUIV_HTMLview_Scrollbars_No:
-              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, BottomScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
-              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Height,  MUIV_EveryTime, RightScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
+              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
+              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Height,  MUIV_EveryTime, (ULONG)RightScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
             break;
 
             case MUIV_HTMLview_Scrollbars_HorizAuto:
               data->Flags |= FLG_RightVisible | FLG_HorizAuto;
             case MUIV_HTMLview_Scrollbars_Auto:
-              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, BottomScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
-              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Height,  MUIV_EveryTime, RightScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
+              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
+              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Height,  MUIV_EveryTime, (ULONG)RightScroll, 3, MUIM_Set, MUIA_Prop_Entries, MUIV_TriggerValue);
 
 //              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, obj, 2, MUIM_ScrollGroup_NewWidth, MUIV_TriggerValue);
-              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, obj, 1, MUIM_ScrollGroup_NewWidth); //, MUIV_TriggerValue);
+              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Width,   MUIV_EveryTime, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, (ULONG)obj, 1, MUIM_ScrollGroup_NewWidth); //, MUIV_TriggerValue);
 //              DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Height,  MUIV_EveryTime, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, obj, 2, MUIM_ScrollGroup_NewHeight, MUIV_TriggerValue);
             break;
           }
@@ -269,7 +292,7 @@ DISPATCHER(ScrollGroupDispatcher)
         data->Events.ehn_Object   = obj;
         data->Events.ehn_Class    = cl;
         data->Events.ehn_Events   = IDCMP_MOUSEBUTTONS;
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->Events);
+        DoMethod(_win(obj), MUIM_Window_AddEventHandler, (ULONG)&data->Events);
       }
     }
     break;
@@ -278,7 +301,7 @@ DISPATCHER(ScrollGroupDispatcher)
     {
       ENTER();
 
-      DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Events);
+      DoMethod(_win(obj), MUIM_Window_RemEventHandler, (ULONG)&data->Events);
       result = DoSuperMethodA(cl, obj, msg);
     }
     break;
@@ -310,17 +333,17 @@ DISPATCHER(ScrollGroupDispatcher)
                 data->VScrollValue = xget(data->RightScroll, MUIA_Prop_First);
                 data->HScrollValue = xget(data->BottomScroll, MUIA_Prop_First);
 
-                DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Events);
+                DoMethod(_win(obj), MUIM_Window_RemEventHandler, (ULONG)&data->Events);
                 data->Events.ehn_Events |= IDCMP_MOUSEMOVE;
-                DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->Events);
+                DoMethod(_win(obj), MUIM_Window_AddEventHandler, (ULONG)&data->Events);
               }
             }
             else if(imsg->Code == IECODE_LBUTTON + IECODE_UP_PREFIX)
             {
               SetAttrs(knob, MUIA_Selected, FALSE, TAG_DONE);
-              DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Events);
+              DoMethod(_win(obj), MUIM_Window_RemEventHandler, (ULONG)&data->Events);
               data->Events.ehn_Events &= ~IDCMP_MOUSEMOVE;
-              DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->Events);
+              DoMethod(_win(obj), MUIM_Window_AddEventHandler, (ULONG)&data->Events);
             }
           }
           break;
@@ -340,8 +363,8 @@ DISPATCHER(ScrollGroupDispatcher)
             LONG v_max = v_entries-v_visible;
             LONG h_max = h_entries-h_visible;
 
-            SetAttrs(data->RightScroll, MUIA_Prop_First, MAX(0, MIN(v_max, v_scroll)), TAG_DONE);
-            SetAttrs(data->BottomScroll, MUIA_Prop_First, MAX(0, MIN(h_max, h_scroll)), TAG_DONE);
+            SetAttrs(data->RightScroll, MUIA_Prop_First, mmax(0, mmin(v_max, v_scroll)), TAG_DONE);
+            SetAttrs(data->BottomScroll, MUIA_Prop_First, mmax(0, mmin(h_max, h_scroll)), TAG_DONE);
           }
           break;
         }

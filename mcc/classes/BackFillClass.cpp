@@ -66,7 +66,7 @@ VOID BackFillClass::GetImages (struct GetImagesMessage &gmsg)
   if(Source && !Picture)
   {
     STRPTR url;
-    if((url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
+    if((url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, (ULONG)Source)))
       gmsg.AddImage(url, 0, 0, this);
   }
   TreeClass::GetImages(gmsg);
@@ -75,7 +75,7 @@ VOID BackFillClass::GetImages (struct GetImagesMessage &gmsg)
 VOID BackFillClass::FindImage (struct LayoutMessage &lmsg)
 {
   STRPTR url;
-  if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
+  if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, (ULONG)Source)))
   {
     if((Picture = lmsg.Share->ImageStorage->FindImage(url, 0, 0)))
       Picture->LockPicture();
@@ -211,17 +211,20 @@ HOOKPROTO(BackFillCode, VOID, struct RastPort *rp, struct LayerMsg *lmsg)
     }
   }
 }
-MakeStaticHook(BackFillHook, BackFillCode);
+//MakeStaticHook(BackFillHook, BackFillCode);
 
 VOID BackFillClass::DrawBackground (struct RenderMessage &rmsg, LONG minx, LONG miny, LONG maxx, LONG maxy, LONG left, LONG top)
 {
   struct RastPort *rp = rmsg.RPort;
+
   if(Picture && (Picture->Flags & PicFLG_Complete))
   {
     struct BackfillInfo info = { Picture, left, top, minx, miny };
     struct Rectangle rect = { minx, miny, maxx, maxy };
+    MakeHook(BackFillHook,BackFillCode);
 
-    InitHook(&BackFillHook, BackFillHook, &info);
+	BackFillHook.h_Data = &info;
+    //InitHook(&BackFillHook, BackFillHook, &info);
 
     DoHookClipRects(&BackFillHook, rp, &rect);
   }

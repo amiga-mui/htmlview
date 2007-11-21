@@ -25,6 +25,14 @@
 
 #include <exec/types.h>
 
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+      #pragma pack(2)
+  #elif defined(__VBCC__)
+      #pragma amiga-align
+  #endif
+#endif
+
 #define MUIC_HTMLview   "HTMLview.mcc"
 #define HTMLviewObject  MUI_NewObject(MUIC_HTMLview
 
@@ -736,6 +744,9 @@
 #define MUIV_HTMLview_Scrollbars_No        2
 #define MUIV_HTMLview_Scrollbars_HorizAuto 3
 
+
+#define MUIA_HTMLview_IsRoot HTMLview_ID(58) /* BOOL  [..G.] return TRUE if the obj is the root one */
+
 /* Structures */
 
 struct MUIP_HTMLview_FlushImage
@@ -834,5 +845,13 @@ enum
   HTMLview_Close,
   HTMLview_Write
 };
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
+  #endif
+#endif
 
 #endif

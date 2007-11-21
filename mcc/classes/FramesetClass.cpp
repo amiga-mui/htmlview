@@ -28,6 +28,7 @@
 #include "ParseMessage.h"
 #include "ScanArgs.h"
 
+#include <stdio.h>
 #include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
