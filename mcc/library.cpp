@@ -31,9 +31,11 @@
 /*                                                                            */
 /******************************************************************************/
 
-extern "C" {
-#include "constructors.h"
+extern "C"
+{
+  #include "constructors.h"
 };
+
 #include "ScrollGroup.h"
 #ifdef USEMUISTRINGS
 #include "StringClass.h"
@@ -108,17 +110,17 @@ static BOOL ClassInit(UNUSED struct Library *base)
     if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
       GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
     {
-  	  if (ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher)))
+  	  if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher))))
       {
-		  #ifdef USEMUISTRINGS
-	  	  if (StringClass = MUI_CreateCustomClass(NULL, MUIC_String, NULL, sizeof(StringData), ENTRY(StringDispatcher)))
-          #endif
+  		  #ifdef USEMUISTRINGS
+	  	  if((StringClass = MUI_CreateCustomClass(NULL, MUIC_String, NULL, sizeof(StringData), ENTRY(StringDispatcher))))
+        #endif
     	  {
-  	    	return(TRUE);
+  	    	RETURN(TRUE);
 	        return TRUE;
     	  }
       }
-	}
+    }
   }
 
   ClassExpunge(base);
@@ -197,7 +199,8 @@ static VOID ClassExpunge(UNUSED struct Library *base)
 // defined by the C-runtime libraries involved
 // Here we
 
-extern "C" {
+extern "C"
+{
 
 // prototypes for the C++ virtual tables setup/cleanup
 // functions automatically defined by the C++ compiler of GCC

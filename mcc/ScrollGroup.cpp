@@ -31,9 +31,11 @@
 #include "private.h"
 #include "HTMLview_mcp.h"
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 ULONG GetConfigItemA (Object *obj, ULONG item, ULONG def_value, BOOL de_ref = FALSE);
 
@@ -181,7 +183,7 @@ DISPATCHER(ScrollGroupDispatcher)
         data->RightScroll = RightScroll;
         data->BottomScroll = BottomScroll;
 
-        //kprintf("---SCROLLGROUP %lx %lx\n",obj,HTMLview);
+        D(DBF_STARTUP, "---SCROLLGROUP %lx %lx",obj,HTMLview);
         DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Left,        MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_First,     MUIV_TriggerValue);
         DoMethod(HTMLview, MUIM_Notify, MUIA_Width,             MUIV_EveryTime, (ULONG)BottomScroll, 3, MUIM_Set, MUIA_Prop_Visible,   MUIV_TriggerValue);
         DoMethod(HTMLview, MUIM_Notify, MUIA_Virtgroup_Top,       MUIV_EveryTime, (ULONG)RightScroll,  3, MUIM_Set, MUIA_Prop_First,     MUIV_TriggerValue);

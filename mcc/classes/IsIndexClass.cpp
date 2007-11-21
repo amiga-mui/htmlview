@@ -31,9 +31,11 @@
 
 #include <mui/BetterString_mcc.h>
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 VOID IsIndexClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {

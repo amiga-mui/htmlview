@@ -31,6 +31,8 @@
 #include "Debug.h"
 #include "General.h"
 
+extern APTR MemoryPool;
+
 APTR operator new(size_t bytes) throw()
 {
   APTR res;

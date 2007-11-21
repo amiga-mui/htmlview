@@ -115,7 +115,7 @@ BOOL BodyClass::Layout (struct LayoutMessage &lmsg)
     lmsg.AddYSpace(5);
     Bottom = lmsg.Height = max(lmsg.MaxY-1+lmsg.MarginHeight, (ULONG)lmsg.Y);
 
-//    kprintf("LayoutStack: %ld\n", LayoutStack);
+    //D(DBF_ALWAYS, "LayoutStack: %ld", LayoutStack);
   }
 
   return TRUE;

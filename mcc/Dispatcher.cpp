@@ -219,7 +219,8 @@ DISPATCHER(_Dispatcher)
   if (msg->MethodID!=OM_NEW)
 	data = (struct HTMLviewData *)INST_DATA(cl, obj);
 
-//  kprintf("HTMLview: Method = 0x%08lx\n", msg->MethodID);
+//  D(DBF_ALWAYS, "HTMLview: Method = 0x%08lx", msg->MethodID);
+
   switch(msg->MethodID)
   {
     case OM_NEW:
@@ -247,8 +248,8 @@ DISPATCHER(_Dispatcher)
         struct HTMLviewData *data = (struct HTMLviewData *)INST_DATA(cl, obj);
 
         D(DBF_STARTUP, "after DoSuperMethod");
+		    D(DBF_ALWAYS, "HTMLVIEW OBJECT %lx",obj);
 
-		//kprintf("HTMLVIEW OBJECT %lx\n",obj);
         data->ImageLoadHook = data->LoadHook = &DefaultLoadHook;
 
         //InitHook(&LayoutHook, LayoutHook, data);
@@ -290,7 +291,7 @@ DISPATCHER(_Dispatcher)
         {
           D(DBF_STARTUP, "MsgPort created.");
 
-		  //kprintf("MSGPORT %lx %lx\n",obj,data->MessagePort);
+		      D(DBF_ALWAYS, "MSGPORT %lx %lx",obj,data->MessagePort);
           data->ihnode.ihn.ihn_Object  = obj;
           data->ihnode.ihn.ihn_Signals = 1 << data->MessagePort->mp_SigBit;
           data->ihnode.ihn.ihn_Flags   = 0L;
@@ -327,20 +328,21 @@ DISPATCHER(_Dispatcher)
     case OM_DISPOSE: { ENTER();
 
       // This deletes notifies and floading images (should be in ~LayoutMessage()) */
-      //kprintf("--------- DISPOSE 1 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 1 %lx",obj);
       data->LayoutMsg.Reset(0, 0);
-      //kprintf("--------- DISPOSE 2 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 2 %lx",obj);
 
       if(data->ParseThread) Signal(&data->ParseThread->pr_Task, SIGBREAKF_CTRL_C);
 
-      //kprintf("--------- DISPOSE 3 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 3 %lx",obj);
 
       while(data->ParseCount)
       {
         struct ParseInfoMsg *msg;
 
-        //kprintf("--------- DISPOSE 4 %lx %ld\n",obj,data->ParseCount);
-		msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort);
+        D(DBF_ALWAYS, "--------- DISPOSE 4 %lx %ld", obj, data->ParseCount);
+
+    		msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort);
         if (msg)
         {
           switch(msg->Class)
@@ -382,26 +384,27 @@ DISPATCHER(_Dispatcher)
             break;
           }
           ReplyMsg(&msg->nm_node);
-          //kprintf(" --------- DISPOSE 4.1 Message  %lx %ld\n",obj,data->ParseCount);
+
+          D(DBF_ALWAYS, " --------- DISPOSE 4.1 Message  %lx %ld", obj, data->ParseCount);
         }
         else WaitPort(data->MessagePort);
       }
 
-      //kprintf("--------- DISPOSE 5 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 5 %lx", obj);
       while(FindTask(data->ParseThreadName))
       {
-        //kprintf("--------- DISPOSE 6 %lx\n",obj);
+        D(DBF_ALWAYS, "--------- DISPOSE 6 %lx", obj);
         Delay(1);
-	  }
+  	  }
 
       if(data->MessagePort)
         DeleteMsgPort(data->MessagePort);
 
-      //kprintf("--------- DISPOSE 7 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 7 %lx",obj);
 
       RemoveChildren(obj, data);
 
-      //kprintf("--------- DISPOSE 8 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 8 %lx",obj);
       delete data->LayoutMsg.FirstGadget;
       delete data->HostObject;
       delete data->URLBase;
@@ -409,7 +412,7 @@ DISPATCHER(_Dispatcher)
       delete data->Local;
       delete data->URL;
 
-      //kprintf("--------- DISPOSE 9 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 9 %lx",obj);
 
       struct MUIR_HTMLview_GetContextInfo *cinfo = &data->ContextInfo;
       delete cinfo->URL;
@@ -420,9 +423,9 @@ DISPATCHER(_Dispatcher)
       if(data->Flags & FLG_RootObj)
         delete data->Share;
 
-      //kprintf("--------- DISPOSE 10 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 10 %lx", obj);
       result = DoSuperMethodA(cl, obj, msg);
-      //kprintf("--------- DISPOSE 11 %lx\n",obj);
+      D(DBF_ALWAYS, "--------- DISPOSE 11 %lx", obj);
     }
     break;
 
@@ -614,7 +617,7 @@ DISPATCHER(_Dispatcher)
             struct Rectangle rect;
             GetRPAttrs(rp, RPTAG_DrawBounds, (ULONG)&rect, TAG_DONE);
             LONG minx = rect.MinX, miny = rect.MinY, maxx = rect.MaxX, maxy = rect.MaxY;
-            //kprintf("%ld, %ld -- %ld, %ld\n", minx, maxx, miny, maxy);
+            D(DBF_ALWAYS, "%ld, %ld -- %ld, %ld", minx, maxx, miny, maxy);
             if(minx > maxx)
             {
               minx = bmsg->left;
@@ -791,7 +794,7 @@ DISPATCHER(_Dispatcher)
       ENTER();
 
       data->PageID++;
-      //kprintf("ABORTALL %lx %lx %ld\n",obj,data->ParseThread,data->ParseCount);
+      D(DBF_ALWAYS, "ABORTALL %lx %lx %ld",obj,data->ParseThread,data->ParseCount);
       if(data->ParseThread)
       {
         Signal(&data->ParseThread->pr_Task, SIGBREAKF_CTRL_C);
@@ -843,7 +846,7 @@ DISPATCHER(_Dispatcher)
 
       struct MUIP_HTMLview_GotoURL *gmsg = (struct MUIP_HTMLview_GotoURL *)msg;
 
-      /*kprintf("GoToURL got for %lx (%s) %lx (%s)\n",
+      /*D(DBF_ALWAYS, "GoToURL got for %lx (%s) %lx (%s)",
       	  gmsg->Target,
 	      gmsg->Target ? gmsg->Target : "",
     	  data->FrameName,
@@ -967,11 +970,11 @@ DISPATCHER(_Dispatcher)
         NP_CodeType,     CODETYPE_PPC,
         NP_PPCStackSize, STACKSIZEPPC,
         NP_StackSize,    STACKSIZE68K,
-		NP_CopyVars,     FALSE,
+    		NP_CopyVars,     FALSE,
         NP_Input,        NULL,
         NP_CloseInput,   FALSE,
         NP_Output,       NULL,
-	    NP_CloseOutput,  FALSE,
+        NP_CloseOutput,  FALSE,
         NP_Error,        NULL,
         NP_CloseError,   FALSE,
         #endif
@@ -982,7 +985,7 @@ DISPATCHER(_Dispatcher)
       else
         delete args;
 
-      //kprintf("Create Proc OBJ:%lx Thread:%lx ARGS:%lx\n",obj,data->ParseThread,args);
+      D(DBF_ALWAYS, "Create Proc OBJ:%lx Thread:%lx ARGS:%lx",obj,data->ParseThread,args);
 	}
     break;
 
@@ -1097,7 +1100,7 @@ DISPATCHER(_Dispatcher)
               /*if(!data->PMsg)
               {
                 DisplayBeep(NULL);
-                kprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>0x%lx - 0x%lx - (0x%lx == 0x%lx)\n", data->ParseThread, data->Flags, data->HostObject, msg->Shutdown.Object);
+                D(DBF_ALWAYS, ">>>>>>>>>>>>>>>>>>>>>>>>>>>0x%lx - 0x%lx - (0x%lx == 0x%lx)", data->ParseThread, data->Flags, data->HostObject, msg->Shutdown.Object);
                 //Wait(4096);
                 data->ParseCount++;
               }
@@ -1141,15 +1144,16 @@ DISPATCHER(_Dispatcher)
               if(data->HostObject != msg->Shutdown.Object)
                 delete msg->Shutdown.Object;
             }
-              data->ParseCount--;
-              //kprintf("ParseMessage %lx %ld\n",obj,data->ParseCount);
+
+            data->ParseCount--;
+            D(DBF_ALWAYS, "ParseMessage %lx %ld",obj,data->ParseCount);
           }
           break;
 
           case ParseMsg_Abort:
           {
 //            data->ParseCount--;
-            //kprintf("ParseMessage %lx %ld\n",obj,data->ParseCount);
+            D(DBF_ALWAYS, "ParseMessage %lx %ld",obj,data->ParseCount);
             if(data->PageID == msg->Unique)
             {
 	            data->ParseCount--;
@@ -1263,7 +1267,8 @@ DISPATCHER(_Dispatcher)
       data->RefreshTimer.ihn.ihn_Millis = data->HostObject->RefreshTime;
       data->RefreshTimer.ihn.ihn_Current = 0;
       data->RefreshTimer.Start(obj);
-//      kprintf("Start refresh timer (%ld, %ld)\n", data->HostObject->RefreshTime, data->RefreshTimer.ihn_Current);
+
+      //D(DBF_ALWAYS, "Start refresh timer (%ld, %ld)", data->HostObject->RefreshTime, data->RefreshTimer.ihn_Current);
     }
     break;
 

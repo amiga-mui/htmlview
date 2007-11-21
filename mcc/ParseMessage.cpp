@@ -197,7 +197,7 @@ BOOL ParseMessage::Fetch (UWORD len)
     {
 //      if(left >= 0)
           memcpy(Buffer, Locked, left);
-//      else  kprintf("*** memcpy(0x%lx, 0x%lx, %ld)\n", Buffer, Locked, left);
+//      else  D(DBF_ALWAYS, "*** memcpy(0x%lx, 0x%lx, %ld)", Buffer, Locked, left);
     }
     LONG offset = Current-Locked;
     Locked = Buffer;

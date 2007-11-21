@@ -172,7 +172,7 @@ void *malloc(size_t size)
         if (mem) *mem++ = size;
 
   //totmem+=size;
-  //kprintf("MEM MALLOC %lx %ld\n",mem,totmem);
+  //D(DBF_STARTUP, "MEM MALLOC %lx %ld",mem,totmem);
 
     	return mem;
 	}
@@ -183,7 +183,7 @@ void *malloc(size_t size)
 void free(void *p)
 {
     //totmem-=*((ULONG *)p-1);
-    //kprintf("MEM FREE %lx %ld\n",p,totmem);
+    //D(DBF_STARTUP, "MEM FREE %lx %ld",p,totmem);
 
     if (p && mempool)
     	FreePooled(mempool,(ULONG *)p-1,*((ULONG *)p-1));
@@ -231,7 +231,7 @@ void *realloc(void *mem, size_t size)
 		}
 
   totmem+=size;
-  kprintf("MEM MALLOC %lx %ld\n",p,totmem);
+  D(DBF_STARTUP, "MEM MALLOC %lx %ld",p,totmem);
 	}
 
 	return (void *)p;
@@ -246,7 +246,7 @@ void free(void *p)
 		FreePooled(mempool, ptr, size);
 
   totmem-=size;
-  kprintf("MEM FREE %lx %ld\n",p,totmem);
+  D(DBF_STARTUP, "MEM FREE %lx %ld",p,totmem);
 	}
 }
 
