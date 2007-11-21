@@ -100,14 +100,14 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
             data->HostObject->AppendGadget(amsg);
           }
           DoMethod(obj, MUIM_Group_ExitChange);
-          SetAttrs(obj, MUIA_HTMLview_Title, pmsg.Title, TAG_DONE);
+          SetAttrs(obj, MUIA_HTMLview_Title, (ULONG)pmsg.Title, TAG_DONE);
 
           if(data->Flags & FLG_Shown)
           {
             struct GetImagesMessage gmsg(obj);
             data->HostObject->GetImages(gmsg);
             data->Images = gmsg.Images;
-            DoMethod(obj, MUIM_HTMLview_LoadImages, gmsg.Images);
+            DoMethod(obj, MUIM_HTMLview_LoadImages, (ULONG)gmsg.Images);
           }
         }
         else
@@ -161,11 +161,11 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
 
       case MUIA_HTMLview_IntuiTicks:
       {
-        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->Share->Events);
+        DoMethod(_win(obj), MUIM_Window_RemEventHandler, (ULONG)&data->Share->Events);
         if(ti_Data)
             data->Share->Events.ehn_Events |= IDCMP_INTUITICKS;
         else  data->Share->Events.ehn_Events &= ~IDCMP_INTUITICKS;
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->Share->Events);
+        DoMethod(_win(obj), MUIM_Window_AddEventHandler, (ULONG)&data->Share->Events);
       }
       break;
 
@@ -248,6 +248,10 @@ ULONG mGet (Object *obj, struct IClass *cl, struct opGet *msg)
 
     case MUIA_Virtgroup_Height:
       ti_Data = data->VirtHeight;
+    break;
+
+	case MUIA_HTMLview_IsRoot:
+      ti_Data = data->Flags & FLG_RootObj ? TRUE : FALSE;
     break;
 
     default:

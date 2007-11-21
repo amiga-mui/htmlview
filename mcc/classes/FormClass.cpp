@@ -27,6 +27,7 @@
 #include "private.h"
 #include "ScanArgs.h"
 #include "SharedData.h"
+#include <stdio.h>
 
 VOID FormClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
@@ -49,7 +50,7 @@ VOID FormClass::ExportForm (struct ExportFormMessage &emsg)
       struct ExportFormMessage emsg2;
       TreeClass::ExportForm(emsg2);
 
-      STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, Action);
+      STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, (ULONG)Action);
       ULONG len = strlen(base) + emsg2.StrLength + 1;
       STRPTR url = new char[len];
       ULONG index = sprintf(url, "%s?", base);
@@ -58,9 +59,9 @@ VOID FormClass::ExportForm (struct ExportFormMessage &emsg)
       emsg2.GetElements(url+index);
 
       SetAttrs(data->Share->Obj,
-          MUIA_HTMLview_ClickedURL, url,
-          MUIA_HTMLview_Target, FindTarget(HTMLview, Target, data),
-          MUIA_HTMLview_Qualifier, 0L,
+          MUIA_HTMLview_ClickedURL, (ULONG)url,
+          MUIA_HTMLview_Target,     (ULONG)FindTarget(HTMLview, Target, data),
+          MUIA_HTMLview_Qualifier,  0L,
           TAG_DONE);
 
       delete url;
@@ -70,11 +71,11 @@ VOID FormClass::ExportForm (struct ExportFormMessage &emsg)
       struct ExportFormMessage emsg2;
       TreeClass::ExportForm(emsg2);
 
-      STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, Action);
+      STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, (ULONG)Action);
       STRPTR contents = new char[emsg2.StrLength + 1];
       emsg2.GetElements(contents);
 
-      DoMethod(HTMLview, MUIM_HTMLview_Post, base, Target, contents, EncType ? EncType : "application/x-www-form-urlencoded");
+      DoMethod(HTMLview, MUIM_HTMLview_Post, (ULONG)base, (ULONG)Target, (ULONG)contents, (ULONG)(EncType ? EncType : "application/x-www-form-urlencoded"));
       delete base;
 //      This is deleted by the ParseThread
 //      delete contents;

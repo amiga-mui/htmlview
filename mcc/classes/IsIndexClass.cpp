@@ -27,22 +27,31 @@
 #include "MinMax.h"
 #include "ParseMessage.h"
 #include "ScanArgs.h"
+#include "StringClass.h"
 
 #include <mui/BetterString_mcc.h>
+
+#undef NewObject
+extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+#undef MUI_NewObject
 
 VOID IsIndexClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
   if(!MUIGadget)
   {
+	#ifdef USEMUISTRINGS
+    MUIGadget = (Object *)NewObject(StringClass->mcc_Class,NULL,
+	#else
     MUIGadget = BetterStringObject,
-                  StringFrame,
-                  MUIA_BetterString_Columns, 40,
-                  End;
+    #endif
+		StringFrame,
+        MUIA_BetterString_Columns, 40,
+        End;
 
     if(MUIGadget)
     {
-      DoMethod(MUIGadget, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, amsg.Parent, 2, MUIM_HTMLview_ServerRequest, MUIV_TriggerValue);
-      DoMethod(amsg.Parent, OM_ADDMEMBER, MUIGadget);
+      DoMethod(MUIGadget, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, (ULONG)amsg.Parent, 2, MUIM_HTMLview_ServerRequest, MUIV_TriggerValue);
+      DoMethod(amsg.Parent, OM_ADDMEMBER, (ULONG)MUIGadget);
     }
     else
       Flags |= FLG_Layouted;

@@ -21,7 +21,6 @@
 ***************************************************************************/
 
 #include <string.h>
-#include <stdio.h>
 #include <dos/dostags.h>
 #include <proto/cybergraphics.h>
 #include <proto/dos.h>
@@ -49,6 +48,7 @@
 #include "private.h"
 
 #include "SDI_stdarg.h"
+#include <stdio.h>
 
 #ifdef __amigaos4__
 #define GetImageDecoderClass(base) ( (struct IClass *)(IExec->EmulateTags)(base, ET_Offset, -30, ET_RegisterA6, base, ET_SaveRegs, TRUE, TAG_DONE) )
@@ -407,7 +407,11 @@ VOID DecodeQueueManager::InvalidateQueue (Object *obj)
 DISPATCHER(DecoderDispatcher)
 {
   ULONG result = NULL;
-  struct DecoderData *data = (struct DecoderData *)INST_DATA(cl, obj);
+  struct DecoderData *data;
+
+	//return 0;
+  if (msg->MethodID!=OM_NEW)
+		data = (struct DecoderData *)INST_DATA(cl, obj);
 
   switch(msg->MethodID)
   {
@@ -417,7 +421,6 @@ DISPATCHER(DecoderDispatcher)
       {
         struct DecoderData *data = (struct DecoderData *)INST_DATA(cl, obj);
         struct opSet *nmsg = (struct opSet *)msg;
-
         BOOL no_dither = FALSE;
         ULONG width = 0, height = 0;
 
@@ -747,17 +750,15 @@ static struct Library *ClassOpen(CONST_STRPTR decoder)
 }
 
 
-VARARGS68K Object *NewDecoderObject(UBYTE *buf, ...);
-VARARGS68K Object *NewDecoderObject(UBYTE *buf, ...)
+Object *NewDecoderObjectA(UBYTE *buf,struct TagItem *attrs)
 {
-  VA_LIST ap;
-  struct TagItem *tags;
+  struct TagItem *tags = attrs;
   struct IClass *cl = NULL;
   struct DecoderInfo *decoders = Decoders;
 
-  VA_START(ap, buf);
-  tags = (struct TagItem *)VA_ARG(ap, struct TagItem *);
+	//return 0;
   ObtainSemaphore(&DecoderMutex);
+
   while(decoders->Name && !cl)
   {
     if(decoders->MatchFunc(buf))
@@ -768,7 +769,10 @@ VARARGS68K Object *NewDecoderObject(UBYTE *buf, ...)
         {
           if((cl = MakeClass(NULL, NULL, GetImageDecoderClass(decoders->Base), sizeof(DecoderData), 0L)))
           {
-            cl->cl_Dispatcher.h_SubEntry = (ULONG(*)())DecoderDispatcher;
+            cl->cl_Dispatcher.h_SubEntry = 0;
+            cl->cl_Dispatcher.h_Entry    = (ULONG(*)())ENTRY(DecoderDispatcher);
+            cl->cl_Dispatcher.h_Data     = 0;
+
             decoders->Class = cl;
           }
         }
@@ -776,19 +780,21 @@ VARARGS68K Object *NewDecoderObject(UBYTE *buf, ...)
     }
     decoders++;
   }
+
   ReleaseSemaphore(&DecoderMutex);
 
-  VA_END(ap);
-
   if(cl)
-     return((Object *)NewObjectA(cl, NULL, tags));
-  else
-      return(NULL);
+  {
+    return((Object *)NewObjectA(cl, NULL, tags));
+  }
+
+  else return(NULL);
 }
 
 extern "C" VOID _INIT_7_PrepareDecoders ();
 VOID _INIT_7_PrepareDecoders ()
 {
+  memset(&DecoderMutex,0,sizeof(struct SignalSemaphore));
   InitSemaphore(&DecoderMutex);
 }
 
@@ -809,8 +815,8 @@ VOID _EXIT_7_FlushDecoders ()
 
 VOID DecoderThread(REG(a0, STRPTR arguments))
 {
-  struct Args *args;
-  sscanf(arguments, "%x", (unsigned int*)&args);
+  struct Args *args = (struct Args *)arguments;
+  //sscanf(arguments, "%x", (unsigned int*)&args);
 
   BOOL result = FALSE;
   struct ImageList *image = args->Img;
@@ -837,19 +843,20 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
     loadmsg.lm_Read.Size = 10;
     ULONG len = CallHookPkt(loadhook, args->Obj, &loadmsg);
 
-    Object *decoder = NewDecoderObject(buf,
-      IDA_StartBuffer,    buf,
-      IDA_BytesInBuffer,  len,
-      IDA_Width,        width,
-      IDA_Height,       height,
-      IDA_Screen,       args->Scr,
-      IDA_HTMLview,     args->Obj,
-      IDA_LoadHook,     loadhook,
-      IDA_LoadMsg,      &loadmsg,
-      IDA_StatusStruct,   item,
-      IDA_NoDither,     dither,
-      IDA_Gamma,        gamma,
-      TAG_DONE);
+	struct TagItem attrs[] =
+     {{IDA_StartBuffer,  (ULONG)buf},
+      {IDA_BytesInBuffer,(ULONG)len},
+      {IDA_Width,        (ULONG)width},
+      {IDA_Height,       (ULONG)height},
+      {IDA_Screen,       (ULONG)args->Scr},
+      {IDA_HTMLview,     (ULONG)args->Obj},
+      {IDA_LoadHook,     (ULONG)loadhook},
+      {IDA_LoadMsg,      (ULONG)&loadmsg},
+      {IDA_StatusStruct, (ULONG)item},
+      {IDA_NoDither,     (ULONG)dither},
+      {IDA_Gamma,        (ULONG)gamma},
+      {TAG_DONE,0}};
+    Object *decoder = NewDecoderObjectA(buf,attrs);
 
     if(decoder)
     {
@@ -907,16 +914,21 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
 
     STRPTR taskname = FBlit ? (char *)"HTMLview ImageDecoder" : args->TaskName;
     if(CreateNewProcTags(
-      NP_Entry, DecoderThread,
-      NP_Priority, -1,
-      NP_Name, taskname,
-      #if !defined(__MORPHOS__)
-      NP_StackSize, 2*8192,
-      NP_Arguments, str_args,
-      NP_Child, TRUE,
-      #else
-      NP_PPC_Arg1, str_args,
-      NP_CodeType, CODETYPE_PPC,
+      NP_Entry,        (ULONG)DecoderThread,
+      NP_Priority,     (ULONG)-1,
+      NP_Name,         (ULONG)taskname,
+      NP_PPC_Arg1,     (ULONG)args,
+      NP_CodeType, 	   CODETYPE_PPC,
+      #if defined(__MORPHOS__)
+	  NP_PPCStackSize, STACKSIZEPPC,
+      NP_StackSize,    STACKSIZE68K,
+	  NP_CopyVars,     FALSE,
+      NP_Input,        NULL,
+      NP_CloseInput,   FALSE,
+      NP_Output,       NULL,
+	  NP_CloseOutput,  FALSE,
+      NP_Error,        NULL,
+      NP_CloseError,   FALSE,
       #endif
       TAG_DONE))
     {

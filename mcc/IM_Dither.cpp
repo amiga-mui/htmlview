@@ -20,7 +20,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include <exec/types.h>
 
 #include "IM_ColourManager.h"

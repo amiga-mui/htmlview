@@ -55,7 +55,7 @@ struct FindMessage *HostClass::Find (STRPTR str, ULONG top, ULONG flags)
       DefaultFrame = Body->FindDefaultFrame(zero);
 
     if(DefaultFrame)
-      result = (struct FindMessage *)DoMethod(DefaultFrame, MUIM_HTMLview_Search, str, flags);
+      result = (struct FindMessage *)DoMethod(DefaultFrame, MUIM_HTMLview_Search, (ULONG)str, flags);
   }
   else
   {
@@ -125,7 +125,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
         DefaultFrame = Body->FindDefaultFrame(zero);
 
       if(DefaultFrame)
-        DoMethod(DefaultFrame, MUIM_HTMLview_HandleEvent, emsg->imsg, emsg->muikey);
+        DoMethod(DefaultFrame, MUIM_HTMLview_HandleEvent, (ULONG)emsg->imsg, emsg->muikey);
     }
     else
     {
@@ -305,7 +305,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
           target = FindTarget(obj, hmsg.Target, data);
 
           linkobj = hmsg.Obj;
-          url = (STRPTR)DoMethod(obj, MUIM_HTMLview_AddPart, link);
+          url = (STRPTR)DoMethod(obj, MUIM_HTMLview_AddPart, (ULONG)link);
           if(hmsg.ServerMap)
           {
             STRPTR t_url = new char[strlen(url) + 11];
@@ -327,8 +327,8 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
         if(link != data->LastURL || map)
         {
           SetAttrs(dst,
-            MUIA_HTMLview_CurrentURL, url,
-            MUIA_HTMLview_Target, target,
+            MUIA_HTMLview_CurrentURL, (ULONG)url,
+            MUIA_HTMLview_Target,     (ULONG)target,
             TAG_DONE);
 
           if(data->ActiveURLObj)
@@ -360,9 +360,9 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
                 RedrawLink(obj, data->ActiveURLObj, data);
 
               SetAttrs(dst,
-                MUIA_HTMLview_ClickedURL, url,
-                MUIA_HTMLview_Target, target,
-                MUIA_HTMLview_Qualifier, imsg->Qualifier,
+                MUIA_HTMLview_ClickedURL, (ULONG)url,
+                MUIA_HTMLview_Target,     (ULONG)target,
+                MUIA_HTMLview_Qualifier,  imsg->Qualifier,
                 TAG_DONE);
             }
             data->ActiveURLObj = NULL;

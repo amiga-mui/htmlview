@@ -22,9 +22,9 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <stdio.h>
 #include <exec/types.h>
 #include <proto/dos.h>
+#include <stdio.h>
 
 #include "General.h"
 #include "Classes.h"

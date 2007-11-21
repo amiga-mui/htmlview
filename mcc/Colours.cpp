@@ -20,7 +20,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <exec/types.h>
@@ -175,7 +174,7 @@ struct ColourInfo ColourTable[] =
   { NULL,                   {   0,   0,   0 } }
 };
 
-struct TNode *ColourTree;
+struct TNode *ColourTree = NULL;
 
 extern "C" VOID _INIT_7_BuildColourTree();
 VOID _INIT_7_BuildColourTree()

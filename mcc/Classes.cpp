@@ -21,7 +21,6 @@
 ***************************************************************************/
 
 #include <ctype.h>
-#include <stdio.h>
 #include <exec/types.h>
 
 #include "General.h"

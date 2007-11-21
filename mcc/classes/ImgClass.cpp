@@ -64,7 +64,7 @@ VOID ImgClass::GetImages (struct GetImagesMessage &gmsg)
   if(Source && !Picture)
   {
     STRPTR url;
-    if((url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
+    if((url = (STRPTR)DoMethod(gmsg.HTMLview, MUIM_HTMLview_AddPart, (ULONG)Source)))
       gmsg.AddImage(url, Width(0), Height(0), this);
   }
 }
@@ -196,7 +196,7 @@ BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
   LONG height = Height(20, &lmsg);
 
   STRPTR url;
-  if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, Source)))
+  if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddPart, (ULONG)Source)))
   {
     if((Picture = lmsg.Share->ImageStorage->FindImage(url, GivenWidth ? width : 0, GivenHeight ? height : 0)))
     {
@@ -206,7 +206,7 @@ BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
       UpdateImage(0, height, 0, 0, TRUE);
 
       if(Picture->Next)
-        DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddSingleAnim, Picture, this);
+        DoMethod(lmsg.HTMLview, MUIM_HTMLview_AddSingleAnim, (ULONG)Picture, (ULONG)this);
     }
     delete url;
   }
@@ -294,7 +294,7 @@ VOID ImgClass::MinMax (struct MinMaxMessage &mmsg)
   LONG width = Width(80, lmsg);
 
   STRPTR url;
-  if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg->HTMLview, MUIM_HTMLview_AddPart, Source)))
+  if(!Picture && Source && (url = (STRPTR)DoMethod(lmsg->HTMLview, MUIM_HTMLview_AddPart, (ULONG)Source)))
   {
     if((Picture = lmsg->Share->ImageStorage->FindImage(url, GivenWidth ? width : 0, Height(0, lmsg))))
     {
@@ -303,7 +303,7 @@ VOID ImgClass::MinMax (struct MinMaxMessage &mmsg)
       UpdateImage(0, Picture->Height, 0, 0, TRUE);
 
       if(Picture->Next)
-        DoMethod(lmsg->HTMLview, MUIM_HTMLview_AddSingleAnim, Picture, this);
+        DoMethod(lmsg->HTMLview, MUIM_HTMLview_AddSingleAnim, (ULONG)Picture, (ULONG)this);
     }
     delete url;
   }

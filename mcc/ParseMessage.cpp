@@ -21,7 +21,6 @@
 ***************************************************************************/
 
 #include <string.h>
-#include <stdio.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
@@ -218,7 +217,8 @@ BOOL ParseMessage::Fetch (UWORD len)
   return(Current < Upper); // && !Status);
 }
 
-BufferParseMessage::BufferParseMessage (STRPTR buf, ULONG size UNUSED) : ParseMessage(NULL, 0, NULL, 0)
+BufferParseMessage::BufferParseMessage(STRPTR buf, ULONG size  UNUSED)
+  : ParseMessage(NULL, 0, NULL, 0)
 {
   ULONG len = strlen(buf) + 1;
   STRPTR buffer = new char[len];
@@ -232,7 +232,7 @@ BufferParseMessage::BufferParseMessage (STRPTR buf, ULONG size UNUSED) : ParseMe
     NextStartBracket();
 }
 
-BOOL BufferParseMessage::Fetch (UWORD len UNUSED)
+BOOL BufferParseMessage::Fetch(UWORD len UNUSED)
 {
   return(Current < Upper);
 }

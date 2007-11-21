@@ -40,6 +40,7 @@
 #include "HTMLview_mcp.h"
 
 #include <string.h>
+#include <stdio.h>
 
 #define GetConfigItem(i, v) (APTR)GetConfigItemA(Obj, i, (ULONG)v, FALSE)
 #define GetConfigVal(i, v) GetConfigItemA(Obj, i, (ULONG)v, TRUE)
@@ -47,7 +48,7 @@
 ULONG GetConfigItemA (Object *obj, ULONG item, ULONG def_value, BOOL de_ref)
 {
   ULONG value;
-  return DoMethod(obj, MUIM_GetConfigItem, item, &value) ? (de_ref ? *(ULONG *)value : value) : def_value;
+  return DoMethod(obj, MUIM_GetConfigItem, (ULONG)item, (ULONG)&value) ? (de_ref ? *(ULONG *)value : value) : def_value;
 }
 
 static BOOL GetFont (Object *Obj, ULONG item, CONST_STRPTR def_value, struct TextFont **storage)
@@ -90,7 +91,7 @@ Object *DecodeListItemGfx (struct Screen *scr, STRPTR file)
     PDTA_DestMode,        PMODE_V43,
     PDTA_Remap,           TRUE,
     PDTA_FreeSourceBitMap,TRUE,
-    PDTA_Screen,          scr,
+    PDTA_Screen,          (ULONG)scr,
     PDTA_UseFriendBitMap, TRUE,
     TAG_DONE)))
   {
@@ -149,7 +150,7 @@ BOOL SharedData::InitConfig ()
   {
     LI_Mask = NULL;
     struct BitMapHeader *header;
-    GetDTAttrs(ListItemMarkers, PDTA_MaskPlane, &LI_Mask, PDTA_BitMapHeader, &header, PDTA_DestBitMap, &LI_BMp, TAG_DONE);
+    GetDTAttrs(ListItemMarkers, PDTA_MaskPlane, (ULONG)&LI_Mask, PDTA_BitMapHeader, (ULONG)&header, PDTA_DestBitMap, (ULONG)&LI_BMp, TAG_DONE);
 
     if(LI_Width != (header->bmh_Width / 3) || LI_Height != header->bmh_Height)
       newconfig = TRUE;

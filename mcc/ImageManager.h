@@ -61,6 +61,7 @@ enum
   StatusDone
 };
 
+
 struct DecodeItem
 {
   DecodeItem (Object *obj, struct HTMLviewData *data, struct ImageList *image);

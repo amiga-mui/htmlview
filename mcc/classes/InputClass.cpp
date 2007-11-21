@@ -29,11 +29,16 @@
 #include "ParseMessage.h"
 #include "private.h"
 #include "ScanArgs.h"
+#include "StringClass.h"
 
 #include "SDI_hook.h"
 
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>
+
+#undef NewObject
+extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+#undef MUI_NewObject
 
 HOOKPROTONHNO(ExportFormCode, VOID, class FormClass **form)
 {
@@ -49,7 +54,11 @@ VOID InputClass::AppendGadget (struct AppendGadgetMessage &amsg)
     switch(Type)
     {
       case Input_Text:
-        obj = BetterStringObject,
+		#ifdef USEMUISTRINGS
+        obj = (Object *)NewObject(StringClass->mcc_Class,NULL,
+        #else
+		obj = BetterStringObject,
+		#endif
           StringFrame,
           MUIA_BetterString_Columns, Size ? Size : 40,
           MUIA_String_MaxLen, MaxLength,
@@ -59,7 +68,11 @@ VOID InputClass::AppendGadget (struct AppendGadgetMessage &amsg)
       break;
 
       case Input_Password:
+		#ifdef USEMUISTRINGS
+        obj = (Object *)NewObject(StringClass->mcc_Class,NULL,
+        #else
         obj = BetterStringObject,
+        #endif
           StringFrame,
           MUIA_BetterString_Columns, Size ? Size : 40,
           MUIA_String_MaxLen, MaxLength,
@@ -111,7 +124,7 @@ VOID InputClass::AppendGadget (struct AppendGadgetMessage &amsg)
       {
         obj = SimpleButton(Value ? Value : "Submit");
         if(amsg.Form)
-          DoMethod(obj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 6, MUIM_Application_PushMethod, _app(amsg.Parent), 3, MUIM_CallHook, &ExportFormHook, amsg.Form);
+          DoMethod(obj, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 6, MUIM_Application_PushMethod, (ULONG)_app(amsg.Parent), 3, MUIM_CallHook, (ULONG)&ExportFormHook, (ULONG)amsg.Form);
       }
       break;
     }
@@ -119,7 +132,7 @@ VOID InputClass::AppendGadget (struct AppendGadgetMessage &amsg)
     if((MUIGadget = obj))
     {
       SetAttrs(obj, MUIA_CycleChain, TRUE, TAG_DONE);
-      DoMethod(amsg.Parent, OM_ADDMEMBER, MUIGadget);
+      DoMethod(amsg.Parent, OM_ADDMEMBER, (ULONG)MUIGadget);
     }
     else
       Flags |= FLG_Layouted;

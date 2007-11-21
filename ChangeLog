@@ -5,6 +5,15 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-11-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc: applied patch kindly provided by Alfonso Ranieri which will make
+    our sources compile/run on MorphOS and bring them to a more compatible
+    level so that hopefully we will soon have a completly running version
+    for all platforms. However, there is still heaps of work to do to
+    stabilize the sources - especially for different GCC versions -
+    but we are getting near. Thanks again, Alfonso.
+
 2007-08-19 Jens Langner <Jens.Langner@light-speed.de>
 
   * include/mccinit.c: updated to latest 1.10 version

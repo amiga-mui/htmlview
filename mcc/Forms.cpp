@@ -20,7 +20,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include <ctype.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>
@@ -32,6 +31,7 @@
 #include "Forms.h"
 #include "private.h"
 #include "SharedData.h"
+#include <stdio.h>
 
 BOOL IsCharSafe (UBYTE byte)
 {

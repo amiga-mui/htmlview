@@ -29,6 +29,7 @@
 #include "SharedData.h"
 
 #include <ctype.h>
+#include <stdio.h>
 
 VOID LIClass::NumToStr (STRPTR str, UWORD type)
 {

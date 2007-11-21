@@ -30,6 +30,10 @@
 #include "private.h"
 #include "ScanArgs.h"
 
+#undef NewObject
+extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+#undef MUI_NewObject
+
 VOID SelectClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
   if(Flags & FLG_AllElementsPresent)
@@ -43,7 +47,7 @@ VOID SelectClass::AppendGadget (struct AppendGadgetMessage &amsg)
         End;
 
       if(MUIGadget)
-          DoMethod(amsg.Parent, OM_ADDMEMBER, MUIGadget);
+          DoMethod(amsg.Parent, OM_ADDMEMBER, (ULONG)MUIGadget);
       else  Flags |= FLG_Layouted;
     }
   }
