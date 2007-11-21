@@ -173,8 +173,9 @@ ULONG AnimInfo::Tick ()
   dst_h = GetBitMapAttr(dst, BMA_HEIGHT);
 
   if(src_x+w <= src_w && src_y+h <= src_h && l+w <= dst_w && t+h <= dst_h)
-      BltBitMap(src, src_x, src_y, dst, l, t, w, h, minterm, mask, storage);
-  else  kprintf("*** Error: (%ld, %ld) %ld, %ld - (%ld, %ld) %ld, %ld, %ld, %ld\n", src_w, src_h, src_x, src_y, dst_w, dst_h, l, t, w, h);
+    BltBitMap(src, src_x, src_y, dst, l, t, w, h, minterm, mask, storage);
+  else
+    D(DBF_ALWAYS, "*** Error: (%ld, %ld) %ld, %ld - (%ld, %ld) %ld, %ld, %ld, %ld", src_w, src_h, src_x, src_y, dst_w, dst_h, l, t, w, h);
 }
 
 VOID mRectFill (struct RastPort *rp, WORD l, WORD t, WORD r, WORD b)
@@ -185,7 +186,8 @@ VOID mRectFill (struct RastPort *rp, WORD l, WORD t, WORD r, WORD b)
 
   if(r < w && b < h)
       RectFill(rp, l, t, r, b);
-  else  kprintf("*** Error: (%ld, %ld) %ld, %ld, %ld, %ld\n", w, h, l, t, r, b);
+  else
+    D(DBF_ALWAYS, "*** Error: (%ld, %ld) %ld, %ld, %ld, %ld", w, h, l, t, r, b);
 }*/
 
 #define mBltBitMap BltBitMap
@@ -235,7 +237,7 @@ ULONG AnimInfo::Update (ULONG diff)
 
           case DisposePREVIOUS:
             copy_mask = TRUE;
-//            kprintf("Unsupported dispose method\n");
+//            D(DBF_ALWAYS, "Unsupported dispose method");
 //            BltBitMapRastPort(FirstFrame->BMp, left, top, Win->RPort, Win->BorderLeft + left, Win->BorderTop + top, width, height, 0xc0);
           break;
         }

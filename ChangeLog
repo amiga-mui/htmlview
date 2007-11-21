@@ -7,6 +7,9 @@ $URL$
 
 2007-11-21 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mcc: made the source compile for OS4 again - however, the builds still
+    seems to be broken and needs some closer look - volunteers? :)
+  * mcc: exchanged all kprintf() uses by proper D() uses.
   * mcc: applied patch kindly provided by Alfonso Ranieri which will make
     our sources compile/run on MorphOS and bring them to a more compatible
     level so that hopefully we will soon have a completly running version

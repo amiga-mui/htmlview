@@ -36,9 +36,11 @@
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 HOOKPROTONHNO(ExportFormCode, VOID, class FormClass **form)
 {

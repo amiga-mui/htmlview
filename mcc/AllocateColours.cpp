@@ -34,7 +34,7 @@ LONG AllocatedColours = 0;
 VOID __EXIT_7_Colours ()
 {
   if(AllocatedColours)
-    kprintf("HTMLview: %ld colours left!\n", AllocatedColours);
+    D(DBF_ALWAYS, "HTMLview: %ld colours left!", AllocatedColours);
 }
 #endif
 
@@ -114,6 +114,6 @@ VOID ObtainShineShadowPens (struct ColorMap *cmap, ULONG rgb, LONG &shine, LONG 
   ULONG brighter = ((RGB[0] >> 8) & 0xff0000) | ((RGB[1] >> 16) & 0xff00) | ((RGB[2] >> 24) & 0xff);
   GetRGB32(cmap, shadow, 1, RGB);
   ULONG darker = ((RGB[0] >> 8) & 0xff0000) | ((RGB[1] >> 16) & 0xff00) | ((RGB[2] >> 24) & 0xff);
-  kprintf("0x%06lx (0x%06lx =? 0x%06lx, 0x%06lx =? 0x%06lx)\n", rgb, brighter, i_brighter, darker, i_darker);
+  D(DBF_ALWAYS, "0x%06lx (0x%06lx =? 0x%06lx, 0x%06lx =? 0x%06lx)", rgb, brighter, i_brighter, darker, i_darker);
 */
 }

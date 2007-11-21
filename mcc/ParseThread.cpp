@@ -117,7 +117,7 @@ VOID ParseThread(REG(a0,STRPTR arguments))
           pmsg.NextStartBracket();
 
         /*ObtainSemaphore(&mutex);
-		kprintf("PARSETHREAD %lx FOR OBJ %lx MSGPORT %lx ARGS %lx\n",FindTask(NULL),args->HTMLview,args->Data->MessagePort,args);
+		    D(DBF_ALWAYS, "PARSETHREAD %lx FOR OBJ %lx MSGPORT %lx ARGS %lx",FindTask(NULL),args->HTMLview,args->Data->MessagePort,args);
         ReleaseSemaphore(&mutex);*/
 
         class HostClass *obj = new class HostClass(args->HTMLview, args->Data);
@@ -142,7 +142,8 @@ VOID ParseThread(REG(a0,STRPTR arguments))
         LONG ticks = t2.ds_Tick - t1.ds_Tick;
         if(ticks < 0)
           ticks += TICKS_PER_SECOND * 60;
-        kprintf("Time: %ld\n", ticks);
+
+        D(DBF_ALWAYS, "Time: %ld", ticks);
 #endif
         pmsg.NextStartBracket();
         obj->setFlags(obj->flags() | FLG_AllElementsPresent);
@@ -172,5 +173,6 @@ VOID ParseThread(REG(a0,STRPTR arguments))
 
     delete args;
   }
-//  kprintf("ParseStack: %ld\n", StackUsage);
+
+  //D(DBF_ALWAYS, "ParseStack: %ld", StackUsage);
 }

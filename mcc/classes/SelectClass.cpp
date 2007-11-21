@@ -30,9 +30,11 @@
 #include "private.h"
 #include "ScanArgs.h"
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 VOID SelectClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {

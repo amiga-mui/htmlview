@@ -33,9 +33,11 @@
 #include <proto/exec.h>
 #include <mui/TextEditor_mcc.h>
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 VOID TextAreaClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {

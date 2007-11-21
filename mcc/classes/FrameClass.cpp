@@ -30,9 +30,11 @@
 #include "SharedData.h"
 #include <stdio.h>
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 VOID FrameClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
@@ -52,7 +54,7 @@ VOID FrameClass::AppendGadget (struct AppendGadgetMessage &amsg)
         End,
       End;
 
-	//kprintf("SCROLLGROUP FRAME %lx\n",ScrollGroup);
+	  D(DBF_STARTUP, "SCROLLGROUP FRAME %lx",ScrollGroup);
 
     if(!ScrollGroup)
       ScrollGroup = HTMLview = RectangleObject, MUIA_Background, MUII_TextBack, End;

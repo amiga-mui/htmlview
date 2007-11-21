@@ -329,7 +329,7 @@ DecodeQueueManager::~DecodeQueueManager ()
     prev = first;
     first = first->Next;
 
-    kprintf("Status: %ld, Y: %ld, Pass: %ld, Started: %ld\n",
+    D(DBF_ALWAYS, "Status: %ld, Y: %ld, Pass: %ld, Started: %ld",
       prev->Status, prev->CurrentY, prev->CurrentPass, prev->Started);
 
     delete prev;
@@ -917,16 +917,16 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
       NP_Entry,        (ULONG)DecoderThread,
       NP_Priority,     (ULONG)-1,
       NP_Name,         (ULONG)taskname,
+      #if defined(__MORPHOS__)
       NP_PPC_Arg1,     (ULONG)args,
       NP_CodeType, 	   CODETYPE_PPC,
-      #if defined(__MORPHOS__)
-	  NP_PPCStackSize, STACKSIZEPPC,
+	    NP_PPCStackSize, STACKSIZEPPC,
       NP_StackSize,    STACKSIZE68K,
-	  NP_CopyVars,     FALSE,
+	    NP_CopyVars,     FALSE,
       NP_Input,        NULL,
       NP_CloseInput,   FALSE,
       NP_Output,       NULL,
-	  NP_CloseOutput,  FALSE,
+	    NP_CloseOutput,  FALSE,
       NP_Error,        NULL,
       NP_CloseError,   FALSE,
       #endif
