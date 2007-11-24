@@ -30,6 +30,7 @@
 #include "classes/HostClass.h"
 
 #include "private.h"
+#include <new>
 
 BOOL LocalURL (STRPTR url)
 {
@@ -51,7 +52,8 @@ STRPTR HTMLview_AddPart(Object *obj UNUSED, struct MUIP_HTMLview_AddPart *amsg, 
       {
         case ':':
         {
-          url = new char[strlen(amsg->File) + 2];
+          url = new (std::nothrow) char[strlen(amsg->File) + 2];
+          if (!url) return NULL;
           strcpy(url, amsg->File);
 
           if(!*file)
@@ -90,14 +92,16 @@ STRPTR HTMLview_AddPart(Object *obj UNUSED, struct MUIP_HTMLview_AddPart *amsg, 
       UWORD len = strlen(base) + strlen(file) + 1;
       if(*file == '#')
       {
-        url = new char[len + strlen(data->Page)];
+        url = new (std::nothrow) char[len + strlen(data->Page)];
+        if (!url) return NULL;
         strcpy(url, urlbase);
         strcat(url, data->Page);
         strcat(url, file);
       }
       else
       {
-        url = new char[len];
+        url = new (std::nothrow) char[len];
+        if (!url) return NULL;
         strcpy(url, urlbase);
 
         UBYTE sep = LocalURL(url) ? ':' : '/';
@@ -151,7 +155,8 @@ STRPTR HTMLview_AddPart(Object *obj UNUSED, struct MUIP_HTMLview_AddPart *amsg, 
   }
   else
   {
-    url = new char[strlen(file) + 1];
+    url = new (std::nothrow) char[strlen(file) + 1];
+    if (!url) return NULL;
     strcpy(url, file);
   }
   return(url);
@@ -161,7 +166,8 @@ VOID HTMLview_SetPath(Object *obj UNUSED, STRPTR url, struct HTMLviewData *data)
 {
   /* Domain name */
   delete data->URLBase;
-  data->URLBase = new char[strlen(url)+2];
+  data->URLBase = new (std::nothrow) char[strlen(url)+2];
+  if (!data->URLBase) return;
   STRPTR dst = data->URLBase;
 
   if(LocalURL(url))
@@ -204,7 +210,8 @@ VOID HTMLview_SetPath(Object *obj UNUSED, STRPTR url, struct HTMLviewData *data)
 
   /* Page name */
   delete data->Page;
-  data->Page = new char[strlen(url)+1];
+  data->Page = new (std::nothrow) char[strlen(url)+1];
+  if (!data->Page) return;
 
   len = 0;
   while(url[len] && url[len] != '#')
@@ -218,7 +225,8 @@ VOID HTMLview_SetPath(Object *obj UNUSED, STRPTR url, struct HTMLviewData *data)
   delete data->Local;
   if(*url++ == '#')
   {
-    data->Local = new char[strlen(url)+1];
+    data->Local = new (std::nothrow) char[strlen(url)+1];
+    if (!data->Local) return;
     strcpy(data->Local, url);
   }
   else

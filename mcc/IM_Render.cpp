@@ -27,12 +27,14 @@
 #include <proto/exec.h>
 #include <proto/graphics.h>
 #include <proto/intuition.h>
+#include <clib/macros.h>
 
 #include "ImageManager.h"
 #include "IM_ColourManager.h"
 #include "IM_Scale.h"
 #include "ImageDecoder.h"
 #include "General.h"
+#include <new>
 
 PictureFrame::PictureFrame (ULONG width, ULONG height, ULONG leftofs, ULONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags)
 {
@@ -144,11 +146,14 @@ BOOL RenderEngine::AllocateFrame (ULONG width, ULONG height, ULONG animdelay, UL
 
       case TransparencyALPHA:
         if(depth >= 15)
-          AlphaMask = new UBYTE [width * height];
+        {
+          AlphaMask = new (std::nothrow) UBYTE [width * height];
+          if (!AlphaMask) return FALSE;
+        }
       break;
     }
 
-    if((LastFrame->Next = new struct PictureFrame(width, height, leftofs, topofs, animdelay, disposal, background, my_bmp, Mask, flags)))
+    if((LastFrame->Next = new (std::nothrow) struct PictureFrame(width, height, leftofs, topofs, animdelay, disposal, background, my_bmp, Mask, flags)))
     {
       LastFrame->Next->AlphaMask = AlphaMask;
       if(depth <= 8)
@@ -202,7 +207,7 @@ VOID RenderEngine::Multiply (ULONG width, ULONG y, ULONG height)
   struct BitMap *bmp = BMpRP.BitMap;
   for(ULONG t_h, h = 1; height; h <<= 1)
   {
-    height -= t_h = min(h, height);
+    height -= t_h = MIN(h, height);
     BltBitMap(bmp, 0, y, bmp, 0, y+h, width, t_h, 0xc0, ~0, NULL);
   }
 }

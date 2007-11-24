@@ -27,8 +27,10 @@
 #include "Layout.h"
 #include "MinMax.h"
 #include "ParseMessage.h"
+#include "BackFillClass.h"
 
 #include <graphics/gfxmacros.h>
+#include <new>
 
 VOID TextClass::DeleteLineInfo ()
 {
@@ -188,11 +190,13 @@ BOOL TextClass::Layout (struct LayoutMessage &lmsg)
 
     if(width)
     {
-      struct TextLineInfo *info = new struct TextLineInfo(lmsg.X, width);
+      struct TextLineInfo *info = new (std::nothrow) struct TextLineInfo(lmsg.X, width);
+      if (!info) return FALSE;
       LineInfoLast->Next = info;
       LineInfoLast = info;
 
-      struct ObjectNotify *notify = new struct ObjectNotify(info->Left, info->Baseline, obj);
+      struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(info->Left, info->Baseline, obj);
+      if (!notify) return FALSE;
       lmsg.AddNotify(notify);
 
       obj = NULL;
@@ -443,7 +447,8 @@ VOID TextClass::MinMax (struct MinMaxMessage &mmsg)
 VOID TextClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
   ULONG length = pmsg.Current-pmsg.Locked;
-  Contents = new char[length+2];
+  Contents = new (std::nothrow) char[length+2];
+  if (!Contents) return;
   BOOL pre;
   if((pre = pmsg.OpenCounts[tag_PRE]))
     Flags |= FLG_Text_Pre;
@@ -613,12 +618,15 @@ VOID TextClass::Parse(REG(a2, struct ParseMessage &pmsg))
 #endif
 }
 
+/*#include<proto/exec.h>
+#define NewRawDoFmt(__p0, __p1, __p2, ...) \
+	(((STRPTR (*)(void *, CONST_STRPTR , APTR (*)(APTR, UBYTE), STRPTR , ...))*(void**)((long)(EXEC_BASE_NAME) - 922))((void*)(EXEC_BASE_NAME), __p0, __p1, __p2, __VA_ARGS__))*/
 VOID TextClass::Render (struct RenderMessage &rmsg)
 {
   struct RastPort *rp = rmsg.RPort;
   if(rp->Font != Font)
     SetFont(rp, Font);
-//  SetAPen(rp, rmsg.Colours[(rmsg.Textstyles & TSF_ALink) ? Col_ALink : ((rmsg.Textstyles & TSF_Link) ? ((rmsg.Textstyles & TSF_VLink) ? Col_VLink : Col_Link) : Col_Text)]);
+  //SetAPen(rp, rmsg.Colours[(rmsg.Textstyles & TSF_ALink) ? Col_ALink : ((rmsg.Textstyles & TSF_Link) ? ((rmsg.Textstyles & TSF_VLink) ? Col_VLink : Col_Link) : Col_Text)]);
   SetAPen(rp, rmsg.Colours[rmsg.Textstyles & TSF_ALink ? Col_ALink : Col_Text]);
   SetSoftStyle(rp, rmsg.Textstyles & TSF_StyleMask, TSF_StyleMask);
 
@@ -641,8 +649,48 @@ VOID TextClass::Render (struct RenderMessage &rmsg)
 
       if(length > 0)
       {
+        /* alfie hack:
+           if on MUI4/MOS1.45 (even the 68k old HTMLview) and TTF fonts,
+           text of a link is rendered in an orrible way if it changes
+           colour. This is a stupid redraw of the background. */
+
+        #ifdef __MORPHOS__
+        if(rmsg.Textstyles & TSF_Link)
+        {
+            int _l = TextLength(rp,contents,length);
+
+			/*NewRawDoFmt("!!!!!!!!!!!!!!!!......Clear back on %s - %ld %ld %ld %ld ",(void * (*)(void *, UBYTE))1,NULL,
+                contents,
+		        line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY,
+		        line->Left-rmsg.OffsetX+_l-1, line->Baseline-rmsg.OffsetY+Font->tf_YSize);*/
+
+          	/*RectFill(rp,
+		        line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY-Font->tf_Baseline,
+		        line->Left-rmsg.OffsetX+_l-1,line->Baseline-rmsg.OffsetY+3);*/
+
+            rmsg.BackgroundObj->DrawBackground(rmsg,
+		        line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY-Font->tf_Baseline,
+		        line->Left-rmsg.OffsetX+_l-1,line->Baseline-rmsg.OffsetY+3,
+		        line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY-Font->tf_Baseline);
+
+            /*rmsg.BackgroundObj->DrawBackground(rmsg,
+		        line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY-Font->tf_YSize,
+		        line->Left-rmsg.OffsetX+_l-1,line->Baseline-rmsg.OffsetY-1,
+		        line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY-Font->tf_YSize);*/
+
+		  	if(rp->Font != Font) SetFont(rp, Font);
+		  	SetAPen(rp, rmsg.Colours[rmsg.Textstyles & TSF_ALink ? Col_ALink : Col_Text]);
+		  	SetSoftStyle(rp, rmsg.Textstyles & TSF_StyleMask, TSF_StyleMask);
+
+        }
+		#endif
+
         Move(rp, line->Left-rmsg.OffsetX, line->Baseline-rmsg.OffsetY);
         Text(rp, contents, length);
+
+        /*if(rmsg.Textstyles & TSF_Link)
+			NewRawDoFmt("-- %ld\n",(void * (*)(void *, UBYTE))1,NULL,rp->cp_x-1);*/
+
         if(rmsg.Textstyles & TSF_Link)
         {
           UWORD pattern[] = { 0xcccc, 0xcccc };

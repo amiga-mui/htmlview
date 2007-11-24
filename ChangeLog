@@ -5,6 +5,44 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-11-25 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcc, mcp: applied another large patch kindly provided by
+    Alfonso Ranieri which heaps of changes - well, at least they seem to
+    compile. Here are the documented changes by Alfonso:
+
+    - All the new calls was changed to new (sdt:nothrow). This is needed
+      to make for "new nothrow" to be able to fail. Of course, any new usage
+      must be checked for failure. This is not easy, because of many
+      structures and classes memebers are allocated  via  new and anywhere
+      they are always aspected to exist. I tried to do my best, but, on too
+      few memory condition, HTMLview might now  fails  badly (when  it  would
+      have  been put in a loop) before, simply because I forgot to check
+      something :P From now, when looking at the code, you should always check
+      if  something that is used without caring about is there or not. In
+      Memory.cpp if CANTFAILNONONO is not defined, this new "can fail mode"
+      is on.  I  used  it for  hours  and everything warked on. I mean, I made
+      malloc fails from time to time with no problem.
+
+    - On MorphOS 1.45 and MUI 4 and ttf fonts, links are rendered in a very ugly
+      way. It  happens with the old 68k HTMLview, so it must be new problem. A
+      very temporary hack was implemented in TextClass.cpp  so  that  the
+      background  is redrawn, before rendering a link.
+
+    - Even on MorphOS, waiting for the 500k of the MCC code to load may be
+      annoying when  the  MUIPrefs  creates  the sample in HTMLview.mcp. So the
+      sample is now opened on request.
+
+    - Changed mcp catalog name to HTMLview.catalog, because of many strings
+      there may be used by the mcc itself (there is some string in mcc code).
+
+    - Localized. I hate to use shortcuts not in the string with a  _  preparse.
+      But the  need for a "name" to be given to the MUI20 menus make it impossible
+      to be solved in another easier way.
+
+    - Many other changes I truly don't remember.
+
+
 2007-11-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc: made the source compile for OS4 again - however, the builds still

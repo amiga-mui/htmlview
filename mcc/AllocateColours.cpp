@@ -65,42 +65,56 @@ inline VOID FreePen (struct ColorMap *cmap, ULONG pen)
 #endif
 }
 */
+
+static inline ULONG mmin(ULONG a,ULONG b) __attribute((always_inline));
+static inline ULONG mmax(ULONG a,ULONG b) __attribute((always_inline));
+
+static inline ULONG mmin(ULONG a,ULONG b)
+{
+	return a>b ? b : a;
+}
+
+static inline ULONG mmax(ULONG a,ULONG b)
+{
+	return a>b ? a : b;
+}
+
 VOID ObtainShineShadowPens (struct ColorMap *cmap, ULONG rgb, LONG &shine, LONG &shadow)
 {
   ULONG r = (rgb & 0xff0000) >> 16;
   ULONG g = (rgb & 0x00ff00) >> 8;
   ULONG b = rgb & 0x0000ff;
 
-  ULONG dark_r = max(64, r)-64;
-  ULONG dark_g = max(64, g)-64;
-  ULONG dark_b = max(64, b)-64;
+  ULONG dark_r = mmax(64, r)-64;
+  ULONG dark_g = mmax(64, g)-64;
+  ULONG dark_b = mmax(64, b)-64;
 
-  ULONG bright_r = min(191, r)+64;
-  ULONG bright_g = min(191, g)+64;
-  ULONG bright_b = min(191, b)+64;
+  ULONG bright_r = mmin(191, r)+64;
+  ULONG bright_g = mmin(191, g)+64;
+  ULONG bright_b = mmin(191, b)+64;
 
   ULONG intencity = (r+g+b)/3;
   if(intencity >= 215)
   {
-    bright_r = min(255, dark_r+32);
-    bright_g = min(255, dark_g+32);
-    bright_b = min(255, dark_b+32);
+    bright_r = mmin(255, dark_r+32);
+    bright_g = mmin(255, dark_g+32);
+    bright_b = mmin(255, dark_b+32);
 
-    dark_r = max(0, (LONG)dark_r-64);
-    dark_g = max(0, (LONG)dark_g-64);
-    dark_b = max(0, (LONG)dark_b-64);
+    dark_r = mmax(0, (LONG)dark_r-64);
+    dark_g = mmax(0, (LONG)dark_g-64);
+    dark_b = mmax(0, (LONG)dark_b-64);
   }
   else
   {
     if(intencity < 32)
     {
-      dark_r = max(0, (LONG)bright_r);
-      dark_g = max(0, (LONG)bright_g);
-      dark_b = max(0, (LONG)bright_b);
+      dark_r = mmax(0, (LONG)bright_r);
+      dark_g = mmax(0, (LONG)bright_g);
+      dark_b = mmax(0, (LONG)bright_b);
 
-      bright_r = min(255, bright_r+64);
-      bright_g = min(255, bright_g+64);
-      bright_b = min(255, bright_b+64);
+      bright_r = mmin(255, bright_r+64);
+      bright_g = mmin(255, bright_g+64);
+      bright_b = mmin(255, bright_b+64);
     }
   }
 

@@ -28,6 +28,7 @@
 #include <proto/graphics.h>
 #include <proto/intuition.h>
 #include <proto/utility.h>
+#include <clib/macros.h>
 
 #if defined(__amigaos4__)
 #include <exec/emulation.h>
@@ -45,10 +46,11 @@
 #include "classes/ImgClass.h"
 #include "classes/SuperClass.h"
 
-#include "private.h"
+//#include "private.h"
 
 #include "SDI_stdarg.h"
 #include <stdio.h>
+#include <new>
 
 #ifdef __amigaos4__
 #define GetImageDecoderClass(base) ( (struct IClass *)(IExec->EmulateTags)(base, ET_Offset, -30, ET_RegisterA6, base, ET_SaveRegs, TRUE, TAG_DONE) )
@@ -60,10 +62,13 @@
 
 ImageCacheItem::ImageCacheItem (STRPTR url, struct PictureFrame *pic)
 {
-  URL = new char[strlen(url)+1];
-  strcpy(URL, url);
-  Picture = pic;
-  pic->LockPicture();
+  URL = new (std::nothrow) char[strlen(url)+1];
+  if (URL)
+  {
+	  strcpy(URL, url);
+	  Picture = pic;
+	  pic->LockPicture();
+  }
 }
 
 ImageCacheItem::~ImageCacheItem ()
@@ -85,35 +90,38 @@ ImageCache::~ImageCache ()
 
 VOID ImageCache::AddImage (STRPTR url, struct PictureFrame *pic)
 {
-  struct ImageCacheItem *item = new struct ImageCacheItem (url, pic);
-  LastEntry = (LastEntry->Next = item);
-  CurrentSize += pic->Size();
-
-  struct ImageCacheItem *preprev = NULL, *prev, *first = FirstEntry;
-  while(CurrentSize > MaxSize && first)
+  struct ImageCacheItem *item = new (std::nothrow) struct ImageCacheItem (url, pic);
+  if (item)
   {
-    prev = first;
-    first = first->Next;
+    LastEntry = (LastEntry->Next = item);
+    CurrentSize += pic->Size();
 
-    if(prev->Picture->LockCnt == 1)
+    struct ImageCacheItem *preprev = NULL, *prev, *first = FirstEntry;
+    while(CurrentSize > MaxSize && first)
     {
-      if(prev == FirstEntry)
-        if(!(FirstEntry = first))
-          LastEntry = (struct ImageCacheItem *)&FirstEntry;
+      prev = first;
+      first = first->Next;
 
-      CurrentSize -= prev->Picture->Size();
-      delete prev;
+      if(prev->Picture->LockCnt == 1)
+      {
+        if(prev == FirstEntry)
+          if(!(FirstEntry = first))
+            LastEntry = (struct ImageCacheItem *)&FirstEntry;
 
-      if(preprev)
-        preprev->Next = first;
+        CurrentSize -= prev->Picture->Size();
+        delete prev;
+
+        if(preprev)
+          preprev->Next = first;
+      }
+      else
+      {
+        preprev = prev;
+      }
     }
-    else
-    {
-      preprev = prev;
-    }
+    if(preprev && !preprev->Next)
+      LastEntry = preprev;
   }
-  if(preprev && !preprev->Next)
-    LastEntry = preprev;
 }
 
 struct PictureFrame *ImageCache::FindImage (STRPTR url, ULONG width, ULONG height)
@@ -486,10 +494,10 @@ DISPATCHER(DecoderDispatcher)
 
           class ScaleEngine *img;
           if(depth >= 15)
-              img = new TrueColourEngine(scr, width, height, data);
+              img = new (std::nothrow) TrueColourEngine(scr, width, height, data);
           else if(no_dither)
-              img = new LowColourNDEngine(scr, width, height, data);
-          else  img = new LowColourEngine(scr, width, height, data);
+              img = new (std::nothrow) LowColourNDEngine(scr, width, height, data);
+          else  img = new (std::nothrow) LowColourEngine(scr, width, height, data);
 
           if((data->ImgObj = img))
             return((ULONG)obj);
@@ -545,7 +553,7 @@ DISPATCHER(DecoderDispatcher)
       STRPTR buf = (STRPTR)rmsg->Buffer;
       if(data->BytesInBuffer)
       {
-        result = min(len, data->BytesInBuffer);
+        result = MIN(len, data->BytesInBuffer);
         memcpy(buf, data->StartBuffer, result);
         buf += result;
         len -= result;
@@ -567,7 +575,7 @@ DISPATCHER(DecoderDispatcher)
 
       if(data->BytesInBuffer)
       {
-        LONG size = min((LONG)data->BytesInBuffer, left);
+        LONG size = MIN((LONG)data->BytesInBuffer, left);
         left -= size;
         data->BytesInBuffer -= size;
       }
@@ -665,9 +673,12 @@ struct Args
 {
   Args (Object *obj, struct HTMLviewData *data, struct ImageList *image, struct Screen *scr, LONG sigbit, struct Task *parenttask)
   {
-    TaskName = new char[strlen(image->ImageName)+12];
-    sprintf(TaskName, "HTMLview - %s", image->ImageName);
-    Name = TaskName + 11;
+    TaskName = new (std::nothrow) char[strlen(image->ImageName)+12];
+    if (TaskName)
+    {
+    	sprintf(TaskName, "HTMLview - %s", image->ImageName);
+	    Name = TaskName + 11;
+    }
 
     Obj = obj;
     Data = data;
@@ -827,54 +838,56 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
   struct HTMLview_LoadMsg loadmsg;
   loadmsg.lm_App = _app(args->Obj);
 
-  struct DecodeItem *item = new struct DecodeItem(args->Obj, args->Data, image);
-  args->Data->Share->DecodeQueue.InsertElm(item);
-  Signal(args->ParentTask, 1 << args->SigBit);
-
-  loadmsg.lm_Type = HTMLview_Open;
-  loadmsg.lm_PageID = item->PageID;
-  loadmsg.lm_Open.URL = args->Name;
-  loadmsg.lm_Open.Flags = MUIF_HTMLview_LoadMsg_Image;
-  if(CallHookPkt(loadhook, args->Obj, &loadmsg))
+  struct DecodeItem *item = new (std::nothrow) struct DecodeItem(args->Obj, args->Data, image);
+  if (item)
   {
-    UBYTE buf[12];
-    loadmsg.lm_Type = HTMLview_Read;
-    loadmsg.lm_Read.Buffer = (char *)buf;
-    loadmsg.lm_Read.Size = 10;
-    ULONG len = CallHookPkt(loadhook, args->Obj, &loadmsg);
+    args->Data->Share->DecodeQueue.InsertElm(item);
+    Signal(args->ParentTask, 1 << args->SigBit);
 
-	struct TagItem attrs[] =
-     {{IDA_StartBuffer,  (ULONG)buf},
-      {IDA_BytesInBuffer,(ULONG)len},
-      {IDA_Width,        (ULONG)width},
-      {IDA_Height,       (ULONG)height},
-      {IDA_Screen,       (ULONG)args->Scr},
-      {IDA_HTMLview,     (ULONG)args->Obj},
-      {IDA_LoadHook,     (ULONG)loadhook},
-      {IDA_LoadMsg,      (ULONG)&loadmsg},
-      {IDA_StatusStruct, (ULONG)item},
-      {IDA_NoDither,     (ULONG)dither},
-      {IDA_Gamma,        (ULONG)gamma},
-      {TAG_DONE,0}};
-    Object *decoder = NewDecoderObjectA(buf,attrs);
-
-    if(decoder)
+    loadmsg.lm_Type = HTMLview_Open;
+    loadmsg.lm_PageID = item->PageID;
+    loadmsg.lm_Open.URL = args->Name;
+    loadmsg.lm_Open.Flags = MUIF_HTMLview_LoadMsg_Image;
+    if(CallHookPkt(loadhook, args->Obj, &loadmsg))
     {
-      result = DoMethod(decoder, IDM_Decode);
-      DisposeObject(decoder);
+      UBYTE buf[12];
+      loadmsg.lm_Type = HTMLview_Read;
+      loadmsg.lm_Read.Buffer = (char *)buf;
+      loadmsg.lm_Read.Size = 10;
+      ULONG len = CallHookPkt(loadhook, args->Obj, &loadmsg);
+
+  	  struct TagItem attrs[] =
+       {{IDA_StartBuffer,  (ULONG)buf},
+        {IDA_BytesInBuffer,(ULONG)len},
+        {IDA_Width,        (ULONG)width},
+        {IDA_Height,       (ULONG)height},
+        {IDA_Screen,       (ULONG)args->Scr},
+        {IDA_HTMLview,     (ULONG)args->Obj},
+        {IDA_LoadHook,     (ULONG)loadhook},
+        {IDA_LoadMsg,      (ULONG)&loadmsg},
+        {IDA_StatusStruct, (ULONG)item},
+        {IDA_NoDither,     (ULONG)dither},
+        {IDA_Gamma,        (ULONG)gamma},
+        {TAG_DONE,0}};
+      Object *decoder = NewDecoderObjectA(buf,attrs);
+
+      if(decoder)
+      {
+        result = DoMethod(decoder, IDM_Decode);
+        DisposeObject(decoder);
+      }
+
+      loadmsg.lm_Type = HTMLview_Close;
+      CallHookPkt(loadhook, args->Obj, &loadmsg);
     }
 
-    loadmsg.lm_Type = HTMLview_Close;
-    CallHookPkt(loadhook, args->Obj, &loadmsg);
+    delete args;
+
+    item->Enter();
+    item->Status = result ? StatusDone : StatusError;
+    item->Thread = NULL;
+    item->Leave();
   }
-
-  delete args;
-
-  item->Enter();
-  item->Status = result ? StatusDone : StatusError;
-  item->Thread = NULL;
-  Forbid();
-  item->Leave();
 }
 
 #if defined(__PPC__)
@@ -908,7 +921,12 @@ VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struc
     UnlockPubScreenList();
     struct Screen *lock = LockPubScreen(name);
 
-    struct Args *args = new struct Args(obj, data, image, lock, sigbit, FindTask(NULL));
+    struct Args *args = new (std::nothrow) struct Args(obj, data, image, lock, sigbit, FindTask(NULL));
+    if (!args)
+    {
+        UnlockPubScreen(NULL,lock);
+        return;
+    }
     char str_args[10];
     sprintf(str_args, "%lx", (ULONG)args);
 

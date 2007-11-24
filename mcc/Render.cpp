@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <graphics/gfxmacros.h>
 #include <libraries/mui.h>
 #include <proto/cybergraphics.h>
@@ -36,7 +37,8 @@
 #include "IM_Render.h"
 #include "SharedData.h"
 
-#include "private.h"
+//#include "private.h"
+#include <new>
 
 #define MINTERM_B_OR_C      (ABC | ABNC | NABC | NABNC | ANBC | NANBC)
 #define MINTERM_B_EQUALS_C  (ABC | ANBNC | NABC | NANBNC)
@@ -49,14 +51,16 @@ struct RastPort *RenderMessage::ObtainDoubleBuffer (ULONG width, ULONG height)
     {
       WaitBlit();
       FreeBitMap(BufferRP->BitMap);
-      BufferWidth = max(BufferWidth, width);
-      BufferHeight = max(BufferHeight, height);
+      BufferWidth = MAX(BufferWidth, width);
+      BufferHeight = MAX(BufferHeight, height);
       BufferRP->BitMap = AllocBitMap(BufferWidth, BufferHeight, GetBitMapAttr(RPort->BitMap, BMA_DEPTH), BMF_MINPLANES, RPort->BitMap);
     }
   }
   else
   {
-    BufferRP = new struct RastPort;
+    BufferRP = new (std::nothrow) struct RastPort;
+    if (!BufferRP) return NULL;
+
     InitRastPort(BufferRP);
     BufferRP->BitMap = AllocBitMap(width, height, GetBitMapAttr(RPort->BitMap, BMA_DEPTH), BMF_MINPLANES, RPort->BitMap);
     BufferWidth = width;
@@ -132,7 +136,7 @@ static LONG TextLength32(struct RastPort *rp, STRPTR string, ULONG count)
 
    while (count > 0)
    {
-      chars = TextFit(rp, string, min(count,65535), &te, NULL, 1, 32767, 32767);
+      chars = TextFit(rp, string, MIN(count,65535), &te, NULL, 1, 32767, 32767);
 
       if (!chars) break; // paranoia!
 

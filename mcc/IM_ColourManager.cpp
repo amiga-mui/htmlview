@@ -26,6 +26,7 @@
 #include <proto/intuition.h>
 
 #include "IM_ColourManager.h"
+#include <new>
 
 struct SignalSemaphore Mutex;
 class ColourManager *FirstCMap = NULL;
@@ -54,7 +55,7 @@ class ColourManager *ObtainCMap (struct Screen *scr)
 
   if(!first)
   {
-    if(!(first = new ColourManager(scr)))
+    if(!(first = new (std::nothrow) ColourManager(scr)))
       goto error;
 
     if(last)

@@ -25,6 +25,7 @@
 
 #include "ParseMessage.h"
 #include "ScanArgs.h"
+#include <new>
 
 VOID OptionClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
@@ -71,7 +72,7 @@ VOID OptionClass::Parse(REG(a2, struct ParseMessage &pmsg))
 /*  pmsg.SetLock();
   pmsg.NextStartBracket();
 
-  if(Contents = new UBYTE [pmsg.Current-pmsg.Locked+1])
+  if(Contents = new (std::nothrow) UBYTE [pmsg.Current-pmsg.Locked+1])
   {
     STRPTR src = pmsg.Locked, dst = Contents;
     while(*src != '<' && *src != '\n' && *src != '\r' && *src)

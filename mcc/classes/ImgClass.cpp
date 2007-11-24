@@ -34,6 +34,7 @@
 #include "SharedData.h"
 
 #include <proto/cybergraphics.h>
+#include <new>
 
 ImgClass::~ImgClass ()
 {
@@ -232,7 +233,8 @@ BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
     Top = lmsg.Y;
     Bottom = lmsg.Y + height - 1;
 
-    struct FloadingImage *img = new struct FloadingImage(Top, Left, width, height, this, lmsg.Parent);
+    struct FloadingImage *img = new (std::nothrow) struct FloadingImage(Top, Left, width, height, this, lmsg.Parent);
+    if (!img) return FALSE;
     Left = lmsg.AddImage(img, Alignment == Align_Right);
 
     lmsg.TopChange = min(lmsg.TopChange, Top);
@@ -274,7 +276,8 @@ BOOL ImgClass::Layout (struct LayoutMessage &lmsg)
       break;
     }
 
-    struct ObjectNotify *notify = new struct ObjectNotify(Left, Baseline, this);
+    struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(Left, Baseline, this);
+    if (!notify) return FALSE;
     lmsg.AddNotify(notify);
   }
   Flags |= FLG_WaitingForSize;
@@ -358,13 +361,15 @@ BOOL ImgClass::ReceiveImage (struct PictureFrame *pic)
 
   if(!GivenWidth)
   {
-    GivenWidth = new struct ArgSize(pic->Width, Size_Pixels);
+    GivenWidth = new (std::nothrow) struct ArgSize(pic->Width, Size_Pixels);
+    if (!GivenWidth) return FALSE;
     relayout = TRUE;
   }
 
   if(!GivenHeight)
   {
-    GivenHeight = new struct ArgSize(pic->Height, Size_Pixels);
+    GivenHeight = new (std::nothrow) struct ArgSize(pic->Height, Size_Pixels);
+    if (!GivenHeight) return FALSE;
     relayout = TRUE;
   }
 
@@ -483,33 +488,34 @@ VOID ImgClass::Render (struct RenderMessage &rmsg)
           rmsg.RPort = tmprp;
 
           struct RGBPixel *mixline;
-          mixline = new struct RGBPixel [2*width];
+          mixline = new (std::nothrow) struct RGBPixel [2*width];
+          if (mixline)
+		  {
+            InitRastPort(&srcrport);
+            srcrport.BitMap = Picture->BMp;
+            InitRastPort(&dstrport);
+            dstrport.BitMap = BlendBitMap;
 
-          InitRastPort(&srcrport);
-          srcrport.BitMap = Picture->BMp;
-          InitRastPort(&dstrport);
-          dstrport.BitMap = BlendBitMap;
-
-          UBYTE *alpha = Picture->AlphaMask;
-          for(UWORD y = 0; y < height; y++)
-          {
-            rmsg.BackgroundObj->DrawBackground(rmsg, 0, 0, width-1, 0, xoffset, yoffset+y);
-            ReadPixelArray(mixline, 0, 0, width*sizeof(RGBPixel), &srcrport, 0, y, width, 1, PIXEL_FORMAT);
-            ReadPixelArray(mixline, 0, 1, width*sizeof(RGBPixel), tmprp, 0, 0, width, 1, PIXEL_FORMAT);
-
-            for(UWORD x = 0; x < width; x++)
+            UBYTE *alpha = Picture->AlphaMask;
+            for(UWORD y = 0; y < height; y++)
             {
-              UBYTE factor = *alpha++;
-              mixline[x].SetRGB(mixline[x].Scale(factor) + mixline[x+width].Scale(255-factor));
+              rmsg.BackgroundObj->DrawBackground(rmsg, 0, 0, width-1, 0, xoffset, yoffset+y);
+              ReadPixelArray(mixline, 0, 0, width*sizeof(RGBPixel), &srcrport, 0, y, width, 1, PIXEL_FORMAT);
+              ReadPixelArray(mixline, 0, 1, width*sizeof(RGBPixel), tmprp, 0, 0, width, 1, PIXEL_FORMAT);
+
+              for(UWORD x = 0; x < width; x++)
+              {
+                UBYTE factor = *alpha++;
+                mixline[x].SetRGB(mixline[x].Scale(factor) + mixline[x+width].Scale(255-factor));
+              }
+
+              WritePixelArray(mixline, 0, 0, width*sizeof(RGBPixel), &dstrport, 0, y, width, 1, PIXEL_FORMAT);
             }
 
-            WritePixelArray(mixline, 0, 0, width*sizeof(RGBPixel), &dstrport, 0, y, width, 1, PIXEL_FORMAT);
+            delete mixline;
+            rmsg.RPort = rp;
           }
-
-          delete mixline;
-          rmsg.RPort = rp;
         }
-
         Flags &= ~FLG_Img_CreateAlpha;
       }
 

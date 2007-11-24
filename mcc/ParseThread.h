@@ -22,6 +22,7 @@
 
 #ifndef PARSETHREAD_H
 #define PARSETHREAD_H
+#include <new>
 
 /* Protos */
 
@@ -37,8 +38,8 @@ struct ParseThreadArgs
     HTMLview = htmlview;
     Data = data;
     Flags = flags;
-    URL = new char[strlen(url)+1];
-    strcpy(URL, url);
+    URL = new (std::nothrow) char[strlen(url)+1];
+    if (URL) strcpy(URL, url);
     PostData = postdata;
 
   }

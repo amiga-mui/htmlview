@@ -28,6 +28,7 @@
 
 #include "General.h"
 #include "ParseMessage.h"
+#include <new>
 
 BOOL ParseMessage::OpenURL (STRPTR url, Object *htmlview, ULONG flags)
 {
@@ -187,17 +188,21 @@ BOOL ParseMessage::Fetch (UWORD len)
     if(Size-left < 1024)
     {
       Size *= 2;
-      STRPTR buf = new char[Size];
+      STRPTR buf = new (std::nothrow) char[Size];
+      if (buf)
+      {
 //      if(left > 0)
         memcpy(buf, Locked, left);
-      delete Buffer;
-      Buffer = buf;
+        delete Buffer;
+        Buffer = buf;
+  	  }
+      else return FALSE;
     }
     else
     {
 //      if(left >= 0)
           memcpy(Buffer, Locked, left);
-//      else  D(DBF_ALWAYS, "*** memcpy(0x%lx, 0x%lx, %ld)", Buffer, Locked, left);
+//      else  kprintf("*** memcpy(0x%lx, 0x%lx, %ld)\n", Buffer, Locked, left);
     }
     LONG offset = Current-Locked;
     Locked = Buffer;
@@ -217,22 +222,24 @@ BOOL ParseMessage::Fetch (UWORD len)
   return(Current < Upper); // && !Status);
 }
 
-BufferParseMessage::BufferParseMessage(STRPTR buf, ULONG size  UNUSED)
-  : ParseMessage(NULL, 0, NULL, 0)
+BufferParseMessage::BufferParseMessage (STRPTR buf, ULONG size  __attribute__((unused))) : ParseMessage(NULL, 0, NULL, 0)
 {
   ULONG len = strlen(buf) + 1;
-  STRPTR buffer = new char[len];
-  memcpy(buffer, buf, len);
+  STRPTR buffer = new (std::nothrow) char[len];
+  if (buffer)
+  {
+	memcpy(buffer, buf, len);
 
-  Buffer = Current = Locked = buffer;
-  Upper = buffer + len - 1;
-  Size = len;
+    Buffer = Current = Locked = buffer;
+    Upper = buffer + len - 1;
+    Size = len;
+  }
 
   if(*Current != '<')
     NextStartBracket();
 }
 
-BOOL BufferParseMessage::Fetch(UWORD len UNUSED)
+BOOL BufferParseMessage::Fetch (UWORD len  __attribute__((unused)))
 {
   return(Current < Upper);
 }

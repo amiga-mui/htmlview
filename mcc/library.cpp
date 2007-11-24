@@ -88,12 +88,19 @@ static VOID cleanupCPP(void);
 /******************************************************************************/
 #include "mccinit.c"
 
+struct SignalSemaphore ttt;
+ULONG tttfail = 0;
+
 /******************************************************************************/
 /* define all implementations of our user functions                           */
 /******************************************************************************/
 static BOOL ClassInit(UNUSED struct Library *base)
 {
   ENTER();
+
+  memset(&ttt,0,sizeof(ttt));
+  InitSemaphore(&ttt);
+  tttfail=0;
 
   if(initCPP())
   {
@@ -209,9 +216,9 @@ extern "C"
 extern void _INIT_4_InitMem(void);
 extern void _INIT_5_CMapMutex(void);
 extern void _INIT_6_CharTables(void);
-extern void _INIT_7_BuildTagTree(void);
-extern void _INIT_7_BuildColourTree(void);
-extern void _INIT_7_BuildEntityTree(void);
+extern ULONG _INIT_7_BuildTagTree(void);
+extern ULONG _INIT_7_BuildColourTree(void);
+extern ULONG _INIT_7_BuildEntityTree(void);
 extern void _INIT_7_PrepareDecoders(void);
 //extern void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
 //extern void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
@@ -239,14 +246,14 @@ static ULONG initCPP(void)
 		return 0;
   #endif
 
-  // call the virtual tables setup in the
-  // correct priority
   _INIT_4_InitMem();
   _INIT_5_CMapMutex();
   _INIT_6_CharTables();
-  _INIT_7_BuildTagTree();
-  _INIT_7_BuildColourTree();
-  _INIT_7_BuildEntityTree();
+
+  if (!_INIT_7_BuildTagTree() ||
+  	  !_INIT_7_BuildColourTree() ||
+      !_INIT_7_BuildEntityTree()) return 0;
+
   _INIT_7_PrepareDecoders();
 //    _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
 //    _Z41__static_initialization_and_destruction_0ii(1, 65535);

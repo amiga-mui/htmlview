@@ -27,6 +27,11 @@
 
 #include <mcc_common.h>
 
+#ifdef __MORPHOS__
+extern struct MUI_CustomClass *PicClass;
+#define PREFSIMAGEOBJECT \
+  NewObject(PicClass->mcc_Class, NULL, End
+#else
 #define PREFSIMAGEOBJECT \
   BitmapObject,\
     MUIA_Bitmap_Bitmap,       (UBYTE *)&image_bitmap,\
@@ -38,6 +43,7 @@
     MUIA_FixHeight,           IMAGE_HEIGHT,\
     MUIA_FixWidth,            IMAGE_WIDTH,\
   End
+#endif
 
 #define MCPMAXRAWBUF 64
 
@@ -69,12 +75,15 @@ enum
 struct InstData_MCP
 {
 	Object *Objects[NumberOfObjects];
+	Object *SampleGroup;
+    Object *FirstSample;
+	Object *Sample;
 };
 
 extern struct MUI_CustomClass *CacheSliderClass;
 extern struct MUI_CustomClass *GammaSliderClass;
 
-Object *CreatePrefsGroup(struct InstData_MCP *data);
+Object *CreatePrefsGroup(Object *parent,struct InstData_MCP *data);
 BOOL CreateSubClasses(void);
 void DeleteSubClasses(void);
 
@@ -89,5 +98,11 @@ ULONG xget(Object *obj, const ULONG attr);
   #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
 #endif
 ///
+
+#if defined(__MORPHOS__)
+#undef NewObject
+#undef MUI_NewObject
+APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+#endif
 
 #endif /* HTMLVIEW_MCP_PRIV_H */

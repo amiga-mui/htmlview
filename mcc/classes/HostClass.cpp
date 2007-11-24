@@ -24,7 +24,7 @@
 #include "TextClass.h"
 #include "BaseClass.h"
 
-#include "private.h"
+//#include "private.h"
 #include "SharedData.h"
 
 #include <proto/commodities.h>
@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>
+#include <new>
 
 #ifndef PI
 #define PI ((double)3.141592653589793)
@@ -308,11 +309,14 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
           url = (STRPTR)DoMethod(obj, MUIM_HTMLview_AddPart, (ULONG)link);
           if(hmsg.ServerMap)
           {
-            STRPTR t_url = new char[strlen(url) + 11];
-            sprintf(t_url, "%s?%ld,%ld", url, hmsg.OffsetX, hmsg.OffsetY);
-            delete url;
-            url = t_url;
-            map = TRUE;
+            STRPTR t_url = new (std::nothrow) char[strlen(url) + 11];
+            if (t_url)
+            {
+              sprintf(t_url, "%s?%ld,%ld", url ? url : "", hmsg.OffsetX, hmsg.OffsetY);
+              delete url;
+              url = t_url;
+              map = TRUE;
+            }
           }
         }
       }

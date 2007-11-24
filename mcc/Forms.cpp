@@ -29,9 +29,10 @@
 #include "General.h"
 #include "Classes.h"
 #include "Forms.h"
-#include "private.h"
-#include "SharedData.h"
+//#include "private.h"
+//#include "SharedData.h"
 #include <stdio.h>
+#include <new>
 
 BOOL IsCharSafe (UBYTE byte)
 {
@@ -66,7 +67,8 @@ STRPTR EncodeString (STRPTR src)
   while(*t_str)
     len += IsCharSafe(*t_str++) ? 1 : 3;
 
-  STRPTR dst, encoded = dst = new char[len];
+  STRPTR dst, encoded = dst = new (std::nothrow) char[len];
+  if (!encoded) return NULL;
   while(*src)
   {
     UBYTE byte = *src++;
@@ -113,9 +115,12 @@ ExportFormMessage::~ExportFormMessage ()
 VOID ExportFormMessage::AddElement (STRPTR name, STRPTR value)
 {
   struct FormElement *element;
-  element = LastElement->Next = new struct FormElement(name, value);
-  LastElement = element;
-  StrLength += 2 + strlen(element->Name) + strlen(element->Value);
+  element = LastElement->Next = new (std::nothrow) struct FormElement(name, value);
+  if (element)
+  {
+	  LastElement = element;
+	  StrLength += 2 + strlen(element->Name) + strlen(element->Value);
+  }
 }
 
 

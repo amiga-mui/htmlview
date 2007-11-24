@@ -26,6 +26,7 @@
 struct TNode
 {
   TNode(CONST_STRPTR str, CONST_APTR data);
+
   virtual ~TNode ();
   struct TNode *TInsert(CONST_STRPTR str, CONST_APTR data);
 
@@ -42,17 +43,21 @@ struct TNode
 APTR TFind (struct TNode *root, CONST_STRPTR str, UBYTE *table);
 
 template <class T>
-VOID BinaryInsert (struct TNode *&tree, T *elements, ULONG from, ULONG to)
+ULONG BinaryInsert (struct TNode *&tree, T *elements, ULONG from, ULONG to)
 {
   ULONG diff = (to-from) / 2;
 
   tree = tree->TInsert(elements[from+diff].Name, elements[from+diff].GetData());
+  if (tree==NULL) return FALSE;
+
   if(from < to)
   {
-    if(diff)
-      BinaryInsert(tree, elements, from, from+diff-1);
-    BinaryInsert(tree, elements, from+diff+1, to);
+    if(diff) if (!BinaryInsert(tree, elements, from, from+diff-1)) return FALSE;
+
+    if (!BinaryInsert(tree, elements, from+diff+1, to)) return FALSE;
   }
+
+  return TRUE;
 }
 
 #endif

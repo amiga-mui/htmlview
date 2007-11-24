@@ -32,6 +32,7 @@
 
 #include <proto/exec.h>
 #include <mui/TextEditor_mcc.h>
+#include <new>
 
 #if defined(__MORPHOS__)
 #undef NewObject
@@ -108,7 +109,8 @@ BOOL TextAreaClass::Layout (struct LayoutMessage &lmsg)
 
       lmsg.UpdateBaseline(Height, Height-1);
 
-      struct ObjectNotify *notify = new struct ObjectNotify(Left, Baseline, this);
+      struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(Left, Baseline, this);
+      if (!notify) return FALSE;
       lmsg.AddNotify(notify);
 
       Flags |= FLG_WaitingForSize;
@@ -165,7 +167,8 @@ VOID TextAreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
   pmsg.SetLock();
   pmsg.NextStartBracket();
 
-  Contents = new char[pmsg.Current-pmsg.Locked+1];
+  Contents = new (std::nothrow) char[pmsg.Current-pmsg.Locked+1];
+  if (!Contents) return;
   STRPTR src = pmsg.Locked, dst = Contents;
   while(*src != '<' && *src)
   {

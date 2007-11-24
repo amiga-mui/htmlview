@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <libraries/mui.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
@@ -32,9 +33,11 @@
 #include "SharedData.h"
 #include "private.h"
 
+#include "classes/BaseClass.h"
 #include "classes/HostClass.h"
 
 #include "rev.h"
+#include <new>
 
 BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
 {
@@ -52,7 +55,7 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
       case MUIA_Virtgroup_Left:
       {
         LONG left = data->Left, diff;
-        data->Left = (data->VirtWidth > data->Width) ? min(data->VirtWidth-data->Width, max(0, ti_Data)) : 0;
+        data->Left = (data->VirtWidth > data->Width) ? MIN(data->VirtWidth-data->Width, MAX(0, ti_Data)) : 0;
         if((diff = data->Left - left) && abs(diff) < data->Height)
           data->HScrollDiff = diff;
       }
@@ -61,7 +64,7 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
       case MUIA_Virtgroup_Top:
       {
         LONG top = data->Top, diff;
-        data->Top = (data->VirtHeight > data->Height) ? min(data->VirtHeight-data->Height, max(0, ti_Data)) : 0;
+        data->Top = (data->VirtHeight > data->Height) ? MIN(data->VirtHeight-data->Height, MAX(0, ti_Data)) : 0;
         if(diff = data->Top - top)
         {
           if(data->PMsg)
@@ -81,45 +84,48 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
 
         class HostClass *hobj, *old_object = data->HostObject;
 
-        hobj = new class HostClass(obj, data);
-        pmsg.Host = hobj;
-        hobj->Parse(pmsg);
-        hobj->setFlags(hobj->flags() | FLG_AllElementsPresent);
-
-        data->LayoutMsg.Reset(data->Width, data->Height);
-        data->HostObject = hobj;
-
-        DoMethod(obj, MUIM_HTMLview_AbortAll);
-
-        if(DoMethod(obj, MUIM_Group_InitChange))
+        hobj = new (std::nothrow) class HostClass(obj, data);
+        if (hobj)
         {
-          DoMethod(obj, MUIM_HTMLview_RemoveChildren);
-          if(pmsg.Gadgets)
-          {
-            struct AppendGadgetMessage amsg(obj, data);
-            data->HostObject->AppendGadget(amsg);
-          }
-          DoMethod(obj, MUIM_Group_ExitChange);
-          SetAttrs(obj, MUIA_HTMLview_Title, (ULONG)pmsg.Title, TAG_DONE);
+	        pmsg.Host = hobj;
+    	    hobj->Parse(pmsg);
+        	hobj->setFlags(hobj->flags() | FLG_AllElementsPresent);
 
-          if(data->Flags & FLG_Shown)
-          {
-            struct GetImagesMessage gmsg(obj);
-            data->HostObject->GetImages(gmsg);
-            data->Images = gmsg.Images;
-            DoMethod(obj, MUIM_HTMLview_LoadImages, (ULONG)gmsg.Images);
-          }
-        }
-        else
-          E(DBF_STARTUP, "*** ERROR: InitChange\n");
+	        data->LayoutMsg.Reset(data->Width, data->Height);
+    	    data->HostObject = hobj;
 
-        if(data->Flags & FLG_HostObjNotUsed)
-          delete old_object;
+	        DoMethod(obj, MUIM_HTMLview_AbortAll);
 
-        if(data->HostObject->RefreshURL)
-          DoMethod(obj, MUIM_HTMLview_StartRefreshTimer);
+    	    if(DoMethod(obj, MUIM_Group_InitChange))
+        	{
+	          DoMethod(obj, MUIM_HTMLview_RemoveChildren);
+    	      if(pmsg.Gadgets)
+        	  {
+            	struct AppendGadgetMessage amsg(obj, data);
+	            data->HostObject->AppendGadget(amsg);
+    	      }
+        	  DoMethod(obj, MUIM_Group_ExitChange);
+	          SetAttrs(obj, MUIA_HTMLview_Title, (ULONG)pmsg.Title, TAG_DONE);
 
-        data->Flags |= FLG_HostObjNotUsed;
+    	      if(data->Flags & FLG_Shown)
+        	  {
+            	struct GetImagesMessage gmsg(obj);
+	            data->HostObject->GetImages(gmsg);
+    	        data->Images = gmsg.Images;
+        	    DoMethod(obj, MUIM_HTMLview_LoadImages, (ULONG)gmsg.Images);
+	          }
+    	    }
+        	else
+	          E(DBF_STARTUP, "*** ERROR: InitChange\n");
+
+	        if(data->Flags & FLG_HostObjNotUsed)
+    	      delete old_object;
+
+        	if(data->HostObject->RefreshURL)
+	          DoMethod(obj, MUIM_HTMLview_StartRefreshTimer);
+
+    	    data->Flags |= FLG_HostObjNotUsed;
+	    }
       }
       break;
 

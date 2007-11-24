@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
+#include <new>
 
 Object *FramesetClass::LookupFrame (STRPTR name, class HostClass *hclass)
 {
@@ -88,7 +89,9 @@ BOOL FramesetClass::Layout (struct LayoutMessage &lmsg)
     delete Columns;
     delete Rows;
     Columns = ConvertSizeList(ColumnsStr, width, ColumnCnt);
+    if (!Columns) return FALSE;
     Rows = ConvertSizeList(RowsStr, height, RowCnt);
+    if (!Rows) return FALSE;
 
     BOOL leftborder = lmsg.LeftBorder;
     ULONG *rows = Rows;
@@ -226,7 +229,8 @@ ULONG *FramesetClass::ConvertSizeList(STRPTR value_list, LONG total, ULONG &cnt)
   }
   cnt = values;
 
-  LONG *Translated = new LONG [values];
+  LONG *Translated = new (std::nothrow) LONG [values];
+  if (!Translated) return NULL;
   LONG *trans = Translated;
 
   t_value_list = value_list;

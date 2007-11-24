@@ -28,6 +28,7 @@
 #include "ParseMessage.h"
 #include "ScanArgs.h"
 #include "SharedData.h"
+#include <new>
 
 static LONG RelativeScale(struct CellWidth *cell)
 {
@@ -264,10 +265,12 @@ BOOL TableClass::Layout (struct LayoutMessage &lmsg)
       if(Alignment == Align_Left || Alignment == Align_Right)
       {
         LONG width = Width + (Columns+1)*Spacing + 2*BorderSize;
-        struct FloadingImage *img = new struct FloadingImage(Top, Left, width, (Bottom-Top)+1, this, lmsg.Parent);
-        LONG left = lmsg.AddImage(img, Alignment == Align_Right);
-
-        offset = left - Left;
+        struct FloadingImage *img = new (std::nothrow) struct FloadingImage(Top, Left, width, (Bottom-Top)+1, this, lmsg.Parent);
+        if (img)
+        {
+        	LONG left = lmsg.AddImage(img, Alignment == Align_Right);
+	        offset = left - Left;
+    	}
 
         lmsg.Y = Top;
         lmsg.Baseline = lmsg.Bottom = 0;
@@ -377,7 +380,8 @@ BOOL TableClass::Mark (struct MarkMessage &mmsg)
 
 VOID TableClass::MinMax (struct MinMaxMessage &mmsg)
 {
-  struct CountCellsMessage *cmsg = new struct CountCellsMessage;
+  struct CountCellsMessage *cmsg = new (std::nothrow) struct CountCellsMessage;
+  if (!cmsg) return;
   struct ChildsList *first = FirstChild;
   while(first)
   {
@@ -392,9 +396,12 @@ VOID TableClass::MinMax (struct MinMaxMessage &mmsg)
   Rows += extra;
   delete cmsg;
 
-  Widths = new struct CellWidth [Columns];
-  Heights = new ULONG [Rows];
-  RowOpenCounts = new ULONG [Columns];
+  Widths = new (std::nothrow) struct CellWidth [Columns];
+  if (!Widths) return;
+  Heights = new (std::nothrow) ULONG [Rows];
+  if (!Heights) return;
+  RowOpenCounts = new (std::nothrow) ULONG [Columns];
+  if (!RowOpenCounts) return;
 
   struct MinMaxMessage t_mmsg(mmsg.Fonts, mmsg.LMsg, Widths);
   t_mmsg.Padding = Padding + (BorderSize ? 1 : 0);
@@ -469,7 +476,8 @@ VOID TableClass::Parse(REG(a2, struct ParseMessage &pmsg))
     ScanArgs(pmsg.Locked, args);
     Alignment++;
 
-    UBYTE *old_opens = new UBYTE [tag_NumberOf + group_NumberOf];
+    UBYTE *old_opens = new (std::nothrow) UBYTE [tag_NumberOf + group_NumberOf];
+    if (!old_opens) return;
     memcpy(old_opens, pmsg.OpenCounts, tag_NumberOf + group_NumberOf);
     memset(old_opens, 0, tag_NumberOf + group_NumberOf);
 
@@ -499,7 +507,8 @@ VOID TableClass::Parse(REG(a2, struct ParseMessage &pmsg))
         }
         else
         {
-          class TRClass *tr = new class TRClass();
+          class TRClass *tr = new (std::nothrow) class TRClass();
+          if (!tr) return;
           tr->setId(tag_TR);
           tr->setFlags(tr->flags() | FLG_ArgumentsRead);
           tr->AddChild(first->Obj);

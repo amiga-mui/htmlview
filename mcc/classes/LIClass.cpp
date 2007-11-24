@@ -30,6 +30,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <new>
 
 VOID LIClass::NumToStr (STRPTR str, UWORD type)
 {
@@ -102,7 +103,8 @@ BOOL LIClass::Layout (struct LayoutMessage &lmsg)
     lmsg.Indent += width+4;
     Left = lmsg.X-4;
 
-    struct ObjectNotify *notify = new struct ObjectNotify(Left, Baseline, NULL);
+    struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(Left, Baseline, NULL);
+    if (!notify) return FALSE;
     lmsg.AddNotify(notify);
   }
 

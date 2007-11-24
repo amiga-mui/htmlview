@@ -21,10 +21,10 @@
 ***************************************************************************/
 
 #define LIB_VERSION    13
-#define LIB_REVISION   1
+#define LIB_REVISION   2
 
-#define LIB_REV_STRING "13.1"
-#define LIB_DATE       "19.11.2007"
+#define LIB_REV_STRING "13.2"
+#define LIB_DATE       "23.11.2007"
 
 #if defined(__PPC__)
   #if defined(__MORPHOS__)

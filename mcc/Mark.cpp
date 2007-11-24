@@ -34,6 +34,7 @@
 #include "classes/TextClass.h"
 
 #include "private.h"
+#include <new>
 
 BOOL MarkMessage::OpenTheClipboard ()
 {
@@ -43,12 +44,14 @@ BOOL MarkMessage::OpenTheClipboard ()
     {
       if(!OpenDevice("clipboard.device", 0, IOReq, 0))
       {
-        ClipBuffer = new UBYTE [CLIPBUFFERSIZE];
-
-        ClipReq->io_ClipID  = 0;
-        ClipReq->io_Offset  = 20;
-        ClipReq->io_Command = CMD_WRITE;
-        return(TRUE);
+        ClipBuffer = new (std::nothrow) UBYTE [CLIPBUFFERSIZE];
+        if (ClipBuffer)
+        {
+	        ClipReq->io_ClipID  = 0;
+    	    ClipReq->io_Offset  = 20;
+        	ClipReq->io_Command = CMD_WRITE;
+	        return(TRUE);
+		}
       }
       DeleteIORequest(IOReq);
     }
@@ -114,9 +117,12 @@ VOID MarkMessage::FlushClipBuffer ()
 
 VOID MarkMessage::AddBox (class TextClass *child, LONG b, LONG e)
 {
-  struct BoxItem *node = new struct BoxItem(child, b, e);
-  LastBox->Next = node;
-  LastBox = node;
+  struct BoxItem *node = new (std::nothrow) struct BoxItem(child, b, e);
+  if (node)
+  {
+	  LastBox->Next = node;
+	  LastBox = node;
+  }
 }
 
 VOID MarkMessage::DrainBoxList (struct RastPort *rp, LONG xoffset, LONG yoffset)

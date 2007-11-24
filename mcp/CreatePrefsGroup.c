@@ -27,353 +27,416 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/locale.h>
+#include <proto/utility.h>
 #include <exec/libraries.h>
 #include <libraries/asl.h>
 #include <libraries/mui.h>
+#ifdef USEBETTERSTRING
 #include <mui/BetterString_mcc.h>
+#endif
+#ifdef USEHOTKEY
 #include <mui/HotkeyString_mcc.h>
+#endif
 #include <workbench/startup.h>
 #include <workbench/workbench.h>
 
 #include "muiextra.h"
-
 #include "HTMLview_mcc.h"
-
 #include "private.h"
 #include "rev.h"
-
 #include "ScrollGroup.h"
+#include "locale.h"
 
-struct MUIP_AppMessage { struct AppMessage *appmsg; };
+/***********************************************************************/
 
-HOOKPROTONH(AppMessageCode, VOID, Object* htmlview, struct MUIP_AppMessage *args)
+#define _HELP(h) ((ULONG)(h)) ? MUIA_ShortHelp   : TAG_IGNORE, ((ULONG)(h)) ? (ULONG)GetStr((APTR)(h)) : 0
+
+/***********************************************************************/
+
+char GetKeyChar(APTR id,BOOL lower)
 {
-	if(args->appmsg->am_NumArgs)
-	{
-		char dir[256+8];
-		
-    strlcpy(dir, "file://", sizeof(dir));
+	UBYTE *s, k;
 
-		if(NameFromLock(args->appmsg->am_ArgList[0].wa_Lock, dir+7, 256))
-		{
-			AddPart(dir+7, args->appmsg->am_ArgList[0].wa_Name, 256);
-			DoMethod(htmlview, MUIM_HTMLview_GotoURL, dir, NULL);
-		}
+	if ((k = (id && (s = (UBYTE *)GetStr(id))) ? *s : 0))
+    {
+		if (lower && LocaleBase)
+	    	return ToLower(k);
+    }
+
+	return k;
+}
+
+/***********************************************************************/
+
+Object *
+ostring(APTR key,APTR help)
+{
+    #ifdef USEBETTERSTRING
+    return BetterStringObject,
+    #else
+    return StringObject,
+    #endif
+        _HELP(help),
+		MUIA_ControlChar, GetKeyChar(key,TRUE),
+        MUIA_CycleChain,  TRUE,
+        StringFrame,
+        //MUIA_Textinput_AdvanceOnCR, TRUE,
+    End;
+}
+
+/***********************************************************************/
+
+Object *
+ocheck(APTR key,APTR help)
+{
+    Object *obj;
+
+    if (obj = MUI_MakeObject(MUIO_Checkmark,NULL))
+        SetAttrs(obj,MUIA_CycleChain,TRUE,MUIA_ControlChar,GetKeyChar(key,TRUE),_HELP(help),TAG_DONE);
+
+    return obj;
+}
+
+/***********************************************************************/
+
+Object *
+olabel1(APTR id,APTR key)
+{
+	return MUI_MakeObject(MUIO_Label,(ULONG)GetStr(id),MUIO_Label_SingleFrame|GetKeyChar(key,FALSE));
+}
+
+
+/****************************************************************************/
+
+Object *
+olabel2(APTR id,APTR key)
+{
+	return MUI_MakeObject(MUIO_Label,(ULONG)GetStr(id),MUIO_Label_DoubleFrame|GetKeyChar(key,FALSE));
+}
+
+/***********************************************************************/
+
+Object *
+otclabel(APTR id,APTR key)
+{
+	return MUI_MakeObject(MUIO_Label,(ULONG)GetStr(id),MUIO_Label_Centered|MUIO_Label_Tiny|GetKeyChar(key,FALSE));
+}
+
+/***********************************************************************/
+
+Object *
+obutton(APTR text,APTR key,APTR help)
+{
+    register Object *obj;
+
+    if (obj = MUI_MakeObject(MUIO_Button,(ULONG)GetStr(text)))
+    {
+        UBYTE k = GetKeyChar(key,FALSE), kl = GetKeyChar(key,TRUE);
+        
+        SetAttrs(obj,MUIA_CycleChain,TRUE,MUIA_ControlChar,kl,MUIA_Text_ControlChar,kl,_HELP(help),TAG_DONE);
 	}
-}
-MakeStaticHook(AppMessageHook, AppMessageCode);
 
-Object *StringGadget(UBYTE ctrlchar, BOOL dragable)
+    return obj;
+}
+
+/***********************************************************************/
+
+Object *
+opoppen(APTR key,APTR title,APTR help)
 {
-	return BetterStringObject,
-		StringFrame,
-		MUIA_ControlChar,				  ctrlchar,
-		MUIA_CycleChain,				  TRUE,
-		MUIA_String_AdvanceOnCR,	TRUE,
-		MUIA_Draggable,				    dragable,
-		End;
+    return PoppenObject,
+        MUIA_ControlChar,  GetKeyChar(key,TRUE),
+        MUIA_Draggable,    TRUE,
+        MUIA_CycleChain,   TRUE,
+        _HELP(help),
+    End;
 }
 
-Object *CheckMarkGadget(UBYTE ctrlchar)
+/***********************************************************************/
+
+Object *CreatePrefsGroup(Object *parent,struct InstData_MCP *data)
 {
-	return ImageObject,
-		ImageButtonFrame,
-		MUIA_ControlChar,		ctrlchar,
-		MUIA_CycleChain,		TRUE,
-		MUIA_InputMode,		  MUIV_InputMode_Toggle,
-		MUIA_Image_Spec,		MUII_CheckMark,
-		MUIA_Image_FreeVert,TRUE,
-		MUIA_Background,		MUII_ButtonBack,
-		MUIA_ShowSelState,	FALSE,
-		End;
+    ULONG PopImg = MUIMasterBase->lib_Version < 20 ? MUII_PopUp : MUII_PopFont;
+    static const char *PageTitles[5];
+    static const char *Dither[3];
+
+    Object **objs = data->Objects;
+    Object *group, *sample;
+    #ifdef USEHOTKEY
+    Object *snoop;
+    #endif
+
+	PageTitles[0] = GetStr(MSG_Page_Fonts);
+    PageTitles[1] = GetStr(MSG_Page_Graphics);
+    PageTitles[2] = GetStr(MSG_Page_Settings);
+    PageTitles[3] = GetStr(MSG_Page_Sample);
+    PageTitles[4] = NULL;
+
+    Dither[0] = GetStr(MSG_Images_Dither_FS);
+    Dither[1] = GetStr(MSG_Images_Dither_None);
+    Dither[2] = NULL;
+
+    group = RegisterObject,
+        MUIA_CycleChain, TRUE,
+        MUIA_Register_Titles, PageTitles,
+
+        /* Fonts */
+        Child, VGroup,
+
+            //Child, RectangleObject, End,
+
+            Child, HGroup,
+                Child, ColGroup(4),
+                    Child, olabel2(MSG_Fonts_Normal,MSG_Fonts_Normal_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[NormalFont] = ostring(MSG_Fonts_Normal_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+                    Child, olabel2(MSG_Fonts_Small,MSG_Fonts_Small_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[SmallFont] = ostring(MSG_Fonts_Small_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+                    Child, olabel2(MSG_Fonts_Fixed,MSG_Fonts_Fixed_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[FixedFont] = ostring(MSG_Fonts_Fixed_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_Flags,      FOF_FIXEDWIDTHONLY,
+                        ASLFO_MaxHeight,  98,
+                        End,
+                    Child, olabel2(MSG_Fonts_Large,MSG_Fonts_Large_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[LargeFont] = ostring(MSG_Fonts_Large_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+
+                    /*Child, RectangleObject, MUIA_Height, 10, End,
+                    Child, RectangleObject, MUIA_Height, 10, End,
+                    Child, RectangleObject, MUIA_Height, 10, End,
+                    Child, RectangleObject, MUIA_Height, 10, End,*/
+
+                    Child, olabel2(MSG_Fonts_H1,MSG_Fonts_H1_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[H1] = ostring(MSG_Fonts_H1_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+
+                    Child, olabel2(MSG_Fonts_H4,MSG_Fonts_H4_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[H4] = ostring(MSG_Fonts_H4_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+
+                    Child, olabel2(MSG_Fonts_H2,MSG_Fonts_H2_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[H2] = ostring(MSG_Fonts_H2_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+
+                    Child, olabel2(MSG_Fonts_H5,MSG_Fonts_H5_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[H5] = ostring(MSG_Fonts_H5_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+
+                    Child, olabel2(MSG_Fonts_H3,MSG_Fonts_H3_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[H3] = ostring(MSG_Fonts_H3_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+
+                    Child, olabel2(MSG_Fonts_H6,MSG_Fonts_H6_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[H6] = ostring(MSG_Fonts_H6_Key,0),
+                        MUIA_Popstring_Button, PopButton(PopImg),
+                        MUIA_Popasl_Type, ASL_FontRequest,
+                        ASLFO_MaxHeight,  98,
+                        End,
+                    End,
+                End,
+
+            Child, RectangleObject, End,
+
+            End,
+
+        /* Graphics */
+        Child, VGroup,
+
+            Child, VGroup,
+                GroupFrameT(GetStr(MSG_Colours_Title)),
+
+                Child, ColGroup(5),
+                    MUIA_Group_SameSize,TRUE,
+                    Child, objs[Col_Background] = opoppen(MSG_Colours_Backgound,MSG_Colours_Backgound_Key,0),
+                    Child, objs[Col_Text] = opoppen(MSG_Colours_Text,MSG_Colours_Text_Key,0),
+                    Child, objs[Col_Link] = opoppen(MSG_Colours_NormalLink,MSG_Colours_NormalLink_Key,0),
+                    Child, objs[Col_VLink] = opoppen(MSG_Colours_VisitedLink,MSG_Colours_VisitedLink_Key,0),
+                    Child, objs[Col_ALink] = opoppen(MSG_Colours_SelectedLink,MSG_Colours_SelectedLink_Key,0),
+
+                    Child, otclabel(MSG_Colours_Backgound,MSG_Colours_Backgound_Key),
+                    Child, otclabel(MSG_Colours_Text,MSG_Colours_Text_Key),
+                    Child, otclabel(MSG_Colours_NormalLink,MSG_Colours_NormalLink_Key),
+                    Child, otclabel(MSG_Colours_VisitedLink,MSG_Colours_VisitedLink_Key),
+                    Child, otclabel(MSG_Colours_SelectedLink,MSG_Colours_SelectedLink_Key),
+                    End,
+
+                Child, HGroup,
+                    Child, RectangleObject, End,
+                    Child, objs[IgnoreDocCols] = ocheck(MSG_Colours_IgnoreColours,MSG_Colours_IgnoreColours_Key),
+                    Child, olabel1(MSG_Colours_IgnoreColours,MSG_Colours_IgnoreColours_Key),
+                    Child, RectangleObject, End,
+                    End,
+
+                End,
+
+            Child, VGroup,
+                GroupFrameT(GetStr(MSG_Images_Title)),
+                //Child, RectangleObject, MUIA_Weight, 50, End,
+
+                Child, ColGroup(2),
+
+                    Child, olabel2(MSG_Images_Listitems,MSG_Images_Listitems_Key),
+                    Child, PopaslObject,
+                        MUIA_Popstring_String, objs[ListItemFile] = ostring(MSG_Images_Listitems_Key,0),
+                        MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                        MUIA_Popasl_Type, ASL_FileRequest,
+                        End,
+
+                    Child, olabel2(MSG_Images_Dither,MSG_Images_Dither_Key),
+                    Child, objs[DitherType] = CycleObject,
+                        MUIA_ControlChar,   GetKeyChar(MSG_Images_Dither_Key,TRUE),
+                        MUIA_CycleChain,    TRUE,
+                        MUIA_Cycle_Entries, Dither,
+                        End,
+
+                    Child, olabel2(MSG_Images_CacheSize,MSG_Images_CacheSize_Key),
+                    Child, objs[ImageCacheSize] = (Object *)NewObject(CacheSliderClass->mcc_Class, NULL,
+                        MUIA_ControlChar, GetKeyChar(MSG_Images_CacheSize_Key,TRUE),
+                        MUIA_CycleChain,  TRUE,
+                        MUIA_Numeric_Min, 1,
+                        MUIA_Numeric_Max, 1024*8,
+                        End,
+
+                    Child, olabel2(MSG_Images_Gamma,MSG_Images_Gamma_Key),
+                    Child, objs[GammaCorrection] = (Object *)NewObject(GammaSliderClass->mcc_Class, NULL,
+                        MUIA_ControlChar, GetKeyChar(MSG_Images_Gamma_Key,TRUE),
+                        MUIA_CycleChain, TRUE,
+                        MUIA_Numeric_Min, 1000,
+                        MUIA_Numeric_Max, 9000,
+                        End,
+
+                    End,
+
+                    Child, RectangleObject, MUIA_Weight, 50, End,
+                End,
+
+                Child, RectangleObject, End,
+
+            End,
+
+        /* Settings */
+        Child, VGroup,
+
+            Child, VGroup,
+                GroupFrameT(GetStr(MSG_PageScroll_Title)),
+
+                Child, ColGroup(2),
+
+                    Child, olabel2(MSG_PageScroll_Smooth,MSG_PageScroll_Smooth_Key),
+                    Child, HGroup,
+                        Child, objs[PageScrollSmooth] = ocheck(MSG_PageScroll_Smooth,MSG_PageScroll_Smooth_Key),
+                        Child, RectangleObject, End,
+                        End,
+
+                    Child, olabel2(MSG_PageScroll_Key,MSG_PageScroll_Key_Key),
+                    #ifdef USEHOTKEY
+                    Child, HGroup,
+                    	MUIA_Group_HorizSpacing,1,
+                        Child, objs[PageScrollKey] = HotkeyStringObject,
+                            StringFrame,
+                            MUIA_ControlChar, GetKeyChar(MSG_PageScroll_Key_Key,TRUE),
+                            MUIA_CycleChain,  TRUE,
+                            MUIA_HotkeyString_Snoop, FALSE,
+                            End,
+                        Child, snoop = obutton(MSG_Hotkey_Snoop,0,0),
+                        End,
+                    #else
+                    Child, objs[PageScrollKey] = KeyadjustObject,
+                        MUIA_ControlChar, GetKeyChar(MSG_PageScroll_Key_Key,TRUE),
+                        MUIA_CycleChain, TRUE,
+                        MUIA_Keyadjust_AllowMouseEvents,  FALSE,
+                        MUIA_Keyadjust_AllowMultipleKeys, FALSE,
+                        End,
+                    #endif
+
+                    Child, olabel2(MSG_PageScroll_Move,MSG_PageScroll_Move_Key),
+                    Child, objs[PageScrollMove] = SliderObject,
+                        MUIA_ControlChar, GetKeyChar(MSG_PageScroll_Move_Key,TRUE),
+                        MUIA_CycleChain, TRUE,
+                        MUIA_Numeric_Min, 1,
+                        MUIA_Numeric_Max, 100,
+                        MUIA_Numeric_Format, GetStr(MSG_PageScroll_Move_Down),
+                        End,
+
+                    End,
+
+                End,
+
+            Child, RectangleObject, End,
+
+            /*Child, TextObject,
+                TextFrame,
+                MUIA_Background, MUII_TextBack,
+                MUIA_Text_Contents, "\33cNot many settings can be found on this page.\nPlease write and suggest something!",
+                End,*/
+
+            End,
+
+        Child, data->SampleGroup = VGroup,
+        	Child,  data->FirstSample = VGroup,
+	        	Child, VSpace(0),
+    	        Child, HGroup,
+        	    	Child, RectangleObject, MUIA_Weight, 200, End,
+		            Child, sample = obutton(MSG_SampleButton,MSG_SampleButton_Key,0),
+    		        Child, RectangleObject, MUIA_Weight, 200, End,
+	    		    End,
+                Child, VSpace(0),
+        		End,
+            End,
+        End;
+
+    #ifdef USEHOTKEY
+    SetAttrs(snoop,
+        MUIA_Weight, 0,
+        MUIA_CycleChain, TRUE,
+        MUIA_InputMode, MUIV_InputMode_Toggle,
+        TAG_DONE);
+
+    DoMethod(snoop, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, (ULONG)objs[PageScrollKey], 3, MUIM_Set, MUIA_HotkeyString_Snoop, MUIV_TriggerValue);
+    DoMethod(snoop, MUIM_Notify, MUIA_Selected, TRUE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, (ULONG)objs[PageScrollKey]);
+    #endif
+
+    DoMethod(sample,MUIM_Notify,MUIA_Pressed,FALSE,MUIV_Notify_Application,4,
+    	MUIM_Application_PushMethod,(ULONG)parent,1,MM_HTMLview_CreateSample);
+
+    return group;
 }
 
-Object *MyLabel(const char *label, UWORD frame, UBYTE key)
-{
-	return MUI_MakeObject(MUIO_Label, label, MUIO_Label_DontCopy | frame | key);
-}
-
-VOID CreateSampleText(Object *htmlview)
-{
-	ULONG ver, rev;
-	const char *extra = MUIMasterBase->lib_Version > 19 ? "<Br><Br><P Align=Center><Small>You can drop HTML files onto this gadget!</Small>" : "";
-	char text[800];
-
-	ver = xget(htmlview, MUIA_Version);
-	rev = xget(htmlview, MUIA_Revision);
-
-	snprintf(text, sizeof(text), "<Body>"
-
-		"<Table CellSpacing=0 CellPadding=0 Align=Center>"
-		"<TR><TD RowSpan=2 VAlign=Bottom><Font Size=+2>HTMLview&nbsp;"
-		"<TD><Small>.mcc V%ld.%ld"
-		"<TR><TD><Small>.mcp V%d.%d"
-		"<TR><TD Height=4 ColSpan=2>"
-		"</Table>"
-		"<Div Align=Center><Font Size=+1>Copyright 1997-2000 by Allan Odgaard<Br>"
-    "Copyright 2005 HTMLview.mcc Open Source Team<br>"
-		"Image decoders by Gunther Nikl"
-		"<Hr></Div>"
-
-		"<P>For the latest version, try: <a href=http://www.sourceforge.net/projects/htmlview-mcc/>http://www.sourceforge.net/projects/htmlview-mcc/</a><br>"
-		"%s\n",
-
-	  ver, rev,
-		LIB_VERSION, LIB_REVISION,
-		extra);
-
-	set(htmlview, MUIA_HTMLview_Contents, text);
-}
-
-Object *CreatePrefsGroup(struct InstData_MCP *data)
-{
-	ULONG PopImg = MUIMasterBase->lib_Version < 20 ? MUII_PopUp : MUII_PopFont;
-	static const char *PageTitles[] = { "Fonts", "Graphics", "Settings", "Sample", NULL };
-	static const char *Dither[] = { "Floyd steinberg", "None", NULL };
-
-	Object **objs = data->Objects;
-	Object *group, *snoop, *htmlview;
-
-	group = RegisterObject,
-		MUIA_CycleChain, TRUE,
-		MUIA_Register_Titles, PageTitles,
-
-		/* Fonts */
-		Child, VGroup,
-
-			Child, RectangleObject, End,
-
-			Child, HGroup,
-				Child, ColGroup(4),
-					Child, MyLabel("Normal", MUIO_Label_DoubleFrame, 'N'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[NormalFont] = StringGadget('n', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("Small", MUIO_Label_DoubleFrame, 'S'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[SmallFont] = StringGadget('s', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("Fixed", MUIO_Label_DoubleFrame, 'F'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[FixedFont] = StringGadget('f', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_Flags,				FOF_FIXEDWIDTHONLY,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("Large", MUIO_Label_DoubleFrame, 'L'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[LargeFont] = StringGadget('l', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-
-					Child, RectangleObject, MUIA_Height, 10, End,
-					Child, RectangleObject, MUIA_Height, 10, End,
-					Child, RectangleObject, MUIA_Height, 10, End,
-					Child, RectangleObject, MUIA_Height, 10, End,
-
-					Child, MyLabel("H1", MUIO_Label_DoubleFrame, '1'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[H1] = StringGadget('1', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("H4", MUIO_Label_DoubleFrame, '4'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[H4] = StringGadget('4', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("H2", MUIO_Label_DoubleFrame, '2'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[H2] = StringGadget('2', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("H5", MUIO_Label_DoubleFrame, '5'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[H5] = StringGadget('5', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("H3", MUIO_Label_DoubleFrame, '3'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[H3] = StringGadget('3', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					Child, MyLabel("H6", MUIO_Label_DoubleFrame, '6'),
-					Child, PopaslObject,
-						MUIA_Popstring_String,	objs[H6] = StringGadget('6', TRUE),
-						MUIA_Popstring_Button,	PopButton(PopImg),
-						MUIA_Popasl_Type,			ASL_FontRequest,
-						ASLFO_MaxHeight,			98,
-						End,
-					End,
-				End,
-
-			Child, RectangleObject, End,
-
-			End,
-
-		/* Graphics */
-		Child, VGroup,
-
-			Child, VGroup,
-				GroupFrameT("Colours"),
-
-				Child, HGroup,
-					Child, RectangleObject, End,
-					Child, MyLabel("Ignore document provided colours:", MUIO_Label_SingleFrame, 'I'),
-					Child, objs[IgnoreDocCols] = CheckMarkGadget('i'),
-					End,
-
-				Child, ColGroup(5),
-					Child, objs[Col_Background] = PoppenObject, MUIA_ControlChar, 'b', MUIA_CycleChain, TRUE, End,
-					Child, objs[Col_Text] = PoppenObject, MUIA_ControlChar, 't', MUIA_CycleChain, TRUE, End,
-					Child, objs[Col_Link] = PoppenObject, MUIA_ControlChar, 'n', MUIA_CycleChain, TRUE, End,
-					Child, objs[Col_VLink] = PoppenObject, MUIA_ControlChar, 'v', MUIA_CycleChain, TRUE, End,
-					Child, objs[Col_ALink] = PoppenObject, MUIA_ControlChar, 's', MUIA_CycleChain, TRUE, End,
-					Child, MyLabel("Background", MUIO_Label_Centered | MUIO_Label_Tiny, 'B'),
-					Child, MyLabel("Text", MUIO_Label_Centered | MUIO_Label_Tiny, 'T'),
-					Child, MyLabel("Normal Link", MUIO_Label_Centered | MUIO_Label_Tiny, 'N'),
-					Child, MyLabel("Visited link", MUIO_Label_Centered | MUIO_Label_Tiny, 'V'),
-					Child, MyLabel("Selected link", MUIO_Label_Centered | MUIO_Label_Tiny, 'S'),
-					End,
-
-				End,
-
-			Child, HGroup,
-				GroupFrameT("ListItem Images"),
-				Child, MyLabel("File", MUIO_Label_DoubleFrame, 'F'),
-				Child, PopaslObject,
-					MUIA_Popstring_String,	objs[ListItemFile] = StringGadget('f', FALSE),
-					MUIA_Popstring_Button,	PopButton(MUII_PopFile),
-					MUIA_Popasl_Type,			ASL_FileRequest,
-					End,
-
-				End,
-
-			Child, VGroup,
-				GroupFrameT("Images"),
-				Child, RectangleObject, MUIA_Weight, 50, End,
-
-				Child, ColGroup(2),
-
-					Child, MyLabel("Dither", MUIO_Label_SingleFrame, 'D'),
-					Child, objs[DitherType] = CycleObject,
-						MUIA_ControlChar, 'd',
-						MUIA_CycleChain, TRUE,
-						MUIA_Cycle_Entries, Dither,
-						End,
-
-					Child, MyLabel("Cache size", MUIO_Label_DoubleFrame, 'C'),
-					Child, objs[ImageCacheSize] = (Object *)NewObject(CacheSliderClass->mcc_Class, NULL,
-						MUIA_ControlChar, 'c',
-						MUIA_CycleChain, TRUE,
-						MUIA_Numeric_Min, 1,
-						MUIA_Numeric_Max, 1024*8,
-						End,
-
-					Child, MyLabel("Gamma correction", MUIO_Label_DoubleFrame, 'G'),
-					Child, objs[GammaCorrection] = (Object *)NewObject(GammaSliderClass->mcc_Class, NULL,
-						MUIA_ControlChar, 'g',
-						MUIA_CycleChain, TRUE,
-						MUIA_Numeric_Min, 1000,
-						MUIA_Numeric_Max, 9000,
-						End,
-
-					End,
-
-				Child, RectangleObject, MUIA_Weight, 50, End,
-				End,
-
-			End,
-
-		/* Settings */
-		Child, VGroup,
-
-			Child, VGroup,
-				GroupFrameT("Page scroll"),
-
-				Child, ColGroup(2),
-
-					Child, MyLabel("Smooth", MUIO_Label_SingleFrame, 'S'),
-					Child, HGroup,
-						Child, objs[PageScrollSmooth] = CheckMarkGadget('s'),
-						Child, RectangleObject, End,
-						End,
-
-					Child, MyLabel("Key", MUIO_Label_SingleFrame, 'K'),
-					Child, HGroup,
-						Child, objs[PageScrollKey] = HotkeyStringObject,
-							StringFrame,
-							MUIA_ControlChar, 'k',
-							MUIA_CycleChain, TRUE,
-							MUIA_HotkeyString_Snoop, FALSE,
-							End,
-						Child, snoop = SimpleButton("Snoop"),
-						End,
-
-					Child, MyLabel("Move", MUIO_Label_DoubleFrame, 'M'),
-					Child, objs[PageScrollMove] = SliderObject,
-						MUIA_ControlChar, 'm',
-						MUIA_CycleChain, TRUE,
-						MUIA_Numeric_Min, 1,
-						MUIA_Numeric_Max, 100,
-						MUIA_Numeric_Format, "%ld%% down",
-						End,
-
-					End,
-
-				End,
-
-			Child, RectangleObject, End,
-
-			Child, TextObject,
-				TextFrame,
-				MUIA_Background, MUII_TextBack,
-				MUIA_Text_Contents, "\33cNot many settings can be found on this page.\nPlease write and suggest something!",
-				End,
-
-			End,
-
-		/* Sample */
-		Child, htmlview = HTMLviewObject,
-			VirtualFrame,
-			MUIA_CycleChain, TRUE,
-			MUIA_HTMLview_Scrollbars, MUIV_HTMLview_Scrollbars_Auto,
-			End,
-
-		End;
-
-	htmlview = (Object *)xget(htmlview, MUIA_ScrollGroup_HTMLview);
-	CreateSampleText(htmlview);
-
-	SetAttrs(snoop,
-		MUIA_Weight, 0,
-		MUIA_CycleChain, TRUE,
-		MUIA_InputMode, MUIV_InputMode_Toggle,
-		TAG_DONE);
-
-	DoMethod(snoop, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, objs[PageScrollKey], 3, MUIM_Set, MUIA_HotkeyString_Snoop, MUIV_TriggerValue);
-	DoMethod(snoop, MUIM_Notify, MUIA_Selected, TRUE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, PageScrollKey);
-
-	DoMethod(htmlview, MUIM_Notify, MUIA_HTMLview_ClickedURL, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_HTMLview_GotoURL, MUIV_TriggerValue, NULL);
-	DoMethod(htmlview, MUIM_Notify, MUIA_AppMessage,          MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_CallHook, &AppMessageHook, MUIV_TriggerValue);
-
-	return group;
-}

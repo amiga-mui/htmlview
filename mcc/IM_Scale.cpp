@@ -24,11 +24,13 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#include <clib/macros.h>
 
 #include "IM_ColourManager.h"
 #include "IM_Scale.h"
 #include "General.h"
 #include "ImageDecoder.h"
+#include <new>
 
 ScaleEngine::ScaleEngine (struct Screen *scr, ULONG width, ULONG height, struct DecoderData *data) : RenderObj(scr, data)
 {
@@ -112,7 +114,7 @@ BOOL ScaleEngine::SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULO
   else if(interlaced && (Dither || SrcHeight < DstHeight))
       src_size = modulo*((SrcHeight+3) / 2); // Half + 1
   else  src_size = modulo*2;
-  SrcBuffer = new RGBPixel [src_size];
+  SrcBuffer = new (std::nothrow) RGBPixel [src_size];
 
   BOOL result;
   if((result = SrcBuffer ? TRUE : FALSE))
@@ -123,7 +125,7 @@ BOOL ScaleEngine::SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULO
     if(SrcWidth != DstWidth)
     {
       modulo = DstWidth+3;
-      ScaleBuffer = new RGBPixel [modulo*2];
+      ScaleBuffer = new (std::nothrow) RGBPixel [modulo*2];
       DstLineA = XScaledLineA = ScaleBuffer+2;
       DstLineB = XScaledLineB = XScaledLineA + modulo;
 
@@ -134,7 +136,7 @@ BOOL ScaleEngine::SetDimensions (ULONG width, ULONG height, BOOL interlaced, ULO
     DstBuffer = NULL;
     if(SrcHeight != DstHeight)
     {
-      DstBuffer = new RGBPixel [modulo*2];
+      DstBuffer = new (std::nothrow) RGBPixel [modulo*2];
       DstLineA = DstBuffer+2;
       DstLineB = DstLineA + modulo;
 
@@ -168,7 +170,7 @@ VOID ScaleEngine::DrawLineBuffer (struct RGBPixel *srcline, ULONG y, ULONG heigh
     {
       RenderObj.WriteMask(srcline, DstWidth, dsty);
       RenderLineND(srcline, dsty);
-      RenderObj.Multiply(DstWidth, dsty, min(height, DstHeight-dsty));
+      RenderObj.Multiply(DstWidth, dsty, MIN(height, DstHeight-dsty));
     }
   }
   else if(SrcHeight == DstHeight)

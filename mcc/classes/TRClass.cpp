@@ -28,6 +28,7 @@
 #include "MinMax.h"
 #include "ParseMessage.h"
 #include "ScanArgs.h"
+#include <new>
 
 BOOL TRClass::TRLayout (struct LayoutMessage &lmsg)
 {
@@ -260,22 +261,25 @@ VOID TRClass::Verify ()
 			}
 			else
 			{
-				class TDClass *td = new class TDClass();
-				td->setId(tag_TD);
-				td->setFlags(td->flags() | FLG_ArgumentsRead);
-				td->AddChild(first->Obj);
-				first->Obj = td;
+				class TDClass *td = new (std::nothrow) class TDClass();
+                if (td)
+                {
+  				  td->setId(tag_TD);
+  				  td->setFlags(td->flags() | FLG_ArgumentsRead);
+  				  td->AddChild(first->Obj);
+  				  first->Obj = td;
 
-				prev = first;
-				first = first->Next;
+  				  prev = first;
+  				  first = first->Next;
 
-				while(first && first->Obj->group() != group_Tablecell)
-				{
-					td->AddChild(first->Obj);
-					prev->Next = first->Next;
-					delete first;
-					first = prev->Next;
-				}
+  				  while(first && first->Obj->group() != group_Tablecell)
+  				  {
+  					  td->AddChild(first->Obj);
+  					  prev->Next = first->Next;
+  					  delete first;
+  					  first = prev->Next;
+  				  }
+                }
 			}
 		}
 		else

@@ -27,14 +27,16 @@
 #include "Layout.h"
 #include "MinMax.h"
 #include "ParseMessage.h"
-#include "private.h"
+//#include "private.h"
 #include "ScanArgs.h"
 #include "StringClass.h"
 
 #include "SDI_hook.h"
+#include "General.h"
 
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>
+#include <new>
 
 #if defined(__MORPHOS__)
 #undef NewObject
@@ -217,7 +219,8 @@ BOOL InputClass::Layout (struct LayoutMessage &lmsg)
 
     lmsg.UpdateBaseline(Height, Height-7);
 
-    struct ObjectNotify *notify = new struct ObjectNotify(Left, Baseline, this);
+    struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(Left, Baseline, this);
+    if (!notify) return FALSE;
     lmsg.AddNotify(notify);
 
     Flags |= FLG_WaitingForSize;

@@ -33,6 +33,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <new>
 
 BOOL AreaClass::UseMap (struct UseMapMessage &umsg)
 {
@@ -194,7 +195,8 @@ VOID AreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
         while(!isdigit(*t_coords) && *t_coords)
           t_coords++;
 
-        current = new struct CoordList(x, y);
+        current = new (std::nothrow) struct CoordList(x, y);
+        if (!current) return;
         prev->Next = current;
         prev = current;
       }

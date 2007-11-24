@@ -64,6 +64,7 @@
 #include "classes/FramesetClass.h"
 #include "classes/NoFramesClass.h"
 #include "classes/FontStyleClass.h"
+#include <new>
 
 const char *const AlignKeywords[] = { "LEFT", "CENTER", "RIGHT", NULL };
 const char *const VAlignKeywords[] = { "TOP", "MIDDLE", "BOTTOM", NULL };
@@ -81,11 +82,11 @@ class SuperClass *CreateObject (struct TagInfo *tag)
     case tag_HEAD:
     case tag_HTML:
     default:
-      result = new class DummyClass();
+      result = new (std::nothrow) class DummyClass();
     break;
 
     case tag_SCRIPT:
-      result = new class ScriptClass();
+      result = new (std::nothrow) class ScriptClass();
     break;
 /* ----------------------------- */
     case tag_ADDRESS:
@@ -102,7 +103,7 @@ class SuperClass *CreateObject (struct TagInfo *tag)
 //      textstyles = TSF_Italic;
 //      textstyles = TSF_BlockQuote;
 //      newline = TRUE;
-      result = new class BlockquoteClass();
+      result = new (std::nothrow) class BlockquoteClass();
     break;
 
     case tag_CENTER:
@@ -209,23 +210,23 @@ class SuperClass *CreateObject (struct TagInfo *tag)
 
 /* ----------------------------- */
     case tag_A:
-      result = new class AClass();
+      result = new (std::nothrow) class AClass();
     break;
 
     case tag_AREA:
-      result = new class AreaClass();
+      result = new (std::nothrow) class AreaClass();
     break;
 
     case tag_BASE:
-      result = new class BaseClass();
+      result = new (std::nothrow) class BaseClass();
     break;
 
     case tag_BODY:
-      result = new class BodyClass();
+      result = new (std::nothrow) class BodyClass();
     break;
 
     case tag_DD:
-      result = new class DDClass();
+      result = new (std::nothrow) class DDClass();
     break;
 
     case tag_DIV:
@@ -234,119 +235,119 @@ class SuperClass *CreateObject (struct TagInfo *tag)
     break;
 
     case tag_DL:
-      result = new class DLClass();
+      result = new (std::nothrow) class DLClass();
     break;
 
     case tag_DT:
-      result = new class DTClass();
+      result = new (std::nothrow) class DTClass();
     break;
 
     case tag_LI:
-      result = new class LIClass();
+      result = new (std::nothrow) class LIClass();
     break;
 
     case tag_FONT:
-      result = new class FontClass();
+      result = new (std::nothrow) class FontClass();
     break;
 
     case tag_P:
-      result = new class PClass();
+      result = new (std::nothrow) class PClass();
     break;
 
     case tag_TABLE:
-      result = new class TableClass();
+      result = new (std::nothrow) class TableClass();
     break;
 
     case tag_TD:
-      result = new class TDClass();
+      result = new (std::nothrow) class TDClass();
     break;
 
     case tag_TH:
-      result = new class THClass();
+      result = new (std::nothrow) class THClass();
     break;
 
     case tag_TR:
-      result = new class TRClass();
+      result = new (std::nothrow) class TRClass();
     break;
 
     case tag_TITLE:
-      result = new class TitleClass();
+      result = new (std::nothrow) class TitleClass();
     break;
 
     case tag_OL:
-      result = new class OLClass();
+      result = new (std::nothrow) class OLClass();
     break;
 
     case tag_DIR:
     case tag_MENU:
     case tag_UL:
-      result = new class ULClass();
+      result = new (std::nothrow) class ULClass();
     break;
 
     case tag_COMMENT:
-      result = new class CommentClass();
+      result = new (std::nothrow) class CommentClass();
     break;
 
     case tag_MAP:
-      result = new class MapClass();
+      result = new (std::nothrow) class MapClass();
     break;
 
     case tag_META:
-      result = new class MetaClass();
+      result = new (std::nothrow) class MetaClass();
     break;
 
     case tag_BR:
-      result = new class BrClass();
+      result = new (std::nothrow) class BrClass();
     break;
 
     case tag_HR:
-      result = new class HRClass();
+      result = new (std::nothrow) class HRClass();
     break;
 
     case tag_IMG:
-      result = new class ImgClass();
+      result = new (std::nothrow) class ImgClass();
     break;
 
     case tag_FORM:
-      result = new class FormClass();
+      result = new (std::nothrow) class FormClass();
     break;
 
     case tag_INPUT:
-      result = new class InputClass();
+      result = new (std::nothrow) class InputClass();
     break;
 
     case tag_ISINDEX:
-      result = new class IsIndexClass();
+      result = new (std::nothrow) class IsIndexClass();
     break;
 
     case tag_OPTION:
-      result = new class OptionClass();
+      result = new (std::nothrow) class OptionClass();
     break;
 
     case tag_SELECT:
-      result = new class SelectClass();
+      result = new (std::nothrow) class SelectClass();
     break;
 
     case tag_TEXTAREA:
-      result = new class TextAreaClass();
+      result = new (std::nothrow) class TextAreaClass();
     break;
 
 
     case tag_FRAME:
-      result = new class FrameClass();
+      result = new (std::nothrow) class FrameClass();
     break;
 
     case tag_FRAMESET:
-      result = new class FramesetClass();
+      result = new (std::nothrow) class FramesetClass();
     break;
 
     case tag_NOFRAMES:
-      result = new class NoFramesClass();
+      result = new (std::nothrow) class NoFramesClass();
     break;
   }
 
   if(!result)
-    result = new class FontStyleClass(textstyles, alignment, newline, font);
+    result = new (std::nothrow) class FontStyleClass(textstyles, alignment, newline, font);
 
   if(result)
     result->setId(id);
