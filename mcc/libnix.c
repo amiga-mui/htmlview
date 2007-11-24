@@ -21,9 +21,15 @@
 ***************************************************************************/
 
 #include <stdlib.h>
+
 #include <proto/dos.h>
 #include <proto/exec.h>
+
 #include <string.h>
+
+/*******************************************************************/
+
+// change the libnix pool size by defining _MSTEP var
 
 int ThisRequiresConstructorHandling = 0;
 VOID *mempool = NULL;
@@ -42,7 +48,15 @@ struct HunkSegment
 
 extern const unsigned long	__ctrslist[];
 extern const unsigned long	__dtrslist[];
-extern const struct CTDT __ctdtlist[];
+extern const struct CTDT    __ctdtlist[];
+
+/*******************************************************************/
+
+void __chkabort(void) { }
+void abort(void) { Wait(0);}
+void exit(int UNUSED err) { Wait(0);}
+
+/*******************************************************************/
 
 static void __HandleConstructors(void (*FuncArray[])(void))
 {
@@ -67,6 +81,8 @@ static void __HandleConstructors(void (*FuncArray[])(void))
 	}
 }
 
+/*******************************************************************/
+
 static int comp_ctdt(struct CTDT *a, struct CTDT *b)
 {
 	if (a->priority == b->priority)
@@ -76,6 +92,8 @@ static int comp_ctdt(struct CTDT *a, struct CTDT *b)
 
 	return (1);
 }
+
+/*******************************************************************/
 
 static int constructors_done = 0;
 static struct CTDT *last_ctdt = NULL;
@@ -130,6 +148,8 @@ ULONG run_constructors(void)
     return 1;
 }
 
+/*******************************************************************/
+
 VOID run_destructors(void)
 {
 	const struct CTDT *ctdt = __ctdtlist;
@@ -160,142 +180,11 @@ VOID run_destructors(void)
 	constructors_done = 0;
 }
 
-//ULONG totmem = 0;
-
-void *malloc(size_t size)
-{
-    if (size && mempool)
-    {
-	    ULONG *mem;
-
-    	mem = (ULONG *)AllocPooled(mempool,size = size+sizeof(ULONG));
-        if (mem) *mem++ = size;
-
-  //totmem+=size;
-  //D(DBF_STARTUP, "MEM MALLOC %lx %ld",mem,totmem);
-
-    	return mem;
-	}
-
-	return NULL;
-}
-
-void free(void *p)
-{
-    //totmem-=*((ULONG *)p-1);
-    //D(DBF_STARTUP, "MEM FREE %lx %ld",p,totmem);
-
-    if (p && mempool)
-    	FreePooled(mempool,(ULONG *)p-1,*((ULONG *)p-1));
-}
-
-void *realloc(void *mem, size_t size)
-{
-    APTR  nmem;
-    ULONG sold = 0; //gcc
-
-    if (size==0) return NULL;
-
-    if (mem)
-    {
-        sold = *((ULONG *)mem-1);
-
-        if (sold-sizeof(ULONG)>=size) return mem;
-    }
-
-    nmem = malloc(size);
-    if (nmem)
-    {
-        if (mem) memcpy(nmem,mem,sold);
-    }
-
-    if (mem) free(mem);
-
-    return nmem;
-}
-
-/*void *malloc(size_t size)
-{
-	ULONG *p = NULL;
-
-	if (size)
-	{
-		size += 4;
-
-		//p = (ULONG *)AllocPooledAligned(mempool, size, 8, 4);
-		p = (ULONG *)AllocPooled(mempool, size);
-
-		if (p)
-		{
-			*p++ = size;
-		}
-
-  totmem+=size;
-  D(DBF_STARTUP, "MEM MALLOC %lx %ld",p,totmem);
-	}
-
-	return (void *)p;
-}
-
-void free(void *p)
-{
-	if (p && mempool)
-	{
-		ULONG size, *ptr = (ULONG *)p;
-		size = *--ptr;
-		FreePooled(mempool, ptr, size);
-
-  totmem-=size;
-  D(DBF_STARTUP, "MEM FREE %lx %ld",p,totmem);
-	}
-}
-
-#ifndef min
-#define min(a,b) (a<b?a:b)
-#endif
-
-void *realloc(void *ptr, size_t size)
-{
-   size_t old_size = 0;
-   void *result;
-
-   if (ptr)
-   {
-      ULONG *mem = (ULONG *)ptr;
-      old_size = *--mem;
-   }
-
-   result = malloc(size);
-   if (result && ptr)
-   {
-      size_t min_size = min(old_size, size);
-      memcpy(result, ptr, min_size);
-   }
-
-   free(ptr);
-
-   return result;
-}*/
-
-void __chkabort(void) { }
-void abort(void) { Wait(0);}
-void exit(int UNUSED err) { Wait(0);}
-
-/*
- * .pctors,.pdtors instead of .init,.fini
- * as the later are std *CODE* sections.
- */
-
-/*int
-sprintf(STRPTR buf,STRPTR fmt,...)
-{
-    va_list va;
-
-    va_start(va,fmt);
-    VNewRawDoFmt(fmt,(void* (*)(void*, UBYTE))0,buf,va);
-    va_end(va);
-}*/
+/*******************************************************************/
 
 asm("\n.section \".ctors\",\"a\",@progbits\n__ctrslist:\n.long -1\n");
 asm("\n.section \".dtors\",\"a\",@progbits\n__dtrslist:\n.long -1\n");
 __asm("\n.section \".ctdt\",\"a\",@progbits\n__ctdtlist:\n.long -1,-1\n");
+
+/*******************************************************************/
+

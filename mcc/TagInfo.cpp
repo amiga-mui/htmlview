@@ -157,16 +157,17 @@ BOOL NotTagEnd (REG(d0) UBYTE c)
 
 struct TNode *TagTree = NULL;
 
-extern "C" VOID _INIT_7_BuildTagTree ();
-VOID _INIT_7_BuildTagTree ()
+extern "C" ULONG _INIT_7_BuildTagTree ();
+ULONG _INIT_7_BuildTagTree ()
 {
-   BinaryInsert(TagTree, TagTable, (ULONG)0, (ULONG)sizeof(TagTable) / sizeof(TagInfo) - 2);
+	return BinaryInsert(TagTree, TagTable, (ULONG)0, (ULONG)sizeof(TagTable) / sizeof(TagInfo) - 2);
 }
 
 extern "C" VOID _EXIT_7_DisposeTagTree ();
 VOID _EXIT_7_DisposeTagTree ()
 {
-   delete TagTree;
+   if (TagTree) delete TagTree;
+   TagTree = NULL;
 }
 
 struct TagInfo DummyTag = { "Unknown", 0, tag_Unknown, 0 };

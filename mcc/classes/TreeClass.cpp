@@ -32,6 +32,7 @@
 #include "SDI_stdarg.h"
 
 #include "Debug.h"
+#include <new>
 
 TreeClass::~TreeClass ()
 {
@@ -60,9 +61,12 @@ class SuperClass *TreeClass::FindElement (ULONG tagID)
 VOID TreeClass::AddChild (class SuperClass *obj)
 {
   struct ChildsList *newchild;
-  newchild = new struct ChildsList(obj);
-  Last->Next = newchild;
-  Last = newchild;
+  newchild = new (std::nothrow) struct ChildsList(obj);
+  if ( newchild)
+  {
+	  Last->Next = newchild;
+	  Last = newchild;
+  }
 }
 
 VOID TreeClass::AllocateColours (struct ColorMap *cmap)
@@ -347,7 +351,10 @@ VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
   APTR handle = NULL;
   if(Flags & FLG_Newline)
+  {
     handle = Backup(pmsg, 1, tag_P);
+    if (!handle) return;
+  }
 
   if(Flags & FLG_Newline)
     pmsg.PendingSpace = FALSE;
@@ -402,23 +409,26 @@ VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
           }
 
           newobj = CreateObject(tinfo);
-          if(newobj->flags() & FLG_Attribute)
+          if (newobj)
           {
-            newobj->Parse(pmsg);
-            AddChild(newobj);
-            weak_nl = TRUE;
-          }
-          else
-          {
-            AddChild(newobj);
-            newobj->Parse(pmsg);
-            newobj->setFlags(newobj->flags() | FLG_AllElementsPresent);
-          }
+            if(newobj->flags() & FLG_Attribute)
+            {
+              newobj->Parse(pmsg);
+              AddChild(newobj);
+              weak_nl = TRUE;
+            }
+            else
+            {
+              AddChild(newobj);
+              newobj->Parse(pmsg);
+              newobj->setFlags(newobj->flags() | FLG_AllElementsPresent);
+            }
 
-          if(newobj->flags() & FLG_Newline)
-          {
-            pmsg.PendingNewline = TRUE;
-            weak_nl = FALSE;
+            if(newobj->flags() & FLG_Newline)
+            {
+              pmsg.PendingNewline = TRUE;
+              weak_nl = FALSE;
+            }
           }
         }
       }
@@ -460,13 +470,16 @@ VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
           if(weak_nl && space)
             pmsg.PendingSpace = TRUE;
 
-          newobj = new TextClass();
-          STRPTR current = pmsg.Current;
-          pmsg.Current = pmsg.Locked + length;
-          newobj->Parse(pmsg);
-          AddChild(newobj);
-          pmsg.Current = current;
-          pmsg.PendingNewline = FALSE;
+          newobj = new (std::nothrow) TextClass();
+          if (newobj)
+          {
+            STRPTR current = pmsg.Current;
+            pmsg.Current = pmsg.Locked + length;
+            newobj->Parse(pmsg);
+            AddChild(newobj);
+            pmsg.Current = current;
+            pmsg.PendingNewline = FALSE;
+          }
         }
       }
     }
@@ -567,7 +580,8 @@ APTR TreeClass::Backup(struct ParseMessage &pmsg, ULONG len, ...)
   va_list ap;
   va_start(ap, len);
 
-  UWORD *result = new UWORD[2*len];
+  UWORD *result = new (std::nothrow) UWORD[2*len];
+  if (!result) return NULL;
   UWORD *res = result;
 
   while(len--)

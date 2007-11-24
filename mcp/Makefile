@@ -157,7 +157,7 @@ ifeq ($(OS), os4)
   CRT      = newlib
   CPU      = -mcpu=powerpc
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
-              -DNO_PPCINLINE_STDARG -Wa,-mregnames
+              -DNO_PPCINLINE_STDARG -DUSEHOTKEY -DUSEBETTERSTRING -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
 
   # additional object files required
@@ -176,7 +176,7 @@ ifeq ($(OS), os3)
 
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
-  CFLAGS  += -noixemul -DNO_INLINE_STDARG
+  CFLAGS  += -noixemul -DNO_INLINE_STDARG -DUSEHOTKEY -DUSEBETTERSTRING
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug -lmui
 
@@ -224,12 +224,14 @@ MCPOBJS = $(OBJDIR)/library.o \
           $(OBJDIR)/locale.o \
           $(OBJDIR)/CreatePrefsGroup.o \
           $(OBJDIR)/Dispatcher.o \
+			 $(OBJDIR)/pic.o \
           $(OBJDIR)/Debug.o
 
 PREFOBJS= $(OBJDIR)/locale.o \
           $(OBJDIR)/CreatePrefsGroup.o \
           $(OBJDIR)/Dispatcher.o \
           $(OBJDIR)/Preference.o \
+			 $(OBJDIR)/pic.o \
           $(OBJDIR)/Debug.o
 
 # available catalog translations

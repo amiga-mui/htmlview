@@ -23,6 +23,7 @@
 #include <string.h>
 #include <exec/types.h>
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <datatypes/pictureclass.h>
 #include <libraries/mui.h>
 
@@ -34,7 +35,7 @@
 #include "IM_Render.h"    /* struct PictureFrame */
 #include "SharedData.h"
 
-#include "private.h"
+//#include "private.h"
 
 MinMaxMessage::MinMaxMessage (struct TextFont **fonts, struct LayoutMessage *lmsg, struct CellWidth *widths)
 {
@@ -51,6 +52,6 @@ VOID MinMaxMessage::Reset ()
 
 VOID MinMaxMessage::Newline ()
 {
-  Max = max((LONG)X, Max);
+  Max = MAX((LONG)X, Max);
   X = Indent;
 }

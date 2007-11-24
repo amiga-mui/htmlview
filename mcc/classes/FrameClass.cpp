@@ -24,11 +24,12 @@
 #include "HostClass.h"
 
 #include "ParseMessage.h"
-#include "private.h"
+//#include "private.h"
 #include "ScanArgs.h"
 #include "ScrollGroup.h"
 #include "SharedData.h"
 #include <stdio.h>
+#include <new>
 
 #if defined(__MORPHOS__)
 #undef NewObject
@@ -208,8 +209,8 @@ VOID FrameClass::Parse(REG(a2, struct ParseMessage &pmsg))
 
   if(!Name)
   {
-    Name = new char[10];
-    sprintf(Name, "%08lx", (ULONG)this);
+    Name = new (std::nothrow) char[10];
+    if (Name) sprintf(Name, "%08lx", (ULONG)this);
   }
 
   if(noresize)

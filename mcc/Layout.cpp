@@ -30,6 +30,7 @@
 #include <proto/datatypes.h>
 #include <proto/exec.h>
 #include <proto/graphics.h>
+#include <clib/macros.h>
 
 #include "General.h"
 #include "Layout.h"
@@ -43,14 +44,15 @@
 #include "classes/ImgClass.h"
 #include "classes/SuperClass.h"
 
-#include "private.h"
+//#include "private.h"
+#include <new>
 
 /*
 extern "C" ULONG StackReg ();
 ULONG LayoutStack = 0;
 VOID StackCheck ()
 {
-  LayoutStack = max(LayoutStack, (ULONG)FindTask(NULL)->tc_SPUpper-StackReg());
+  LayoutStack = MAX(LayoutStack, (ULONG)FindTask(NULL)->tc_SPUpper-StackReg());
 }*/
 
 VOID LayoutMessage::Reset (ULONG width, ULONG height)
@@ -138,7 +140,7 @@ VOID LayoutMessage::Newline ()
       }
       obj->setFlags(obj->flags() & ~FLG_WaitingForSize);
       obj->setFlags(obj->flags() | FLG_Layouted);
-      TopChange = min(TopChange, obj->top());
+      TopChange = MIN(TopChange, obj->top());
 
 /*      if(obj->flags() & FLG_Gadget)
         obj->AdjustPosition(0, 0);
@@ -146,9 +148,9 @@ VOID LayoutMessage::Newline ()
     notify = notify->Next;
   }
 
-  ULONG lineheight = max(Baseline + Bottom, MinLineHeight);
+  ULONG lineheight = MAX(Baseline + Bottom, MinLineHeight);
   Y += lineheight;
-  Width = max(Width, X+MarginWidth+ImageRightIndent);
+  Width = MAX(Width, X+MarginWidth+ImageRightIndent);
   Height = Y;
 
   if(FRight && X > *FRight->Left)
@@ -182,7 +184,7 @@ VOID LayoutMessage::CheckFloatingObjects ()
       ImageLeftIndent = 0;
     img->Obj->setFlags(img->Obj->flags() | FLG_Layouted);
     /* This line is new, does it work? */
-    TopChange = min(TopChange, img->Obj->top());
+    TopChange = MIN(TopChange, img->Obj->top());
     delete img;
   }
 
@@ -194,7 +196,7 @@ VOID LayoutMessage::CheckFloatingObjects ()
     MaxX += img->Width;
     img->Obj->setFlags(img->Obj->flags() | FLG_Layouted);
     /* This line is new, does it work? */
-    TopChange = min(TopChange, img->Obj->top());
+    TopChange = MIN(TopChange, img->Obj->top());
     delete img;
   }
 
@@ -265,19 +267,20 @@ VOID LayoutMessage::AddNotify (struct ObjectNotify *obj)
 
 VOID LayoutMessage::UpdateBaseline (LONG height, LONG baseline)
 {
-  Baseline = max(Baseline, baseline);
-  Bottom = max(Bottom, height-baseline);
+  Baseline = MAX(Baseline, baseline);
+  Bottom = MAX(Bottom, height-baseline);
 }
 
 VOID LayoutMessage::SetLineHeight (LONG height)
 {
-  MinLineHeight = max(MinLineHeight, height);
+  MinLineHeight = MAX(MinLineHeight, height);
 }
 
 VOID LayoutMessage::AddToGadgetList (class SuperClass *gadget)
 {
-  LastGadget->Next = new struct GadgetList(gadget);
-  LastGadget = LastGadget->Next;
+  LastGadget->Next = new (std::nothrow) struct GadgetList(gadget);
+  if (LastGadget->Next)
+	  LastGadget = LastGadget->Next;
 }
 
 VOID LayoutMessage::FlushGadgetList ()

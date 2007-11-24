@@ -27,8 +27,10 @@
 #include "Layout.h"
 #include "MinMax.h"
 #include "ParseMessage.h"
-#include "private.h"
+//#include "private.h"
+#include "General.h"
 #include "ScanArgs.h"
+#include <new>
 
 #if defined(__MORPHOS__)
 #undef NewObject
@@ -95,7 +97,8 @@ BOOL SelectClass::Layout (struct LayoutMessage &lmsg)
 
       lmsg.UpdateBaseline(Height, Height-7);
 
-      struct ObjectNotify *notify = new struct ObjectNotify(Left, Baseline, this);
+      struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(Left, Baseline, this);
+      if (!notify) return FALSE;
       lmsg.AddNotify(notify);
 
       Flags |= FLG_WaitingForSize;
@@ -105,10 +108,15 @@ BOOL SelectClass::Layout (struct LayoutMessage &lmsg)
    return TRUE;
 }
 
+/*#include <proto/exec.h>
+#define NewRawDoFmt(__p0, __p1, __p2, ...) \
+	(((STRPTR (*)(void *, CONST_STRPTR , APTR (*)(APTR, UBYTE), STRPTR , ...))*(void**)((long)(EXEC_BASE_NAME) - 922))((void*)(EXEC_BASE_NAME), __p0, __p1, __p2, __VA_ARGS__))*/
+
 VOID SelectClass::AdjustPosition (LONG x, LONG y)
 {
   Left += x;
   SuperClass::AdjustPosition(x, y);
+  //NewRawDoFmt("!!!!!!!!!!!!!!!!......Layout %lx\n",(void * (*)(void *, UBYTE))1,NULL,MUIGadget);
   if(MUIGadget && Width && Height)
     MUI_Layout(MUIGadget, Left, Top, Width-4, Height-2, 0L);
 }
@@ -159,8 +167,10 @@ VOID SelectClass::Parse(REG(a2, struct ParseMessage &pmsg))
     first = first->Next;
   }
 
-  Values = new STRPTR [entries+1];
-  Entries = new STRPTR [entries+1];
+  Values = new (std::nothrow) STRPTR [entries+1];
+  if (!Values) return;
+  Entries = new (std::nothrow) STRPTR [entries+1];
+  if (!Entries) return;
   entries = 0;
   first = FirstChild;
   Active = 0;

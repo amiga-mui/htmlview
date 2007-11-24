@@ -285,12 +285,14 @@ VOID MainLoop (Object *app)
 }
 
 #if defined(__libnix__)
- void *mempool;
+void *mempool;
 #endif
 
 int main(void)
 {
+  #if defined(__libnix__)
   mempool = CreatePool(MEMF_CLEAR | MEMF_SEM_PROTECTED, 12*1024, 6*1024);
+  #endif
 
   #if defined(__amigaos4__)
   if((IntuitionBase = OpenLibrary("intuition.library", 38)) &&

@@ -26,6 +26,7 @@
 #include "ParseMessage.h"
 #include "ScanArgs.h"
 #include <stdio.h>
+#include <new>
 
 VOID MetaClass::Parse(REG(a2, struct ParseMessage &pmsg))
 {
@@ -46,7 +47,9 @@ VOID MetaClass::Parse(REG(a2, struct ParseMessage &pmsg))
     int offset = 0;
     if(sscanf(content, "%f%*[,; ]%*[URLurl]=%n", &delay, &offset) == 1 && offset)
     {
-      strcpy(pmsg.Host->RefreshURL = new char[strlen(content+offset)+1], content+offset);
+      char *_s = new (std::nothrow) char[strlen(content+offset)+1];
+	  if (!_s) return;
+      strcpy(pmsg.Host->RefreshURL = _s, content+offset);
       pmsg.Host->RefreshTime = (ULONG)(delay*1000);
     }
   }

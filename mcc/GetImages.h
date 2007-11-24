@@ -25,6 +25,7 @@
 
 #include <string.h>
 #include <proto/datatypes.h>
+#include <new>
 
 struct ObjectList
 {
@@ -49,7 +50,7 @@ struct ImageList
     ImageName = imagename;
     Width = width;
     Height = height;
-    Objects = new struct ObjectList(obj);
+    Objects = new (std::nothrow) struct ObjectList(obj);
     ObjectsLast = Objects;
   }
 
@@ -64,7 +65,7 @@ struct ImageList
   {
     if(!strcmp(imagename, ImageName) && Width == width && Height == height)
     {
-      ObjectsLast->Next = new struct ObjectList(obj);
+      ObjectsLast->Next = new (std::nothrow) struct ObjectList(obj);
       ObjectsLast = ObjectsLast->Next;
 
       delete imagename;
@@ -73,7 +74,7 @@ struct ImageList
     {
       if(Next)
           Next->AddImage(imagename, width, height, obj);
-      else  Next = new struct ImageList(imagename, width, height, obj);
+      else  Next = new (std::nothrow) struct ImageList(imagename, width, height, obj);
     }
   }
 
@@ -97,7 +98,7 @@ struct GetImagesMessage
   {
     if(Images)
         Images->AddImage(imagename, width, height, obj);
-    else  Images = new struct ImageList(imagename, width, height, obj);
+    else  Images = new (std::nothrow) struct ImageList(imagename, width, height, obj);
   }
 
   Object *HTMLview;

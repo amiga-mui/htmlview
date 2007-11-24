@@ -24,10 +24,11 @@
 
 #include "Forms.h"
 #include "ParseMessage.h"
-#include "private.h"
+//#include "private.h"
 #include "ScanArgs.h"
 #include "SharedData.h"
 #include <stdio.h>
+#include <new>
 
 VOID FormClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
@@ -52,9 +53,10 @@ VOID FormClass::ExportForm (struct ExportFormMessage &emsg)
 
       STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, (ULONG)Action);
       ULONG len = strlen(base) + emsg2.StrLength + 1;
-      STRPTR url = new char[len];
-      ULONG index = sprintf(url, "%s?", base);
-      delete base;
+      STRPTR url = new (std::nothrow) char[len];
+      if (!url) return;
+      ULONG index = sprintf(url, "%s?", base ? base : "");
+      if (base) delete base;
 
       emsg2.GetElements(url+index);
 
@@ -72,7 +74,8 @@ VOID FormClass::ExportForm (struct ExportFormMessage &emsg)
       TreeClass::ExportForm(emsg2);
 
       STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, (ULONG)Action);
-      STRPTR contents = new char[emsg2.StrLength + 1];
+      STRPTR contents = new (std::nothrow) char[emsg2.StrLength + 1];
+      if (!contents) return;
       emsg2.GetElements(contents);
 
       DoMethod(HTMLview, MUIM_HTMLview_Post, (ULONG)base, (ULONG)Target, (ULONG)contents, (ULONG)(EncType ? EncType : "application/x-www-form-urlencoded"));

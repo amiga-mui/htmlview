@@ -21,6 +21,7 @@
 ***************************************************************************/
 
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <proto/dos.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
@@ -30,8 +31,9 @@
 #include "Animation.h"
 #include "ImageManager.h"
 #include "IM_Render.h"
-#include "private.h"
+//#include "private.h"
 #include "SharedData.h"
+#include <new>
 
 SharedData::SharedData (struct IClass *cl, Object *obj, struct HTMLviewData *data)
 {
@@ -118,10 +120,11 @@ struct AnimInfo *SharedData::AddAnim (Object *obj, struct HTMLviewData *data, st
 {
   ENTER();
 
-  Anims = new struct AnimInfo(obj, data, picture, receivers, Anims);
+  Anims = new (std::nothrow) struct AnimInfo(obj, data, picture, receivers, Anims);
+  if (!Anims) return NULL;
 
   if(AnimTimer.Stop(obj))
-    AnimTimer.ihn.ihn_Millis = min(AnimTimer.ihn.ihn_Current, 10*picture->AnimDelay);
+    AnimTimer.ihn.ihn_Millis = MIN(AnimTimer.ihn.ihn_Current, 10*picture->AnimDelay);
   else
     AnimTimer.ihn.ihn_Millis = 10*picture->AnimDelay;
 

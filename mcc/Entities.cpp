@@ -161,16 +161,16 @@ static struct EntityInfo *TFind (struct TNode *node, CONST_STRPTR str)
 
 struct TNode *EntityTree = NULL;
 
-extern "C" VOID _INIT_7_BuildEntityTree ();
-VOID _INIT_7_BuildEntityTree ()
+extern "C" ULONG _INIT_7_BuildEntityTree ();
+ULONG _INIT_7_BuildEntityTree ()
 {
-  BinaryInsert(EntityTree, EntityTable, (ULONG)0, (ULONG)sizeof(EntityTable) / sizeof(EntityInfo) - 2);
+  return BinaryInsert(EntityTree, EntityTable, (ULONG)0, (ULONG)sizeof(EntityTable) / sizeof(EntityInfo) - 2);
 }
 
 extern "C" VOID _EXIT_7_DisposeEntityTree ();
 VOID _EXIT_7_DisposeEntityTree ()
 {
-  delete EntityTree;
+  if (EntityTree) delete EntityTree;
 }
 
 struct EntityInfo *GetEntityInfo (CONST_STRPTR str)

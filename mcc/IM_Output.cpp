@@ -26,6 +26,7 @@
 
 #include "IM_Output.h"
 #include "General.h"
+#include <new>
 
 #warning "FAST_DITHER is off, check!"
 //#define FAST_DITHER
@@ -87,7 +88,7 @@ BOOL LowColourNDEngine::SetDimensions (ULONG width, ULONG height, BOOL interlace
 	if(result && !CMap)
 	{
 		RenderObj.SetCMap(CMap = ObtainCMap(Scr));
-		ChunkyLine = new UBYTE [DstWidth];
+		ChunkyLine = new (std::nothrow) UBYTE [DstWidth];
 
 		if(!(CMap && ChunkyLine))
 			result = FALSE;

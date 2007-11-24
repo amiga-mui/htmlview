@@ -23,14 +23,15 @@
 #include <exec/types.h>
 
 #include "TernaryTrees.h"
+#include <new>
 
 #define QToUpper(c) ((c >= 'a' && c <= 'z') ? c-('a'-'A') : c)
 
 TNode::TNode(CONST_STRPTR str, CONST_APTR data)
 {
   if((SplitChar = *str))
-      Middle = new TNode(str+1, data);
-  else  Data = data;
+      Middle = new (std::nothrow) TNode(str+1, data);
+  else Data = data;
 }
 
 TNode::~TNode ()
@@ -43,18 +44,18 @@ TNode::~TNode ()
 
 struct TNode *TNode::TInsert(CONST_STRPTR str, CONST_APTR data)
 {
-  struct TNode *res;
+	if (this)
+    {
+		if (*str < SplitChar) Left = Left->TInsert(str, data);
+		else if (*str > SplitChar) Right = Right->TInsert(str, data);
+			 else if (SplitChar) Middle = Middle->TInsert(str+1, data);
 
-  if(!(res = this))
-    res = new TNode(str, data);
-  else if(*str < SplitChar)
-    Left = Left->TInsert(str, data);
-  else if(*str > SplitChar)
-    Right = Right->TInsert(str, data);
-  else if(SplitChar)
-    Middle = Middle->TInsert(str+1, data);
-
-  return res;
+		return this;
+	}
+	else
+    {
+		return new (std::nothrow) TNode(str, data);
+	}
 }
 
 APTR TFind (struct TNode *node, CONST_STRPTR str, UBYTE *table)

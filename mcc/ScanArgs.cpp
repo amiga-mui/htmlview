@@ -32,6 +32,7 @@
 #include "Colours.h"
 #include "TagInfo.h"
 #include "Entities.h"
+#include <new>
 
 VOID PrintTag (STRPTR);
 
@@ -126,7 +127,8 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
             while(len && IsWhitespace(value[len-1]))
               len--;
 
-            STRPTR str = new char[len+1], dst = str;;
+            STRPTR str = new (std::nothrow) char[len+1], dst = str;;
+            if (!str) return;
             *((STRPTR *)args[i].Storage) = str;
 
             BOOL space = FALSE;
@@ -210,13 +212,14 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
           {
             if(*value == '*')
             {
-              *((struct ArgSize **)args[i].Storage) = new struct ArgSize(1, Size_Relative);
+              *((struct ArgSize **)args[i].Storage) = new (std::nothrow) struct ArgSize(1, Size_Relative);
               break;
             }
           }
           case ARG_VALUE:
           {
-            struct ArgSize *size = new struct ArgSize;
+            struct ArgSize *size = new (std::nothrow) struct ArgSize;
+            if (!size) return;
             LONG len = StrToLong(value, (LONG *)&size->Size);
             if(len > 0 && (LONG)size->Size >= 0)
             {

@@ -23,6 +23,8 @@
 #include <libraries/mui.h>
 #include <proto/muimaster.h>
 #include <proto/exec.h>
+//#include <stdlib.h>
+#include <string.h>
 
 /******************************************************************************/
 /*                                                                            */
@@ -59,8 +61,11 @@ struct Library *LocaleBase = NULL;
 struct LocaleBase *LocaleBase = NULL;
 #endif
 
+struct Library *CyberGfxBase = NULL;
+
 #if defined(__amigaos4__)
 struct LocaleIFace *ILocale = NULL;
+struct CyberGfxIFace *ICyberGfx = NULL;
 #endif
 
 /******************************************************************************/
@@ -78,21 +83,29 @@ static VOID ClassExpunge(UNUSED struct Library *base);
 /******************************************************************************/
 /* define all implementations of our user functions                           */
 /******************************************************************************/
+
 static BOOL ClassInit(UNUSED struct Library *base)
 {
-  if((LocaleBase = (APTR)OpenLibrary("locale.library", 38)) &&
-     GETINTERFACE(ILocale, struct LocaleIFace*, LocaleBase))
+  if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
+      GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
   {
-    // open the TextEditor.mcp catalog
-    OpenCat();
+    if((LocaleBase = (APTR)OpenLibrary("locale.library", 38)) &&
+       GETINTERFACE(ILocale, struct LocaleIFace*, LocaleBase))
+    {
+      OpenCat();
 
-    // Initialize the subclasses
-    if(CreateSubClasses())
-      return TRUE;
+      // Initialize the subclasses
+      if(CreateSubClasses())
+        return TRUE;
 
-    DROPINTERFACE(ILocale);
-    CloseLibrary((APTR)LocaleBase);
-    LocaleBase  = NULL;
+      DROPINTERFACE(ILocale);
+      CloseLibrary((APTR)LocaleBase);
+      LocaleBase  = NULL;
+    }
+
+    DROPINTERFACE(ICyberGfx);
+    CloseLibrary(CyberGfxBase);
+    CyberGfxBase = NULL;
   }
 
   return FALSE ;
@@ -110,5 +123,12 @@ static VOID ClassExpunge(UNUSED struct Library *base)
     DROPINTERFACE(ILocale);
     CloseLibrary((APTR)LocaleBase);
     LocaleBase  = NULL;
+  }
+
+  if(CyberGfxBase)
+  {
+    DROPINTERFACE(ICyberGfx);
+    CloseLibrary(CyberGfxBase);
+    CyberGfxBase = NULL;
   }
 }

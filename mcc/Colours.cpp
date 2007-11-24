@@ -28,6 +28,7 @@
 #include "Colours.h"
 #include "TagInfo.h"
 #include "TernaryTrees.h"
+#include <new>
 
 struct ColourInfo ColourTable[] =
 {
@@ -176,16 +177,16 @@ struct ColourInfo ColourTable[] =
 
 struct TNode *ColourTree = NULL;
 
-extern "C" VOID _INIT_7_BuildColourTree();
-VOID _INIT_7_BuildColourTree()
+extern "C" ULONG _INIT_7_BuildColourTree();
+ULONG _INIT_7_BuildColourTree()
 {
-  BinaryInsert(ColourTree, ColourTable, (ULONG)0, (ULONG)sizeof(ColourTable) / sizeof(ColourInfo) - 2);
+  return BinaryInsert(ColourTree, ColourTable, (ULONG)0, (ULONG)sizeof(ColourTable) / sizeof(ColourInfo) - 2);
 }
 
 extern "C" VOID _EXIT_7_DisposeColourTree();
 VOID _EXIT_7_DisposeColourTree()
 {
-  delete ColourTree;
+  if (ColourTree) delete ColourTree;
 }
 
 UBYTE *GetColourInfo (CONST_STRPTR str)

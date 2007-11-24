@@ -28,54 +28,233 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 
+#include <clib/macros.h>
+
 #include "Debug.h"
 #include "General.h"
+#include <new>
 
-extern APTR MemoryPool;
+//#define MEMWATCH
+#define THREAD_SAFE
+#define POOL_SIZE (31*1024)
+
+#ifndef PROGRAM
+#define PROGRAM FindTask(NULL)->tc_Node.ln_Name
+#endif
+
+#ifdef __MORPHOS__
+extern APTR mempool;
+#define MemoryPool mempool
+#else
+APTR MemoryPool = NULL;
+#endif
+
+#if defined(__MORPHOS__)
+/*******************************************************************/
+
+/*#define NewRawDoFmt(__p0, __p1, __p2, ...) \
+	(((STRPTR (*)(void *, CONST_STRPTR , APTR (*)(APTR, UBYTE), STRPTR , ...))*(void**)((long)(EXEC_BASE_NAME) - 922))((void*)(EXEC_BASE_NAME), __p0, __p1, __p2, __VA_ARGS__))*/
+
+//extern struct SignalSemaphore ttt;
+//extern ULONG tttfail;
+
+/*******************************************************************/
+
+void *malloc(size_t size)
+{
+    if (size && mempool)
+    {
+	    ULONG *mem;
+
+    	mem = (ULONG *)AllocPooled(mempool,size = size+sizeof(ULONG));
+        if (mem) *mem++ = size;
+
+  //totmem+=size;
+  //kprintf("MEM MALLOC %lx %ld\n",mem,totmem);
+
+    	return mem;
+	}
+
+	return NULL;
+}
+
+/*******************************************************************/
+
+void free(void *p)
+{
+    //totmem-=*((ULONG *)p-1);
+    //kprintf("MEM FREE %lx %ld\n",p,totmem);
+
+    if (p && mempool)
+    	FreePooled(mempool,(ULONG *)p-1,*((ULONG *)p-1));
+}
+
+/*******************************************************************/
+
+void *realloc(void *mem, size_t size)
+{
+    APTR  nmem;
+    ULONG sold = 0; //gcc
+
+    if (size==0) return NULL;
+
+    if (mem)
+    {
+        sold = *((ULONG *)mem-1);
+
+        if (sold-sizeof(ULONG)>=size) return mem;
+    }
+
+    nmem = malloc(size);
+    if (nmem)
+    {
+        if (mem) memcpy(nmem,mem,sold);
+    }
+
+    if (mem) free(mem);
+
+    return nmem;
+}
+
+#endif
+
+/*******************************************************************/
+
+#define CANTFAILNONONO
+
+#ifdef CANTFAILNONONO
+
+void *cantFailMalloc(size_t size)
+{
+    for (;;)
+    {
+        APTR res = malloc(size);
+        if (res) return res;
+        Delay(5);
+	}
+}
+#define _MALLOC cantFailMalloc
+#else
+#define _MALLOC malloc
+#endif
+
+/*******************************************************************/
+
+APTR operator new(std::size_t bytes,const std::nothrow_t&) throw()
+{
+/*  {
+    ULONG f;
+	ObtainSemaphore(&ttt);
+	f = tttfail;
+	ReleaseSemaphore(&ttt);
+    if (f)
+    {
+	  //NewRawDoFmt("!!!!!!!!!!!!!!!!......New std compelled to fail on %ld\n",(void * (*)(void *, UBYTE))1,NULL,bytes);
+      return 0;
+    }
+  }*/
+
+  //NewRawDoFmt("......New std %ld\n",(void * (*)(void *, UBYTE))1,NULL,bytes);
+  return _MALLOC(bytes);
+}
+
+/*******************************************************************/
+
+void *operator new[](std::size_t bytes, const std::nothrow_t&) throw()
+{
+  /*{
+    ULONG f;
+	ObtainSemaphore(&ttt);
+	f = tttfail;
+	ReleaseSemaphore(&ttt);
+    if (f)
+    {
+	  NewRawDoFmt("!!!!!!!!!!!!!!!!......New[] std compelled to fail on %ld\n",(void * (*)(void *, UBYTE))1,NULL,bytes);
+      return 0;
+    }
+  }*/
+
+  //NewRawDoFmt("......New[] %ld\n",(void * (*)(void *, UBYTE))1,NULL,bytes);
+  return _MALLOC(bytes);
+}
+
+/*******************************************************************/
 
 APTR operator new(size_t bytes) throw()
 {
-  APTR res;
-
-  for (;;)
-  {
-    res = malloc(bytes);
-    if (res) break;
-    Delay(10);
-  }
-
-  return res;
+  //NewRawDoFmt("......!!! New %ld\n",(void * (*)(void *, UBYTE))1,NULL,bytes);
+  return _MALLOC(bytes);
 }
 
 void* operator new[](size_t t) throw ()
 {
+  //NewRawDoFmt("......!!! New[] %ld\n",(void * (*)(void *, UBYTE))1,NULL,t);
   return operator new(t);
+
 }
 
-void* operator new(size_t t,void *p) throw ()
+/*******************************************************************/
+
+/*void* operator new(size_t t,void *p) throw ()
 {
-  return p;
-}
+    NewRawDoFmt("......NewP %lx\n",(void * (*)(void *, UBYTE))1,NULL,p);
+	return p;
+}*/
 
 VOID operator delete[] (APTR mem)
 {
-  return operator delete(mem);
+    //NewRawDoFmt("......Delete[] %lx\n",(void * (*)(void *, UBYTE))1,NULL,mem);
+    return operator delete(mem);
 }
+
+/*******************************************************************/
 
 VOID operator delete (APTR mem)
 {
+  //NewRawDoFmt("......Delete %lx\n",(void * (*)(void *, UBYTE))1,NULL,mem);
   if (mem) free(mem);
 }
+
+/*******************************************************************/
 
 extern "C" VOID _INIT_4_InitMem ();
 VOID _INIT_4_InitMem ()
 {
+  #ifndef __MORPHOS__
+	  #if defined(__amigaos4__)
+	  MemoryPool = IExec->AllocSysObjectTags(ASOT_MEMPOOL,
+                                         ASOPOOL_MFlags,     MEMF_CLEAR | MEMF_SHARED,
+                                         ASOPOOL_Puddle,     32*1024,
+                                         ASOPOOL_Threshold,  8*1024,
+                                         ASOPOOL_Protected,  TRUE,
+                                         ASOPOOL_Name,       "HTMLview.mcc",
+                                         TAG_DONE);
+	  #else
+	  MemoryPool = CreatePool(MEMF_CLEAR | MEMF_ANY | MEMF_SEM_PROTECTED, 32*1024, 8*1024);
+	  #endif
+  #endif
 }
 
-extern "C" VOID _EXIT_4_CleanupMem();
-VOID _EXIT_4_CleanupMem()
+/*******************************************************************/
+
+extern "C" VOID _EXIT_4_CleanupMem ();
+VOID _EXIT_4_CleanupMem ()
 {
+  if(MemoryPool)
+  {
+
+	#ifndef __MORPHOS__
+	    #if defined(__amigaos4__)
+	    FreeSysObject(ASOT_MEMPOOL, MemoryPool);
+    	#else
+	    DeletePool(MemoryPool);
+    	MemoryPool = NULL;
+	    #endif
+    #endif
+  }
 }
+
+/*******************************************************************/
 
 #ifndef __MORPHOS__
 void *malloc(size_t size)
@@ -113,7 +292,7 @@ void *realloc(void *ptr, size_t size)
    result = malloc(size);
    if (result && ptr)
    {
-      size_t min_size = min(old_size, size);
+      size_t min_size = MIN(old_size, size);
       memcpy(result, ptr, min_size);
    }
 
@@ -122,4 +301,6 @@ void *realloc(void *ptr, size_t size)
    return result;
 }
 #endif
+
+/*******************************************************************/
 

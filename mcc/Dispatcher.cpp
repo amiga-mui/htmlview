@@ -274,7 +274,12 @@ DISPATCHER(_Dispatcher)
         else
         {
           D(DBF_STARTUP, "after DoSuperMethod4");
-          data->Share = new struct SharedData(cl, obj, data);
+          data->Share = new (std::nothrow) struct SharedData(cl, obj, data);
+          if (!data->Share)
+          {
+            CoerceMethod(cl->cl_Super,obj,OM_DISPOSE);
+            return 0;
+          }
         }
 
         D(DBF_STARTUP, "after DoSuperMethod5");
@@ -875,7 +880,8 @@ DISPATCHER(_Dispatcher)
       if(url && len > 7)
       {
         delete data->URL;
-        data->URL = new char[len+1];
+        data->URL = new (std::nothrow) char[len+1];
+        if (!data->URL) return 0;
         strcpy(data->URL, url);
 
         ULONG baselen, pagelen;
@@ -895,7 +901,8 @@ DISPATCHER(_Dispatcher)
               if(!(data->Flags & FLG_HostObjNotUsed))
               {
                 delete data->Local;
-                data->Local = new char[strlen(url+baselen+pagelen)];
+                data->Local = new (std::nothrow) char[strlen(url+baselen+pagelen)];
+                if (!data->Local) return 0;
                 strcpy(data->Local, url+baselen+pagelen+1);
               }
             }
@@ -911,6 +918,7 @@ DISPATCHER(_Dispatcher)
         }
 
         DoMethod(obj, MUIM_HTMLview_AbortAll);
+        data->Flags &= ~FLG_NoBackfill;
         result = data->PageID;
 
         HTMLview_SetPath(obj, url, data);
@@ -930,7 +938,8 @@ DISPATCHER(_Dispatcher)
       data->PostData = pmsg->Data;
       data->EncodingType = pmsg->EncodingType;
 
-      STRPTR url = new char[strlen(pmsg->URL)+20];
+      STRPTR url = new (std::nothrow) char[strlen(pmsg->URL)+20];
+      if (!url) return 0;
       sprintf(url, "%s?{%lu}¿", pmsg->URL, data->PageID);
 
       SetAttrs(data->Share->Obj,
@@ -950,10 +959,12 @@ DISPATCHER(_Dispatcher)
       ENTER();
 
       STRPTR url = data->URLBase;
-      STRPTR page = data->Page, comp_url = new char[2 + strlen(url) + strlen(page)];
+      STRPTR page = data->Page, comp_url = new (std::nothrow) char[2 + strlen(url) + strlen(page)];
+      if (!comp_url) return 0;
       sprintf(comp_url, "%s%s", url, page);
-      struct ParseThreadArgs *args = new ParseThreadArgs(data->PageID, obj, data, data->Flags, comp_url, data->PostData);
+      struct ParseThreadArgs *args = new (std::nothrow) ParseThreadArgs(data->PageID, obj, data, data->Flags, comp_url, data->PostData);
       delete comp_url;
+      if (!args) return 0;
 
       /*char str_args[10];
       sprintf(str_args, "%lx", (ULONG)args);*/
@@ -1314,7 +1325,8 @@ DISPATCHER(_Dispatcher)
       if((host = data->HostObject))
       {
         LONG x = cmsg->X-_mleft(obj), y = cmsg->Y-_mtop(obj);
-        struct HitTestMessage *hmsg = new struct HitTestMessage(x + data->Left, y + data->Top, host);
+        struct HitTestMessage *hmsg = new (std::nothrow) struct HitTestMessage(x + data->Left, y + data->Top, host);
+        if (!hmsg) return 0;
         if(!host->HitTest(*hmsg))
           hmsg->URL = NULL;
 
@@ -1353,7 +1365,8 @@ DISPATCHER(_Dispatcher)
     {
       ENTER();
       struct MUIP_HTMLview_AddSingleAnim *amsg = (struct MUIP_HTMLview_AddSingleAnim *)msg;
-      struct ObjectList *receivers = new struct ObjectList(amsg->receiver);
+      struct ObjectList *receivers = new (std::nothrow) struct ObjectList(amsg->receiver);
+      if (!receivers) return NULL;
       struct AnimInfo *item;
       if((item = data->Share->AddAnim(obj, data, amsg->picture, receivers)))
         item->Flags |= AnimFLG_DeleteObjList;
@@ -1405,7 +1418,8 @@ DISPATCHER(_Dispatcher)
     {
       ENTER();
       struct MUIP_HTMLview_ServerRequest *smsg = (struct MUIP_HTMLview_ServerRequest *)msg;
-      STRPTR dummy, url = new char[strlen(data->URL) + strlen(smsg->Argument) + 2];
+      STRPTR dummy, url = new (std::nothrow) char[strlen(data->URL) + strlen(smsg->Argument) + 2];
+      if (!url) return 0;
       if((dummy = strstr(strcpy(url, data->URL), "?")))
         *dummy = '\0';
       sprintf(url+strlen(url), "?%s", smsg->Argument);

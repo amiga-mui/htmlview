@@ -30,6 +30,7 @@
 #include "StringClass.h"
 
 #include <mui/BetterString_mcc.h>
+#include <new>
 
 #if defined(__MORPHOS__)
 #undef NewObject
@@ -84,7 +85,8 @@ BOOL IsIndexClass::Layout (struct LayoutMessage &lmsg)
 
     lmsg.UpdateBaseline(Height, Height-7);
 
-    struct ObjectNotify *notify = new struct ObjectNotify(Left, Baseline, this);
+    struct ObjectNotify *notify = new (std::nothrow) struct ObjectNotify(Left, Baseline, this);
+    if (!notify) return FALSE;
     lmsg.AddNotify(notify);
 
     Flags |= FLG_WaitingForSize;

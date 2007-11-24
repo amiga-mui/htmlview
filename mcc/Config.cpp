@@ -35,12 +35,13 @@
 //#include "Preference/ConfigItems.h"
 #include "ImageManager.h" /* struct ImageCache */
 #include "SharedData.h"
-#include "private.h"
+//#include "private.h"
 
 #include "HTMLview_mcp.h"
 
 #include <string.h>
 #include <stdio.h>
+#include <new>
 
 #define GetConfigItem(i, v) (APTR)GetConfigItemA(Obj, i, (ULONG)v, FALSE)
 #define GetConfigVal(i, v) GetConfigItemA(Obj, i, (ULONG)v, TRUE)
@@ -105,7 +106,8 @@ BOOL SharedData::InitConfig ()
   DitherType = GetConfigVal(MUICFG_HTMLview_DitherType, 0);
   ImageCacheSize = 1024 * GetConfigVal(MUICFG_HTMLview_ImageCacheSize, 512);
   GammaCorrection = GetConfigVal(MUICFG_HTMLview_GammaCorrection, 2200);
-  ImageStorage = new class ImageCache(ImageCacheSize);
+  ImageStorage = new (std::nothrow) class ImageCache(ImageCacheSize);
+  if (!ImageStorage) return FALSE;
 
   if(GetConfigVal(MUICFG_HTMLview_IgnoreDocCols, FALSE))
       Flags |= FLG_CustomColours;

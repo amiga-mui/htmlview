@@ -36,6 +36,7 @@
 #include "classes/HostClass.h"
 
 #include "private.h"
+#include <new>
 
 //#define OUTPUT
 //#define TIME_IT
@@ -65,11 +66,14 @@ VOID PrintTag (STRPTR tag)
   while(!TagEnd(*tagend))
     tagend++;
 
-  STRPTR newtag = new UBYTE [(tagend-tag)+1];
+  STRPTR newtag = new (std::nothrow) UBYTE [(tagend-tag)+1];
   strncpy(newtag, tag, tagend-tag);
-  newtag[tagend-tag] = '\0';
-  printf("%s>\n", newtag);
-  delete newtag;
+  if (newtag)
+  {
+    newtag[tagend-tag] = '\0';
+    printf("%s>\n", newtag);
+    delete newtag;
+  }
 }
 #endif
 
@@ -78,101 +82,94 @@ VOID PrintTag (STRPTR tag)
 //VOID ParseThread(REG(a0, STRPTR arguments ))
 VOID ParseThread(REG(a0,STRPTR arguments))
 {
-  //if(sscanf(arguments, "%x", (unsigned int *)&args))
-  if(1)
-  {
     struct ParseThreadArgs *args = (struct ParseThreadArgs *)arguments;
 
     struct Hook *loadhook = args->Data->LoadHook;
 
-    struct MsgPort *myport;
-    if((myport = CreateMsgPort()))
+    struct MsgPort myport;
+
+	myport.mp_Flags = PA_SIGNAL;
+	myport.mp_SigBit = (UBYTE)AllocSignal(-1);
+    myport.mp_SigTask = FindTask(NULL);
+    NewList(&myport.mp_MsgList);
+
+    //if((myport = CreateMsgPort()))
     {
       struct ParseInfoMsg msg;
-      msg.nm_node.mn_ReplyPort = myport;
+      msg.nm_node.mn_ReplyPort = &myport;
       msg.nm_node.mn_Length = sizeof(struct ParseInfoMsg);
       msg.Unique = args->PageID;
 
-      STRPTR buf = new char[2048];
-      struct ParseMessage pmsg(buf, 2048, loadhook, args->PageID);
+      ULONG success = FALSE;
 
-      ULONG flags = 0L;
-      if(args->Flags & FLG_Reload)
-        flags |= MUIF_HTMLview_LoadMsg_Reload;
-      if(args->PostData)
-        flags |= MUIF_HTMLview_LoadMsg_Post;
-
-      /* This is sort of a hack... */
-      if(args->PostData)
+      STRPTR buf = new (std::nothrow) char[2048];
+      if (buf)
       {
-        pmsg.LoadMsg.PostLength = strlen(args->PostData);
-        pmsg.LoadMsg.EncodingType = args->Data->EncodingType;
+        struct ParseMessage pmsg(buf, 2048, loadhook, args->PageID);
+
+        ULONG flags = 0L;
+        if(args->Flags & FLG_Reload)
+          flags |= MUIF_HTMLview_LoadMsg_Reload;
+        if(args->PostData)
+          flags |= MUIF_HTMLview_LoadMsg_Post;
+
+        /* This is sort of a hack... */
+        if(args->PostData)
+        {
+          pmsg.LoadMsg.PostLength = strlen(args->PostData);
+          pmsg.LoadMsg.EncodingType = args->Data->EncodingType;
+        }
+
+        if(pmsg.OpenURL(args->URL, args->HTMLview, flags))
+        {
+          pmsg.WriteURL(args->PostData);
+
+          if(pmsg.Fetch(32) && *pmsg.Current != '<')
+            pmsg.NextStartBracket();
+
+          class HostClass *obj = new (std::nothrow) class HostClass(args->HTMLview, args->Data);
+          if (obj)
+          {
+            msg.Class = ParseMsg_Startup;
+            msg.Startup.PMsg = &pmsg;
+            msg.Startup.Object = obj;
+
+            PutMsg(args->Data->MessagePort, &msg.nm_node);
+            WaitPort(&myport);
+            GetMsg(&myport);
+
+            pmsg.Host = obj;
+            obj->Parse(pmsg);
+            pmsg.NextStartBracket();
+            obj->setFlags(obj->flags() | FLG_AllElementsPresent);
+
+            msg.Class = ParseMsg_Shutdown;
+            msg.Shutdown.PMsg = &pmsg;
+            msg.Shutdown.Object = obj;
+
+    	    PutMsg(args->Data->MessagePort, &msg.nm_node);
+            WaitPort(&myport);
+            GetMsg(&myport);
+
+            pmsg.CloseURL();
+
+            success = TRUE;
+          }
+        }
+
       }
 
-      if(pmsg.OpenURL(args->URL, args->HTMLview, flags))
-      {
-        pmsg.WriteURL(args->PostData);
-
-        if(pmsg.Fetch(32) && *pmsg.Current != '<')
-          pmsg.NextStartBracket();
-
-        /*ObtainSemaphore(&mutex);
-		    D(DBF_ALWAYS, "PARSETHREAD %lx FOR OBJ %lx MSGPORT %lx ARGS %lx",FindTask(NULL),args->HTMLview,args->Data->MessagePort,args);
-        ReleaseSemaphore(&mutex);*/
-
-        class HostClass *obj = new class HostClass(args->HTMLview, args->Data);
-        msg.Class = ParseMsg_Startup;
-        msg.Startup.PMsg = &pmsg;
-        msg.Startup.Object = obj;
-/*        ObtainSemaphore(&mutex);
-        printf("0x%lx: Sending startup msg (0x%lx, 0x%lx)\n",  FindTask(NULL), obj, &pmsg);
-        ReleaseSemaphore(&mutex);
-*/        PutMsg(args->Data->MessagePort, &msg.nm_node);
-        WaitPort(myport);
-        GetMsg(myport);
-
-        pmsg.Host = obj;
-#ifdef TIME_IT
-        struct DateStamp t1, t2;
-        DateStamp(&t1);
-#endif
-        obj->Parse(pmsg);
-#ifdef TIME_IT
-        DateStamp(&t2);
-        LONG ticks = t2.ds_Tick - t1.ds_Tick;
-        if(ticks < 0)
-          ticks += TICKS_PER_SECOND * 60;
-
-        D(DBF_ALWAYS, "Time: %ld", ticks);
-#endif
-        pmsg.NextStartBracket();
-        obj->setFlags(obj->flags() | FLG_AllElementsPresent);
-
-        msg.Class = ParseMsg_Shutdown;
-        msg.Shutdown.PMsg = &pmsg;
-        msg.Shutdown.Object = obj;
-
-/*        ObtainSemaphore(&mutex);
-        printf("0x%lx: Sending shutdown msg (0x%lx, 0x%lx)\n",  FindTask(NULL), obj, &pmsg);
-        ReleaseSemaphore(&mutex);
-*/        PutMsg(args->Data->MessagePort, &msg.nm_node);
-        WaitPort(myport);
-        GetMsg(myport);
-
-        pmsg.CloseURL();
-      }
-      else
+      if (!success)
       {
         msg.Class = ParseMsg_Abort;
         PutMsg(args->Data->MessagePort, &msg.nm_node);
-        WaitPort(myport);
-        GetMsg(myport);
+        WaitPort(&myport);
+        GetMsg(&myport);
       }
-      DeleteMsgPort(myport);
-    }
+
+      //DeleteMsgPort(myport);
+	}
 
     delete args;
-  }
-
-  //D(DBF_ALWAYS, "ParseStack: %ld", StackUsage);
+//  kprintf("ParseStack: %ld\n", StackUsage);
 }

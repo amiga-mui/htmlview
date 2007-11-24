@@ -46,6 +46,6 @@ class TextAreaClass : public TreeClass
     LONG Left, Baseline;
     ULONG Columns, Rows, Width, Height;
     Object *MUIGadget;
-};
+};            
 
 #endif // TEXTAREACLASS_H

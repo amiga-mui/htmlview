@@ -143,7 +143,7 @@ ULONG AnimInfo::Tick ()
   struct AnimInfo *first = this;
   while(first)
   {
-    newtime = min(newtime, first->Update(tick));
+    newtime = MIN(newtime, first->Update(tick));
     first = first->Next;
   }
 
