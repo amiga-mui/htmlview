@@ -1,0 +1,295 @@
+## version $VER: HTMLview.catalog 3.1 (3.12.2007)
+## language czech
+## codeset 0
+;
+;
+; HTMLview.cd - HTMLview MUI custom prefs catalog description file
+;
+;#version 3
+;#language english
+;
+;
+MSG_Page_Fonts
+Text
+; Fonts
+;
+MSG_Page_Graphics
+Grafika
+; Graphics
+;
+MSG_Page_Settings
+Mo¾nosti
+; Settings
+;
+MSG_Page_Sample
+Ukázka
+; Sample
+;
+MSG_Fonts_Normal
+Normální
+; Normal
+;
+MSG_Fonts_Normal_Key
+N
+; N
+;
+MSG_Fonts_Small
+Malá
+; Small
+;
+MSG_Fonts_Small_Key
+M
+; S
+;
+MSG_Fonts_Large
+Velká
+; Large
+;
+MSG_Fonts_Large_Key
+l
+; L
+;
+MSG_Fonts_Fixed
+Fixní
+; Fixed
+;
+MSG_Fonts_Fixed_Key
+F
+; F
+;
+MSG_Fonts_H1
+H1
+; H1
+;
+MSG_Fonts_H1_Key
+1
+; 1
+;
+MSG_Fonts_H2
+H2
+; H2
+;
+MSG_Fonts_H2_Key
+2
+; 2
+;
+MSG_Fonts_H3
+H3
+; H3
+;
+MSG_Fonts_H3_Key
+3
+; 3
+;
+MSG_Fonts_H4
+H4
+; H4
+;
+MSG_Fonts_H4_Key
+4
+; 4
+;
+MSG_Fonts_H5
+H5
+; H5
+;
+MSG_Fonts_H5_Key
+5
+; 5
+;
+MSG_Fonts_H6
+H6
+; H6
+;
+MSG_Fonts_H6_Key
+6
+; 6
+;
+MSG_Colours_Title
+Barvy
+; Colours
+;
+MSG_Colours_Backgound
+Pozadí
+; Background
+;
+MSG_Colours_Backgound_Key
+B
+; B
+;
+MSG_Colours_Text
+Text
+; Text
+;
+MSG_Colours_Text_Key
+T
+; T
+;
+MSG_Colours_NormalLink
+Standardní odkaz
+; Normal link
+;
+MSG_Colours_NormalLink_Key
+n
+; N
+;
+MSG_Colours_VisitedLink
+Nav¹tívený odkaz
+; Visited link
+;
+MSG_Colours_VisitedLink_Key
+v
+; V
+;
+MSG_Colours_SelectedLink
+Vybraný odkaz
+; Selected link
+;
+MSG_Colours_SelectedLink_Key
+y
+; S
+;
+MSG_Colours_IgnoreColours
+Ignorovat barvy definované v dokumentu
+; Ignore document provided colours
+;
+MSG_Colours_IgnoreColours_Key
+I
+; I
+;
+MSG_Images_Title
+Obrázky
+; Images
+;
+MSG_Images_Listitems
+Obrázky polo¾ek v seznamu
+; Listitem images
+;
+MSG_Images_Listitems_Key
+l
+; L
+;
+MSG_Images_Dither
+Rozklad barev
+; Dither
+;
+MSG_Images_Dither_Key
+d
+; D
+;
+MSG_Images_Dither_FS
+Floyd/Steinberg
+; Floyd/Steinberg
+;
+MSG_Images_Dither_None
+vypnuto
+; None
+;
+MSG_Images_CacheSize
+Velikost cache
+; Cache size
+;
+MSG_Images_CacheSize_Key
+c
+; C
+;
+MSG_Images_Gamma
+Korekce gamma
+; Gamma correction
+;
+MSG_Images_Gamma_Key
+g
+; G
+;
+MSG_PageScroll_Title
+Posouvání dokumentu
+; Page scroll
+;
+MSG_PageScroll_Smooth
+Plynulé
+; Smooth
+;
+MSG_PageScroll_Smooth_Key
+y
+; S
+;
+MSG_PageScroll_Key
+Klávesa
+; Key
+;
+MSG_PageScroll_Key_Key
+K
+; K
+;
+MSG_Hotkey_Snoop
+Zachytit
+; Snoop
+;
+MSG_PageScroll_Move
+Posun
+; Move
+;
+MSG_PageScroll_Move_Key
+n
+; M
+;
+MSG_PageScroll_Move_Down
+%ld %% dolù
+; %ld%% down
+;
+MSG_SampleButton
+Ukázka
+; Sample
+;
+MSG_SampleButton_Key
+a
+; A
+;
+MSG_SampleWindow_Title
+Ukázka vlastností HTMLview
+; HTMLview sample
+;
+MSG_Page_SampleText
+<html>\
+ <body>\
+  <p align=\"center\">\
+   <b><u>HTMLview</u></b><br>\
+   <small>mcc %ld.%ld<br></small>\
+   <small>mcp %ld.%ld<br><br></small>\
+   Copyright 1997-2007 Allan Odgaard<br>\
+   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+   Dekodéry obrázkù: Gunther Nikl<br>\
+  <hr>\
+  </p>\
+  <p align=\"center\">\
+   Nejnovìj¹í verzi najdete na stránce:<br>\
+   http://www.sourceforge.net/projects/htmlview-mcc/\
+   <br>\
+   <br>\
+   <br>\
+   <small>Zkuste do tohoto pole pøetáhnout a pustit soubor ve formátu HTML!</small>\
+  </p>\
+ </body>\
+</html>
+; <html>\
+;  <body>\
+;   <p align=\"center\">\
+;    <b><u>HTMLview</u></b><br>\
+;    <small>mcc %ld.%ld<br></small>\
+;    <small>mcp %ld.%ld<br><br></small>\
+;    Copyright 1997-2007 by Allan Odgaard<br>\
+;    Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+;    Image decoders by Gunther Nikl<br>\
+;   <hr>\
+;   </p>\
+;   <p align=\"center\">\
+;    For the latest version, try:<br>\
+;    http://www.sourceforge.net/projects/htmlview-mcc/\
+;    <br>\
+;    <br>\
+;    <br>\
+;    <small>You can drop HTML files onto this gadget!</small>\
+;   </p>\
+;  </body>\
+; </html>
+;

@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-12-03 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * mcp/locale/czech.ct: added Czech catalog translation
+
 2007-11-25 Jens Langner <Jens.Langner@light-speed.de>
 
   * mcc, mcp: applied another large patch kindly provided by
