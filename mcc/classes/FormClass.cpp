@@ -52,9 +52,13 @@ VOID FormClass::ExportForm (struct ExportFormMessage &emsg)
       TreeClass::ExportForm(emsg2);
 
       STRPTR base = (STRPTR)DoMethod(HTMLview, MUIM_HTMLview_AddPart, (ULONG)Action);
-      ULONG len = strlen(base) + emsg2.StrLength + 1;
+      ULONG len = strlen(base) + emsg2.StrLength + 2; /* alfie - bad overflow */
       STRPTR url = new (std::nothrow) char[len];
-      if (!url) return;
+      if (!url)
+      {
+        if (base) delete base;
+      	return;
+      }
       ULONG index = sprintf(url, "%s?", base ? base : "");
       if (base) delete base;
 
