@@ -110,20 +110,21 @@ VOID CreateSampleText(Object *htmlview)
 DISPATCHER(_DispatcherP)
 {
     struct InstData_MCP *data = (struct InstData_MCP *)INST_DATA(cl, obj);
+    ULONG result = 0;
 
     if (msg->MethodID!=OM_NEW)
         data = (struct InstData_MCP *)INST_DATA(cl, obj);
 
-    ULONG result = 0;
     switch(msg->MethodID)
     {
         case OM_NEW:
         {
             if((obj = (Object *)DoSuperMethodA(cl, obj, (Msg)msg)))
             {
+                Object *group;
+
                 data = (struct InstData_MCP *)INST_DATA(cl, obj);
 
-                Object *group;
                 if((group = CreatePrefsGroup(obj,data)))
                 {
                     ULONG i;
