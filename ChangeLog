@@ -5,6 +5,14 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2007-12-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: preparations for the first new official release for AmigaOS4
+    and MorphOS. Please note, however, that the class is still in very
+    early beta state. So expect anything to happen :)
+  * include/mccinit.c, mcc: adapted sources to get compiled for AmigaOS4
+    again.
+
 2007-12-15  Alfonso Ranieri <alforan@tin.it>
 
   * FormClass.cpp: Fixed a buffer overflow 

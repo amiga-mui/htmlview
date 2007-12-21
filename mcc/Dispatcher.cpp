@@ -60,9 +60,11 @@
 #include "private.h"
 #include <stdio.h>
 
+#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
+#endif
 
 BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg);
 ULONG mGet (Object *obj, struct IClass *cl, struct opGet *msg);

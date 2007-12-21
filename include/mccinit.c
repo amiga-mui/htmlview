@@ -206,12 +206,12 @@ static const char UserLibName[] = CLASS;
 static const char UserLibID[]   = "$VER: " USERLIBID;
 
 #ifdef SUPERCLASS
-static struct MUI_CustomClass *ThisClass = NULL;
+/*static*/ struct MUI_CustomClass *ThisClass = NULL;
 DISPATCHERPROTO(_Dispatcher);
 #endif
 
 #ifdef SUPERCLASSP
-static struct MUI_CustomClass *ThisClassP = NULL;
+/*static*/ struct MUI_CustomClass *ThisClassP = NULL;
 DISPATCHERPROTO(_DispatcherP);
 #endif
 
