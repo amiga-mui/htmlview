@@ -5,6 +5,8 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+#### v13.4 RELEASE ############################################################
+
 2007-12-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: preparations for the first new official release for AmigaOS4

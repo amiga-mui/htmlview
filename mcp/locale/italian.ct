@@ -1,32 +1,28 @@
-## version $VER: HTMLview.catalog 3.1 (3.12.2007)
-## language czech
-## codeset 0
+## version $VER: HTMLview.catalog 3.0 (22.11.2007)
+## language italiano
+## codeset 111
+## chunk AUTH Alfonso Ranieri
 ;
-;
-; HTMLview.cd - HTMLview MUI custom prefs catalog description file
-;
-;#version 3
-;#language english
-;
+; flexcat HTMLview.cd HTMLview-ita.ct CATALOG locale:catalogs/italiano/HTMLview.catalog NOOPTIM
 ;
 MSG_Page_Fonts
-Text
+Caratteri
 ; Fonts
 ;
 MSG_Page_Graphics
-Grafika
+Grafica
 ; Graphics
 ;
 MSG_Page_Settings
-Mo¾nosti
+Impostazioni
 ; Settings
 ;
 MSG_Page_Sample
-Ukázka
+Esempio
 ; Sample
 ;
 MSG_Fonts_Normal
-Normální
+Normale
 ; Normal
 ;
 MSG_Fonts_Normal_Key
@@ -34,23 +30,23 @@ N
 ; N
 ;
 MSG_Fonts_Small
-Malá
+Piccolo
 ; Small
 ;
 MSG_Fonts_Small_Key
-M
+P
 ; S
 ;
 MSG_Fonts_Large
-Velká
+Grande
 ; Large
 ;
 MSG_Fonts_Large_Key
-l
+G
 ; L
 ;
 MSG_Fonts_Fixed
-Fixní
+Fisso
 ; Fixed
 ;
 MSG_Fonts_Fixed_Key
@@ -106,19 +102,19 @@ MSG_Fonts_H6_Key
 ; 6
 ;
 MSG_Colours_Title
-Barvy
+Colori
 ; Colours
 ;
 MSG_Colours_Backgound
-Pozadí
+Sfondo
 ; Background
 ;
 MSG_Colours_Backgound_Key
-B
+f
 ; B
 ;
 MSG_Colours_Text
-Text
+Testo
 ; Text
 ;
 MSG_Colours_Text_Key
@@ -126,15 +122,15 @@ T
 ; T
 ;
 MSG_Colours_NormalLink
-Standardní odkaz
+Link
 ; Normal link
 ;
 MSG_Colours_NormalLink_Key
-n
+L
 ; N
 ;
 MSG_Colours_VisitedLink
-Nav¹tívený odkaz
+Link visitato
 ; Visited link
 ;
 MSG_Colours_VisitedLink_Key
@@ -142,15 +138,15 @@ v
 ; V
 ;
 MSG_Colours_SelectedLink
-Vybraný odkaz
+Link selezionato
 ; Selected link
 ;
 MSG_Colours_SelectedLink_Key
-y
+e
 ; S
 ;
 MSG_Colours_IgnoreColours
-Ignorovat barvy definované v dokumentu
+Ignora i colori documento
 ; Ignore document provided colours
 ;
 MSG_Colours_IgnoreColours_Key
@@ -158,23 +154,23 @@ I
 ; I
 ;
 MSG_Images_Title
-Obrázky
+Immagini
 ; Images
 ;
 MSG_Images_Listitems
-Obrázky polo¾ek v seznamu
+Immagini liste
 ; Listitem images
 ;
 MSG_Images_Listitems_Key
-l
+g
 ; L
 ;
 MSG_Images_Dither
-Rozklad barev
+Retinatura
 ; Dither
 ;
 MSG_Images_Dither_Key
-d
+t
 ; D
 ;
 MSG_Images_Dither_FS
@@ -182,114 +178,81 @@ Floyd/Steinberg
 ; Floyd/Steinberg
 ;
 MSG_Images_Dither_None
-vypnuto
+Nessuna
 ; None
 ;
 MSG_Images_CacheSize
-Velikost cache
+Grandezza cache
 ; Cache size
 ;
 MSG_Images_CacheSize_Key
-c
+r
 ; C
 ;
 MSG_Images_Gamma
-Korekce gamma
+Correzione gamma
 ; Gamma correction
 ;
 MSG_Images_Gamma_Key
-g
+o
 ; G
 ;
 MSG_PageScroll_Title
-Posouvání dokumentu
+Scroll pagina
 ; Page scroll
 ;
 MSG_PageScroll_Smooth
-Plynulé
+Delicato
 ; Smooth
 ;
 MSG_PageScroll_Smooth_Key
-y
+D
 ; S
 ;
 MSG_PageScroll_Key
-Klávesa
+Sequenza
 ; Key
 ;
 MSG_PageScroll_Key_Key
-K
+z
 ; K
 ;
 MSG_Hotkey_Snoop
-Zachytit
+Registra
 ; Snoop
 ;
 MSG_PageScroll_Move
-Posun
+Muovi del
 ; Move
 ;
 MSG_PageScroll_Move_Key
-n
+M
 ; M
 ;
 MSG_PageScroll_Move_Down
-%ld %% dolù
+%ld%% in giù
 ; %ld%% down
 ;
 MSG_SampleButton
-Ukázka
+Esempio
 ; Sample
 ;
 MSG_SampleButton_Key
-a
+E
 ; A
 ;
 MSG_SampleWindow_Title
-Ukázka vlastností HTMLview
+Esempio HTMLview
 ; HTMLview sample
 ;
 MSG_Page_SampleText
-<html>\
- <body>\
-  <p align=\"center\">\
-   <b><u>HTMLview</u></b><br>\
-   <small>mcc %ld.%ld<br></small>\
-   <small>mcp %ld.%ld<br><br></small>\
-   Copyright 1995-2000 Allan Odgaard<br>\
-   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
-   Dekodéry obrázkù: Gunther Nikl<br>\
-  <hr>\
-  </p>\
-  <p align=\"center\">\
-   Nejnovìj¹í verzi najdete na stránce:<br>\
-   http://www.sourceforge.net/projects/htmlview-mcc/\
-   <br>\
-   <br>\
-   <br>\
-   <small>Zkuste do tohoto pole pøetáhnout a pustit soubor ve formátu HTML!</small>\
-  </p>\
- </body>\
-</html>
-; <html>\
-;  <body>\
-;   <p align=\"center\">\
-;    <b><u>HTMLview</u></b><br>\
-;    <small>mcc %ld.%ld<br></small>\
-;    <small>mcp %ld.%ld<br><br></small>\
-;    Copyright 1997-2007 by Allan Odgaard<br>\
-;    Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
-;    Image decoders by Gunther Nikl<br>\
-;   <hr>\
-;   </p>\
-;   <p align=\"center\">\
-;    For the latest version, try:<br>\
-;    http://www.sourceforge.net/projects/htmlview-mcc/\
-;    <br>\
-;    <br>\
-;    <br>\
-;    <small>You can drop HTML files onto this gadget!</small>\
-;   </p>\
-;  </body>\
-; </html>
+<html><body><p align=\"center\"><b><u>HTMLview</u></b><br>\n\
+<small>mcc %ld.%ld<br></small><small>mcp %ld.%ld<br><br></small>\n\
+Copyright 1995-2000 Allan Odgaard<br>\n\
+Copyright 2005-2007 HTMLview Open Source Team<br>\n\
+I decoder delle immagini sono di Gunther Nikl<br><hr>\n\
+</p><p align=\"center\">Aggiornamenti disponibili su:<br>\n\
+http://www.sourceforge.net/projects/htmlview-mcc/<br><br><br>\n\
+<small>Puoi trascinare file HTML qui!</small></p></body></html>
+; <html> <body>  <p align=\"center\">   <b><u>HTMLview</u></b><br>   <small>mcc %ld.%ld<br></small>   <small>mcp %ld.%ld<br><br></small>   Copyright 1997-2007 by Allan Odgaard<br>   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>   Image decoders by Gunther Nikl<br>  <hr>  </p>  <p align=\"center\">   For the latest version, try:<br>   http://www.sourceforge.net/projects/htmlview-mcc/   <br>   <br>   <br>   <small>You can drop HTML files onto this gadget!</small>  </p> </body></html>
 ;

@@ -1,0 +1,85 @@
+Short:        HTMLview custom class for MUI, v13.4
+Author:       HTMLview.mcc Open Source Team
+Uploader:     Jens Langner <Jens.Langner@light-speed.de>
+Type:         dev/mui
+Version:      13.4
+Replaces:     dev/mui/MCC_TextEditor-12.6.lha
+Requires:     AmigaOS 3.0+ or MorphOS, MUI 3.8+, 68020+/PPC604e+
+Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2
+
+ABOUT HTMLview.mcc
+******************
+
+HTMLview.mcc is a custom class for MUI which offers HTML viewing capabilities.
+The class supports most of the HTML 4.0 standard as defined by W3C, it is
+infact often more accurate than most browsers.
+
+It is very well suited for mail programs or similar, which just wants to
+display HTML fast, and the class really is fast, I have still not seen anything
+like it :-)
+
+Please note that the class should be regarded as a prototype. It is still
+not finished are mature yet.
+
+Its main features are:
+
+ * Incremental rendering of the page, using a seperate process for the
+   parsing, which allows the MUI application to be fully responsive while
+   chewing on a document.
+ * Progressive display of images for which a decoder module exists
+   (currently GIF / GIFAnim, JPEG & PNG)
+ * Text can be marked and copied to the clipboard.
+ * Allows searching in the document.
+ * Extensive HTML support, including floating tables with background images,
+   frames, forms etc.
+ * And, it's very fast... 
+
+Known "bugs":
+
+ * Text outside a <Body> ... </Body> pair is not shown. Thus those pages
+   which doesn't have such tags are simply rendered blank.
+ * Entities without an ending semi-colon are not interpreted. E.g. &amp must
+   be written as &amp; before HTMLview accepts it.
+ * The Floyd Steinberg dither has a tendency to append less diffusion to
+   edges, which can make tiled backgrounds look as if a line was drawn
+   between each tile.
+ * The datatype wrapper, for image decoding, only seems to work with the P96
+   picture.datatype. 
+
+LEGALESE
+********
+
+HTMLview.mcc was originally written in 1995 and is Copyright (C) 1995-2000
+by Allan Odgaard. As of version 13.4, released in December 2007, the gadget is
+maintained and Copyright (C) 2005-2007 by the HTMLview.mcc Open Source Team.
+
+HTMLview.mcc is distributed under the GNU Lesser General Public License
+(LGPL) and the development is hosted at SourceForge.net:
+
+            http://www.sourceforge.net/projects/htmlview-mcc/
+
+Please consult the included "COPYING" file for more detailed information
+about the licensing of the gadget and its source code.
+
+
+CHANGES SINCE THE LAST RELEASE
+******************************
+
+Please note that the v13 version of HTMLview.mcc is the first open source
+version available. It is still largly untested and therefore may not work
+as expected. We are currently working hard on getting HTMLview ready for
+a larger crowd so that applications can use this class for providing
+HTML viewing capabilities. But for now this v13 release is just meant to
+be the first developer snapshot since the release of the sources under
+an open source license.
+
+In addition, please note that the v13 version of the mcc is currently only
+available for AmigaOS4 and MorphOS. Versions for AmigaOS3 systems are to
+be available later on. So for the moment the v12.6 version for 68k is
+included due to backward compatibility reasons. Also the image decoders
+are currently only available as m68k versions. We are currently
+investigating the possibility to replace them or provide them as native
+PowerPC versions.
+
+Please refer to the included ChangeLog in the archive for a detailed information
+on the changes since the last public release.
