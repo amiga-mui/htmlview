@@ -1,6 +1,6 @@
-## version $VER: HTMLview.catalog 3.1 (3.12.2007)
+## version $VER: HTMLview_mcp.catalog 3.2 (4.1.2008)
 ## language czech
-## codeset 0
+## codeset 5
 ;
 ;
 ; HTMLview.cd - HTMLview MUI custom prefs catalog description file
@@ -10,7 +10,7 @@
 ;
 ;
 MSG_Page_Fonts
-Text
+Písma
 ; Fonts
 ;
 MSG_Page_Graphics
@@ -34,7 +34,7 @@ N
 ; N
 ;
 MSG_Fonts_Small
-Malá
+Malé
 ; Small
 ;
 MSG_Fonts_Small_Key
@@ -42,7 +42,7 @@ M
 ; S
 ;
 MSG_Fonts_Large
-Velká
+Velké
 ; Large
 ;
 MSG_Fonts_Large_Key
@@ -114,7 +114,7 @@ Pozadí
 ; Background
 ;
 MSG_Colours_Backgound_Key
-B
+P
 ; B
 ;
 MSG_Colours_Text
@@ -126,11 +126,11 @@ T
 ; T
 ;
 MSG_Colours_NormalLink
-Standardní odkaz
+Normální odkaz
 ; Normal link
 ;
 MSG_Colours_NormalLink_Key
-n
+N
 ; N
 ;
 MSG_Colours_VisitedLink
@@ -162,27 +162,27 @@ Obrázky
 ; Images
 ;
 MSG_Images_Listitems
-Obrázky polo¾ek v seznamu
+Obrázky pro seznam
 ; Listitem images
 ;
 MSG_Images_Listitems_Key
-l
+O
 ; L
 ;
 MSG_Images_Dither
-Rozklad barev
+Kvalita barev obrázkù
 ; Dither
 ;
 MSG_Images_Dither_Key
-d
+K
 ; D
 ;
 MSG_Images_Dither_FS
-Floyd/Steinberg
+Metoda Floyd/Steinberg
 ; Floyd/Steinberg
 ;
 MSG_Images_Dither_None
-vypnuto
+Bez úprav
 ; None
 ;
 MSG_Images_CacheSize
@@ -206,15 +206,15 @@ Posouvání dokumentu
 ; Page scroll
 ;
 MSG_PageScroll_Smooth
-Plynulé
+Posouvat plynule
 ; Smooth
 ;
 MSG_PageScroll_Smooth_Key
-y
+s
 ; S
 ;
 MSG_PageScroll_Key
-Klávesa
+Klávesová zkratka
 ; Key
 ;
 MSG_PageScroll_Key_Key
@@ -226,11 +226,11 @@ Zachytit
 ; Snoop
 ;
 MSG_PageScroll_Move
-Posun
+Míra posunutí
 ; Move
 ;
 MSG_PageScroll_Move_Key
-n
+M
 ; M
 ;
 MSG_PageScroll_Move_Down
@@ -277,7 +277,7 @@ MSG_Page_SampleText
 ;    <b><u>HTMLview</u></b><br>\
 ;    <small>mcc %ld.%ld<br></small>\
 ;    <small>mcp %ld.%ld<br><br></small>\
-;    Copyright 1997-2007 by Allan Odgaard<br>\
+;    Copyright 1995-2000 by Allan Odgaard<br>\
 ;    Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
 ;    Image decoders by Gunther Nikl<br>\
 ;   <hr>\
