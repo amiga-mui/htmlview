@@ -67,6 +67,7 @@ struct EntityInfo EntityTable[] =
   { "atilde", 227 },
   { "auml",   228 },
   { "brvbar", 166 },
+  { "bull",   183 },
   { "Ccedil", 199 },
   { "ccedil", 231 },
   { "cedil",  184 },
