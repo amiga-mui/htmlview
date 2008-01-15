@@ -60,11 +60,9 @@
 #include "private.h"
 #include <stdio.h>
 
-#if defined(__MORPHOS__)
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
-#endif
 
 BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg);
 ULONG mGet (Object *obj, struct IClass *cl, struct opGet *msg);
@@ -213,6 +211,9 @@ struct alfieMsg
     struct ParseThreadArgs *args;
 };
 
+#define NewRawDoFmt(__p0, __p1, __p2, ...) \
+	(((STRPTR (*)(void *, CONST_STRPTR , APTR (*)(APTR, UBYTE), STRPTR , ...))*(void**)((long)(EXEC_BASE_NAME) - 922))((void*)(EXEC_BASE_NAME), __p0, __p1, __p2, __VA_ARGS__))
+
 DISPATCHER(_Dispatcher)
 {
   ULONG result = NULL;
@@ -221,8 +222,7 @@ DISPATCHER(_Dispatcher)
   if (msg->MethodID!=OM_NEW)
 	data = (struct HTMLviewData *)INST_DATA(cl, obj);
 
-//  D(DBF_ALWAYS, "HTMLview: Method = 0x%08lx", msg->MethodID);
-
+//  kprintf("HTMLview: Method = 0x%08lx\n", msg->MethodID);
   switch(msg->MethodID)
   {
     case OM_NEW:
@@ -235,11 +235,13 @@ DISPATCHER(_Dispatcher)
       {
         { MUIA_CustomBackfill, TRUE },
 //        { MUIA_Background, MUII_SHADOWFILL },
-//        { MUIA_FillArea, FALSE },
+        { MUIA_FillArea, FALSE },
         { MUIA_InnerBottom, 0 },
         { MUIA_InnerLeft, 0 },
         { MUIA_InnerRight, 0 },
         { MUIA_InnerTop, 0 },
+		//#define MUIA_DoubleBufferClipped 0x8042f282
+        //{MUIA_DoubleBufferClipped, 1},
         { TAG_MORE, (ULONG)nmsg->ops_AttrList }
       };
 
@@ -250,8 +252,8 @@ DISPATCHER(_Dispatcher)
         struct HTMLviewData *data = (struct HTMLviewData *)INST_DATA(cl, obj);
 
         D(DBF_STARTUP, "after DoSuperMethod");
-		    D(DBF_ALWAYS, "HTMLVIEW OBJECT %lx",obj);
 
+		//kprintf("HTMLVIEW OBJECT %lx\n",obj);
         data->ImageLoadHook = data->LoadHook = &DefaultLoadHook;
 
         //InitHook(&LayoutHook, LayoutHook, data);
@@ -294,81 +296,79 @@ DISPATCHER(_Dispatcher)
 
         D(DBF_STARTUP, "before CreateMsgPort!");
 
-		data->MessagePort = new (std::nothrow) struct MsgPort;
-        if (data->MessagePort)
+
+        int sigBit;
+		
+        if (tag = FindTagItem(MUIA_HTMLview_SigBit,nmsg->ops_AttrList))
         {
-          int sigBit;
+		  sigBit = (int)tag->ti_Data;
+		  data->SigBit = -1;
+        }
+        else
+        {
+          data->SigBit = sigBit = AllocSignal(-1);
+        }
+
+        if (sigBit>0)
+        {
+          data->MessagePort.mp_Flags   = PA_SIGNAL;
+          data->MessagePort.mp_SigBit  = (UBYTE)sigBit;
+          data->MessagePort.mp_SigTask = FindTask(NULL);
+          NewList(&data->MessagePort.mp_MsgList);
 
           D(DBF_STARTUP, "MsgPort created.");
 
-		  if (tag = FindTagItem(MUIA_HTMLview_SigBit,nmsg->ops_AttrList))
-			data->sigBit = sigBit = (int)tag->ti_Data;
+		  //kprintf("MSGPORT %lx %lx\n",obj,data->MessagePort);
+          data->ihnode.ihn.ihn_Object  = obj;
+          data->ihnode.ihn.ihn_Signals = 1 << sigBit;
+          data->ihnode.ihn.ihn_Flags   = 0L;
+          data->ihnode.ihn.ihn_Method  = MUIM_HTMLview_ExtMessage;
+
+          sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", (ULONG)obj);
+
+          if((tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList)))
+          {
+            D(DBF_STARTUP, "creating scollgroupclass object...");
+
+            return (ULONG)NewObject(ScrollGroupClass->mcc_Class, NULL,
+                                    MUIA_ScrollGroup_Scrolling,  tag->ti_Data,
+                                    MUIA_ScrollGroup_HTMLview,   obj,
+                                    TAG_DONE);
+          }
           else
           {
-          	data->sigBit = -1;
-            sigBit = AllocSignal(-1);
-          }
-
-          if (sigBit>=0)
-          {
-            data->MessagePort->mp_Flags   = PA_SIGNAL;
-            data->MessagePort->mp_SigBit  = (UBYTE)(sigBit);
-            data->MessagePort->mp_SigTask = FindTask(NULL);
-            NewList(&data->MessagePort->mp_MsgList);
-
-  		    //kprintf("MSGPORT %lx %lx\n",obj,data->MessagePort);
-            data->ihnode.ihn.ihn_Object  = obj;
-            data->ihnode.ihn.ihn_Signals = 1 << data->MessagePort->mp_SigBit;
-            data->ihnode.ihn.ihn_Flags   = 0L;
-            data->ihnode.ihn.ihn_Method  = MUIM_HTMLview_ExtMessage;
-
-            sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", (ULONG)obj);
-
-            if((tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList)))
-            {
-              D(DBF_STARTUP, "creating scollgroupclass object...");
-
-              return     (ULONG)NewObject(ScrollGroupClass->mcc_Class,     NULL,
-              MUIA_ScrollGroup_Scrolling,                          tag->ti_Data,
-              MUIA_ScrollGroup_HTMLview, obj, TAG_DONE); } else { D(DBF_STARTUP,
-              "created HTMLview object.");
-
-            }
+            D(DBF_STARTUP, "created HTMLview object.");
 
             RETURN(obj);
             return((ULONG)obj);
           }
-
-          delete data->MessagePort;
         }
-		
-		CoerceMethod(cl->cl_Super,obj,OM_DISPOSE);
-        obj = NULL;
+        else
+        {
+		  D(DBF_STARTUP, "MsgPort NOT Created!!");
+          CoerceMethod(cl, obj, OM_DISPOSE);
+        }
       }
     }
     break;
 
-    case OM_DISPOSE: 
-    { 
-      
-      ENTER();
+    case OM_DISPOSE: { ENTER();
 
       // This deletes notifies and floading images (should be in ~LayoutMessage()) */
-      D(DBF_ALWAYS, "--------- DISPOSE 1 %lx",obj);
+      //kprintf("--------- DISPOSE 1 %lx\n",obj);
       data->LayoutMsg.Reset(0, 0);
-      D(DBF_ALWAYS, "--------- DISPOSE 2 %lx",obj);
+      //kprintf("--------- DISPOSE 2 %lx\n",obj);
 
       if(data->ParseThread) Signal(&data->ParseThread->pr_Task, SIGBREAKF_CTRL_C);
 
-      D(DBF_ALWAYS, "--------- DISPOSE 3 %lx",obj);
+      //kprintf("--------- DISPOSE 3 %lx\n",obj);
 
       while(data->ParseCount)
       {
         struct ParseInfoMsg *msg;
 
-        D(DBF_ALWAYS, "--------- DISPOSE 4 %lx %ld", obj, data->ParseCount);
-
-    		msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort);
+        //kprintf("--------- DISPOSE 4 %lx %ld\n",obj,data->ParseCount);
+		msg = (struct ParseInfoMsg *)GetMsg(&data->MessagePort);
         if (msg)
         {
           switch(msg->Class)
@@ -410,27 +410,26 @@ DISPATCHER(_Dispatcher)
             break;
           }
           ReplyMsg(&msg->nm_node);
-
-          D(DBF_ALWAYS, " --------- DISPOSE 4.1 Message  %lx %ld", obj, data->ParseCount);
+          //kprintf(" --------- DISPOSE 4.1 Message  %lx %ld\n",obj,data->ParseCount);
         }
-        else WaitPort(data->MessagePort);
+        else WaitPort(&data->MessagePort);
       }
 
-      D(DBF_ALWAYS, "--------- DISPOSE 5 %lx", obj);
+      //kprintf("--------- DISPOSE 5 %lx\n",obj);
       while(FindTask(data->ParseThreadName))
       {
-        D(DBF_ALWAYS, "--------- DISPOSE 6 %lx", obj);
+        //kprintf("--------- DISPOSE 6 %lx\n",obj);
         Delay(1);
-  	  }
+	  }
 
-      if(data->MessagePort)
-        DeleteMsgPort(data->MessagePort);
+      if (data->SigBit>0)
+        FreeSignal(data->SigBit);
 
-      D(DBF_ALWAYS, "--------- DISPOSE 7 %lx",obj);
+      //kprintf("--------- DISPOSE 7 %lx\n",obj);
 
       RemoveChildren(obj, data);
 
-      D(DBF_ALWAYS, "--------- DISPOSE 8 %lx",obj);
+      //kprintf("--------- DISPOSE 8 %lx\n",obj);
       delete data->LayoutMsg.FirstGadget;
       delete data->HostObject;
       delete data->URLBase;
@@ -438,7 +437,7 @@ DISPATCHER(_Dispatcher)
       delete data->Local;
       delete data->URL;
 
-      D(DBF_ALWAYS, "--------- DISPOSE 9 %lx",obj);
+      //kprintf("--------- DISPOSE 9 %lx\n",obj);
 
       struct MUIR_HTMLview_GetContextInfo *cinfo = &data->ContextInfo;
       delete cinfo->URL;
@@ -449,9 +448,9 @@ DISPATCHER(_Dispatcher)
       if(data->Flags & FLG_RootObj)
         delete data->Share;
 
-      D(DBF_ALWAYS, "--------- DISPOSE 10 %lx", obj);
+      //kprintf("--------- DISPOSE 10 %lx\n",obj);
       result = DoSuperMethodA(cl, obj, msg);
-      D(DBF_ALWAYS, "--------- DISPOSE 11 %lx", obj);
+      //kprintf("--------- DISPOSE 11 %lx\n",obj);
     }
     break;
 
@@ -518,6 +517,7 @@ DISPATCHER(_Dispatcher)
       struct MUIP_Draw *dmsg = (struct MUIP_Draw *)msg;
 
       result = DoSuperMethodA(cl, obj, msg);
+
       if(dmsg->flags & MADF_DRAWUPDATE)
       {
         LONG minx, miny, maxx, maxy;
@@ -528,6 +528,7 @@ DISPATCHER(_Dispatcher)
         LONG xoffset = data->Left - data->XOffset, yoffset = data->Top - data->YOffset;
 
         APTR cliphandle = MUI_AddClipping(muiRenderInfo(obj), minx, miny, maxx-minx+1, maxy-miny+1);
+
         if(data->Flags & FLG_RedrawMarked)
         {
           data->HostObject->MarkMsg.DrainBoxList(_rp(obj), xoffset, yoffset);
@@ -542,16 +543,44 @@ DISPATCHER(_Dispatcher)
           data->HostObject->Render(data->RenderMsg);
           data->Flags &= ~FLG_ActiveLink;
         }
+
         MUI_RemoveClipping(muiRenderInfo(obj), cliphandle);
       }
     }
     break;
 
-    //case MUIM_Backfill:
     case MUIM_Backfill:
     {
       ENTER();
       struct MUIP_Backfill *bmsg = (struct MUIP_Backfill *)msg;
+
+      /*
+      **  This is to fix but this is hard. I have no time.
+      **  This is the hack that stuntzi uses to make it work
+      **  otherwise it draws itself outside its box
+      **  bad, bad, bad. It is also the cause of the links
+      **  problem, I suppose.
+      */
+
+	  {
+
+	  	LONG l, r, t, b;
+
+        l = bmsg->left;
+        r = bmsg->right;
+        t = bmsg->top;
+        b = bmsg->bottom;
+
+	  	if (l>r || t>b) return 0;
+
+  		if (!(l==_mleft(obj) && t==_mtop(obj) && r==_mright(obj) && b==_mbottom(obj)))
+        {
+	        NewRawDoFmt("HTMLview: %ld %ld, %ld %ld, %ld %ld, %ld %ld\n",(void * (*)(void *, UBYTE))1,NULL,
+  		  	l,_mleft(obj),t,_mtop(obj),r,_mright(obj),b,_mbottom(obj));
+
+            return 0;
+          }
+	  }
 
       struct RastPort *rp = _rp(obj);
 
@@ -579,11 +608,13 @@ DISPATCHER(_Dispatcher)
         if(top < (LONG)data->Height)
         {
           APTR Cliphandle = NULL;
+
           if(top)
             Cliphandle = MUI_AddClipping(muiRenderInfo(obj), data->XOffset, data->YOffset+top, data->Width, data->Height);
 
-/*          LONG dx = data->HScrollDiff, dy = data->VScrollDiff;
-          if(MUIMasterBase->lib_Version < 20 && (dx || dy))
+/*
+          LONG dx = data->HScrollDiff, dy = data->VScrollDiff;
+          if(MUIMasterBase->lib_Version < 220 && (dx || dy))
           {
 //            DoSuperMethodA(cl, obj, msg);
             LONG minx, miny, width, height;
@@ -639,11 +670,13 @@ DISPATCHER(_Dispatcher)
             data->HScrollDiff = data->VScrollDiff = 0;
           }
           else
-*/          {
+
+*/
+	      {
             struct Rectangle rect;
             GetRPAttrs(rp, RPTAG_DrawBounds, (ULONG)&rect, TAG_DONE);
             LONG minx = rect.MinX, miny = rect.MinY, maxx = rect.MaxX, maxy = rect.MaxY;
-            D(DBF_ALWAYS, "%ld, %ld -- %ld, %ld", minx, maxx, miny, maxy);
+            //kprintf("%ld, %ld -- %ld, %ld\n", minx, maxx, miny, maxy);
             if(minx > maxx)
             {
               minx = bmsg->left;
@@ -651,6 +684,12 @@ DISPATCHER(_Dispatcher)
               maxx = bmsg->right;
               maxy = bmsg->bottom;
             }
+
+	        /*NewRawDoFmt("%ld %ld %ld %ld %ld %ld %ld %ld\n",(void * (*)(void *, UBYTE))1,NULL,
+				bmsg->left,  minx,
+				bmsg->right, maxx,
+				bmsg->top,   miny,
+				bmsg->bottom,maxy);*/
 
             data->RenderMsg.Reset(minx, miny, maxx, maxy, data->Left-data->XOffset, data->Top-data->YOffset, data->Left + (minx - data->XOffset), data->Top + (miny - data->YOffset), data->Share->Pens);
             data->HostObject->Render(data->RenderMsg);
@@ -820,7 +859,7 @@ DISPATCHER(_Dispatcher)
       ENTER();
 
       data->PageID++;
-      D(DBF_ALWAYS, "ABORTALL %lx %lx %ld",obj,data->ParseThread,data->ParseCount);
+      //kprintf("ABORTALL %lx %lx %ld\n",obj,data->ParseThread,data->ParseCount);
       if(data->ParseThread)
       {
         Signal(&data->ParseThread->pr_Task, SIGBREAKF_CTRL_C);
@@ -872,7 +911,7 @@ DISPATCHER(_Dispatcher)
 
       struct MUIP_HTMLview_GotoURL *gmsg = (struct MUIP_HTMLview_GotoURL *)msg;
 
-      /*D(DBF_ALWAYS, "GoToURL got for %lx (%s) %lx (%s)",
+      /*kprintf("GoToURL got for %lx (%s) %lx (%s)\n",
       	  gmsg->Target,
 	      gmsg->Target ? gmsg->Target : "",
     	  data->FrameName,
@@ -1002,11 +1041,11 @@ DISPATCHER(_Dispatcher)
         NP_CodeType,     CODETYPE_PPC,
         NP_PPCStackSize, STACKSIZEPPC,
         NP_StackSize,    STACKSIZE68K,
-    		NP_CopyVars,     FALSE,
+		NP_CopyVars,     FALSE,
         NP_Input,        NULL,
         NP_CloseInput,   FALSE,
         NP_Output,       NULL,
-        NP_CloseOutput,  FALSE,
+	    NP_CloseOutput,  FALSE,
         NP_Error,        NULL,
         NP_CloseError,   FALSE,
         #endif
@@ -1017,7 +1056,7 @@ DISPATCHER(_Dispatcher)
       else
         delete args;
 
-      D(DBF_ALWAYS, "Create Proc OBJ:%lx Thread:%lx ARGS:%lx",obj,data->ParseThread,args);
+      //kprintf("Create Proc OBJ:%lx Thread:%lx ARGS:%lx\n",obj,data->ParseThread,args);
 	}
     break;
 
@@ -1083,7 +1122,7 @@ DISPATCHER(_Dispatcher)
 	  ULONG msgs = 0;
 
       struct ParseInfoMsg *msg;
-      while((msg = (struct ParseInfoMsg *)GetMsg(data->MessagePort)))
+      while((msg = (struct ParseInfoMsg *)GetMsg(&data->MessagePort)))
       {
         msgs++;
 
@@ -1132,7 +1171,7 @@ DISPATCHER(_Dispatcher)
               /*if(!data->PMsg)
               {
                 DisplayBeep(NULL);
-                D(DBF_ALWAYS, ">>>>>>>>>>>>>>>>>>>>>>>>>>>0x%lx - 0x%lx - (0x%lx == 0x%lx)", data->ParseThread, data->Flags, data->HostObject, msg->Shutdown.Object);
+                kprintf(">>>>>>>>>>>>>>>>>>>>>>>>>>>0x%lx - 0x%lx - (0x%lx == 0x%lx)\n", data->ParseThread, data->Flags, data->HostObject, msg->Shutdown.Object);
                 //Wait(4096);
                 data->ParseCount++;
               }
@@ -1176,16 +1215,15 @@ DISPATCHER(_Dispatcher)
               if(data->HostObject != msg->Shutdown.Object)
                 delete msg->Shutdown.Object;
             }
-
-            data->ParseCount--;
-            D(DBF_ALWAYS, "ParseMessage %lx %ld",obj,data->ParseCount);
+              data->ParseCount--;
+              //kprintf("ParseMessage %lx %ld\n",obj,data->ParseCount);
           }
           break;
 
           case ParseMsg_Abort:
           {
 //            data->ParseCount--;
-            D(DBF_ALWAYS, "ParseMessage %lx %ld",obj,data->ParseCount);
+            //kprintf("ParseMessage %lx %ld\n",obj,data->ParseCount);
             if(data->PageID == msg->Unique)
             {
 	            data->ParseCount--;
@@ -1299,8 +1337,7 @@ DISPATCHER(_Dispatcher)
       data->RefreshTimer.ihn.ihn_Millis = data->HostObject->RefreshTime;
       data->RefreshTimer.ihn.ihn_Current = 0;
       data->RefreshTimer.Start(obj);
-
-      //D(DBF_ALWAYS, "Start refresh timer (%ld, %ld)", data->HostObject->RefreshTime, data->RefreshTimer.ihn_Current);
+//      kprintf("Start refresh timer (%ld, %ld)\n", data->HostObject->RefreshTime, data->RefreshTimer.ihn_Current);
     }
     break;
 

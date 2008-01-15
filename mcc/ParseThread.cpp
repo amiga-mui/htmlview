@@ -134,7 +134,7 @@ VOID ParseThread(REG(a0,STRPTR arguments))
             msg.Startup.PMsg = &pmsg;
             msg.Startup.Object = obj;
 
-            PutMsg(args->Data->MessagePort, &msg.nm_node);
+            PutMsg(&args->Data->MessagePort, &msg.nm_node);
             WaitPort(&myport);
             GetMsg(&myport);
 
@@ -147,7 +147,7 @@ VOID ParseThread(REG(a0,STRPTR arguments))
             msg.Shutdown.PMsg = &pmsg;
             msg.Shutdown.Object = obj;
 
-    	    PutMsg(args->Data->MessagePort, &msg.nm_node);
+    	    PutMsg(&args->Data->MessagePort, &msg.nm_node);
             WaitPort(&myport);
             GetMsg(&myport);
 
@@ -162,7 +162,7 @@ VOID ParseThread(REG(a0,STRPTR arguments))
       if (!success)
       {
         msg.Class = ParseMsg_Abort;
-        PutMsg(args->Data->MessagePort, &msg.nm_node);
+        PutMsg(&args->Data->MessagePort, &msg.nm_node);
         WaitPort(&myport);
         GetMsg(&myport);
       }

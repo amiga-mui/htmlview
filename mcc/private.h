@@ -109,8 +109,8 @@ struct HTMLviewData
   ULONG TopChange;
   struct MUI_PulseNode Period, RefreshTimer;
 
-  struct MsgPort *MessagePort;
-  int			 sigBit;
+  struct MsgPort MessagePort;
+  int            SigBit;
   struct MUI_PulseNode ihnode;
 
   struct Process *ParseThread;
