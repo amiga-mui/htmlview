@@ -110,6 +110,7 @@ struct HTMLviewData
   struct MUI_PulseNode Period, RefreshTimer;
 
   struct MsgPort *MessagePort;
+  int			 sigBit;
   struct MUI_PulseNode ihnode;
 
   struct Process *ParseThread;
@@ -165,8 +166,8 @@ struct HTMLviewData
 #define FLG_MarkingEnabled    (1<<11)
 #define FLG_RedrawMarked      (1<<12)
 
-#define STACKSIZEPPC 248000
-#define STACKSIZE68K 224000
+#define STACKSIZEPPC 32000
+#define STACKSIZE68K 32000
 
 extern "C" DISPATCHERPROTO(_Dispatcher);
 
