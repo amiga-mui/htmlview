@@ -294,45 +294,64 @@ DISPATCHER(_Dispatcher)
 
         D(DBF_STARTUP, "before CreateMsgPort!");
 
-        if((data->MessagePort = CreateMsgPort()))
+		data->MessagePort = new (std::nothrow) struct MsgPort;
+        if (data->MessagePort)
         {
+          int sigBit;
+
           D(DBF_STARTUP, "MsgPort created.");
 
-		      D(DBF_ALWAYS, "MSGPORT %lx %lx",obj,data->MessagePort);
-          data->ihnode.ihn.ihn_Object  = obj;
-          data->ihnode.ihn.ihn_Signals = 1 << data->MessagePort->mp_SigBit;
-          data->ihnode.ihn.ihn_Flags   = 0L;
-          data->ihnode.ihn.ihn_Method  = MUIM_HTMLview_ExtMessage;
-
-          sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", (ULONG)obj);
-
-          struct TagItem *tag;
-          if((tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList)))
-          {
-            D(DBF_STARTUP, "creating scollgroupclass object...");
-
-            return (ULONG)NewObject(ScrollGroupClass->mcc_Class, NULL,
-                                    MUIA_ScrollGroup_Scrolling,  tag->ti_Data,
-                                    MUIA_ScrollGroup_HTMLview,   obj,
-                                    TAG_DONE);
-          }
+		  if (tag = FindTagItem(MUIA_HTMLview_SigBit,nmsg->ops_AttrList))
+			data->sigBit = sigBit = (int)tag->ti_Data;
           else
           {
-            D(DBF_STARTUP, "created HTMLview object.");
+          	data->sigBit = -1;
+            sigBit = AllocSignal(-1);
+          }
+
+          if (sigBit>=0)
+          {
+            data->MessagePort->mp_Flags   = PA_SIGNAL;
+            data->MessagePort->mp_SigBit  = (UBYTE)(sigBit);
+            data->MessagePort->mp_SigTask = FindTask(NULL);
+            NewList(&data->MessagePort->mp_MsgList);
+
+  		    //kprintf("MSGPORT %lx %lx\n",obj,data->MessagePort);
+            data->ihnode.ihn.ihn_Object  = obj;
+            data->ihnode.ihn.ihn_Signals = 1 << data->MessagePort->mp_SigBit;
+            data->ihnode.ihn.ihn_Flags   = 0L;
+            data->ihnode.ihn.ihn_Method  = MUIM_HTMLview_ExtMessage;
+
+            sprintf(data->ParseThreadName, "HTMLview ParseThread 0x%08lx", (ULONG)obj);
+
+            if((tag = FindTagItem(MUIA_HTMLview_Scrollbars, nmsg->ops_AttrList)))
+            {
+              D(DBF_STARTUP, "creating scollgroupclass object...");
+
+              return     (ULONG)NewObject(ScrollGroupClass->mcc_Class,     NULL,
+              MUIA_ScrollGroup_Scrolling,                          tag->ti_Data,
+              MUIA_ScrollGroup_HTMLview, obj, TAG_DONE); } else { D(DBF_STARTUP,
+              "created HTMLview object.");
+
+            }
 
             RETURN(obj);
             return((ULONG)obj);
           }
-        }
-        else
-          D(DBF_STARTUP, "MsgPort NOT Created!!");
 
-        CoerceMethod(cl, obj, OM_DISPOSE);
+          delete data->MessagePort;
+        }
+		
+		CoerceMethod(cl->cl_Super,obj,OM_DISPOSE);
+        obj = NULL;
       }
     }
     break;
 
-    case OM_DISPOSE: { ENTER();
+    case OM_DISPOSE: 
+    { 
+      
+      ENTER();
 
       // This deletes notifies and floading images (should be in ~LayoutMessage()) */
       D(DBF_ALWAYS, "--------- DISPOSE 1 %lx",obj);
