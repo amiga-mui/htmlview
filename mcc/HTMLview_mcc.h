@@ -746,6 +746,7 @@
 
 
 #define MUIA_HTMLview_IsRoot HTMLview_ID(58) /* BOOL  [..G.] return TRUE if the obj is the root one */
+#define MUIA_HTMLview_SigBit HTMLview_ID(59) /* int   [I...] signal bit to use */
 
 /* Structures */
 
