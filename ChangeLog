@@ -5,6 +5,12 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2008-02-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.h: replaced all abort() usages in our ASSERT() macros with the
+    respective calls to assert(). This should prevent the MorphOS compile
+    from not linking and be a bit more intuitiv.
+
 2008-02-02 Jens Langner <Jens.Langner@light-speed.de>
 
   * mccinit.c: updated to latest version available which fixes some
@@ -13,24 +19,24 @@ $URL$
 2008-01-15 Alfonso Ranieri <alforan@tin.it>
 
   * Because of any HTMLview object creates a MessagePort to
-    receive messages from the parsing threads, a very limited 
-    amount of HTMLview objs may be created in a MUI GUI. It is 
+    receive messages from the parsing threads, a very limited
+    amount of HTMLview objs may be created in a MUI GUI. It is
     annoying if you are using HTMLview in a multitabs application.
-    It seems that simply passing a SigBit allocated in the main 
-    application and letting all the HTMLview MsgPorts using it, 
-    solve the whole problem. I tested it in strangé for some days 
+    It seems that simply passing a SigBit allocated in the main
+    application and letting all the HTMLview MsgPorts using it,
+    solve the whole problem. I tested it in strangé for some days
     and it works. It needed, of course to define a new tag.
 
   * I left a very high stack values used to run parsing threads
     under MorphOS. It is not, of course, needed and 32K seems to
     be a very large stack for PPC and 68k. I think it should be
-    reduced further and a stack swap should be done in the 
+    reduced further and a stack swap should be done in the
     application hooks, if they need more.
 
   * "bull" entity added, because of it seems used very often (f.e. see Aminet)
 
   * Not a change but a info; Huston we have two problems:
-    
+
     1. Since MUI3.9 there is a patch in MUI for HTMLview. It is the very same
     one used for IBrowse; that is what MUI does in MUIM_Backfill before calling
     HTMLview method:
@@ -50,12 +56,12 @@ $URL$
 	  }
     }
     ...
-    I have a MUI4 beta struntz kindly compiled without the patch and HTMLview simply 
-    renders itself all over its window. I was not able to find the reason. Someone 
+    I have a MUI4 beta struntz kindly compiled without the patch and HTMLview simply
+    renders itself all over its window. I was not able to find the reason. Someone
     else might easly be. Note that this causes backgrounds rendering problems.
-    
+
     2. png.decoder doesn't work on MorphOS. It renders pic in an ugly way. png.decoder
-    doesn't use the detatype, so it is not "MorphOS 1.45 png datatype result" related.   
+    doesn't use the detatype, so it is not "MorphOS 1.45 png datatype result" related.
     Some decoders sources are really needed.
 
 2008-01-04 Vit Sindlar <sindlarv at centrum dot cz>
@@ -74,7 +80,7 @@ $URL$
 
 2007-12-15  Alfonso Ranieri <alforan@tin.it>
 
-  * FormClass.cpp: Fixed a buffer overflow 
+  * FormClass.cpp: Fixed a buffer overflow
 
 2007-12-03 Vit Sindlar <sindlarv at centrum dot cz>
 

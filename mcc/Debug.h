@@ -41,6 +41,8 @@
 
 #if defined(DEBUG)
 
+#include <assert.h>
+
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
@@ -107,7 +109,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
               __LINE__,         \
               "failed assertion '%s'", \
               #expression),     \
-     abort(),                   \
+     assert(#expression),       \
      0                          \
     )                           \
    )                            \
