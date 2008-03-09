@@ -1,0 +1,247 @@
+## chunk AUTH Pär Boberg
+## language svenska
+## version $VER: HTMLview_mcp.ct 3.0 (06.03.08)
+MSG_Page_Fonts
+Typsnitt
+;#DEF Fonts
+;#SET (1000//)
+MSG_Page_Graphics
+Grafik
+;#DEF Graphics
+;#SET (//)
+MSG_Page_Settings
+Inställningar
+;#DEF Settings
+;#SET (//)
+MSG_Page_Sample
+Exempel
+;#DEF Sample
+;#SET (//)
+MSG_Fonts_Normal
+Normal
+;#DEF Normal
+;#SET (1050//)
+MSG_Fonts_Normal_Key
+N
+;#DEF N
+;#SET (//)
+MSG_Fonts_Small
+Liten
+;#DEF Small
+;#SET (//)
+MSG_Fonts_Small_Key
+S
+;#DEF S
+;#SET (//)
+MSG_Fonts_Large
+Stor
+;#DEF Large
+;#SET (//)
+MSG_Fonts_Large_Key
+L
+;#DEF L
+;#SET (//)
+MSG_Fonts_Fixed
+Fast
+;#DEF Fixed
+;#SET (//)
+MSG_Fonts_Fixed_Key
+F
+;#DEF F
+;#SET (//)
+MSG_Fonts_H1
+H1
+;#DEF H1
+;#SET (//)
+MSG_Fonts_H1_Key
+1
+;#DEF 1
+;#SET (//)
+MSG_Fonts_H2
+H2
+;#DEF H2
+;#SET (//)
+MSG_Fonts_H2_Key
+2
+;#DEF 2
+;#SET (//)
+MSG_Fonts_H3
+H3
+;#DEF H3
+;#SET (//)
+MSG_Fonts_H3_Key
+3
+;#DEF 3
+;#SET (//)
+MSG_Fonts_H4
+H4
+;#DEF H4
+;#SET (//)
+MSG_Fonts_H4_Key
+4
+;#DEF 4
+;#SET (//)
+MSG_Fonts_H5
+H5
+;#DEF H5
+;#SET (//)
+MSG_Fonts_H5_Key
+5
+;#DEF 5
+;#SET (//)
+MSG_Fonts_H6
+H6
+;#DEF H6
+;#SET (//)
+MSG_Fonts_H6_Key
+6
+;#DEF 6
+;#SET (//)
+MSG_Colours_Title
+Färger
+;#DEF Colours
+;#SET (1010//)
+MSG_Colours_Backgound
+Bakgrund
+;#DEF Background
+;#SET (//)
+MSG_Colours_Backgound_Key
+B
+;#DEF B
+;#SET (//)
+MSG_Colours_Text
+Text
+;#DEF Text
+;#SET (//)
+MSG_Colours_Text_Key
+T
+;#DEF T
+;#SET (//)
+MSG_Colours_NormalLink
+Normal länk
+;#DEF Normal link
+;#SET (//)
+MSG_Colours_NormalLink_Key
+N
+;#DEF N
+;#SET (//)
+MSG_Colours_VisitedLink
+Besökt länk
+;#DEF Visited link
+;#SET (//)
+MSG_Colours_VisitedLink_Key
+V
+;#DEF V
+;#SET (//)
+MSG_Colours_SelectedLink
+Vald länk
+;#DEF Selected link
+;#SET (//)
+MSG_Colours_SelectedLink_Key
+S
+;#DEF S
+;#SET (//)
+MSG_Colours_IgnoreColours
+Ignorera dokumentets angivna färger
+;#DEF Ignore document provided colours
+;#SET (//)
+MSG_Colours_IgnoreColours_Key
+I
+;#DEF I
+;#SET (//)
+MSG_Images_Title
+Bilder
+;#DEF Images
+;#SET (1150//)
+MSG_Images_Listitems
+List bilder
+;#DEF Listitem images
+;#SET (//)
+MSG_Images_Listitems_Key
+L
+;#DEF L
+;#SET (//)
+MSG_Images_Dither
+Dither
+;#DEF Dither
+;#SET (//)
+MSG_Images_Dither_Key
+D
+;#DEF D
+;#SET (//)
+MSG_Images_Dither_FS
+Floyd/Steinberg
+;#DEF Floyd/Steinberg
+;#SET (//)
+MSG_Images_Dither_None
+Ingen
+;#DEF None
+;#SET (//)
+MSG_Images_CacheSize
+Bufferstorlek
+;#DEF Cache size
+;#SET (//)
+MSG_Images_CacheSize_Key
+C
+;#DEF C
+;#SET (//)
+MSG_Images_Gamma
+Gamma justering
+;#DEF Gamma correction
+;#SET (//)
+MSG_Images_Gamma_Key
+G
+;#DEF G
+;#SET (//)
+MSG_PageScroll_Title
+Sidrullning
+;#DEF Page scroll
+;#SET (1200//)
+MSG_PageScroll_Smooth
+Mjuk
+;#DEF Smooth
+;#SET (//)
+MSG_PageScroll_Smooth_Key
+S
+;#DEF S
+;#SET (//)
+MSG_PageScroll_Key
+Tangent
+;#DEF Key
+;#SET (//)
+MSG_PageScroll_Key_Key
+K
+;#DEF K
+;#SET (//)
+MSG_Hotkey_Snoop
+Läs av
+;#DEF Snoop
+;#SET (//)
+MSG_PageScroll_Move
+Flytta
+;#DEF Move
+;#SET (//)
+MSG_PageScroll_Move_Key
+M
+;#DEF M
+;#SET (//)
+MSG_PageScroll_Move_Down
+%ld%% ned
+;#DEF %ld%% down
+;#SET (//)
+MSG_SampleButton
+Exempel
+;#DEF Sample
+;#SET (1250//)
+MSG_SampleButton_Key
+A
+;#DEF A
+;#SET (//)
+MSG_SampleWindow_Title
+HTMLview exempel
+;#DEF HTMLview sample
+;#SET (//)
+MSG_Page_SampleText
+<html> <body>  <p align=\"center\">  <b><u>HTMLview</u></b><br>  <small>mcc %ld.%ld<br></small>  <small>mcp %ld.%ld<br><br></small>  Kopieringsrätt 1995-2000 av Allan Odgaard<br>  Kopieringsrätt 2005-2008 HTMLview.mcc Open Source Team<br>  Bildavkodare av Gunther Nikl<br> <hr> </p> <p align=\"center\">  För senaste versionen, kolla:<br> http://www.sourceforge.net/projects/htmlview.mcc/  <br> <br> <br> <small>Du kan släppa HTML-filer på denna grunka!</small> </p> </body></html>
+;#DEF <html> <body>  <p align=\"center\">   <b><u>HTMLview</u></b><br>   <small>mcc %ld.%ld<br></small>   <small>mcp %ld.%ld<br><br></small>   Copyright 1995-2000 by Allan Odgaard<br>   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>   Image decoders by Gunther Nikl<br>  <hr>  </p>  <p align=\"center\">   For the latest version, try:<br>   http://www.sourceforge.net/projects/htmlview-mcc/   <br>   <br>   <br>   <small>You can drop HTML files onto this gadget!</small>  </p> </body></html>
+;#SET (//)

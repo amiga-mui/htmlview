@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2008-03-06  Pär Boberg <pbobbenb@spray.se>
+
+  * mcp/locale/swedish.ct: added swedish translation.
+
 2008-02-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.h: replaced all abort() usages in our ASSERT() macros with the
