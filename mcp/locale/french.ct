@@ -1,0 +1,296 @@
+## version $VER: HTMLview_mcp.catalog 3.0 (30.01.2008)
+## language français
+## codeset 0
+;
+; Based on HTMLview_mcp.cd rev 64
+;
+; HTMLview.cd - HTMLview MUI custom prefs catalog description file
+;
+;#version 3
+;#language english
+;
+;
+MSG_Page_Fonts
+Polices
+; Fonts
+;
+MSG_Page_Graphics
+Graphismes
+; Graphics
+;
+MSG_Page_Settings
+Réglages
+; Settings
+;
+MSG_Page_Sample
+Exemple
+; Sample
+;
+MSG_Fonts_Normal
+Normal
+; Normal
+;
+MSG_Fonts_Normal_Key
+N
+; N
+;
+MSG_Fonts_Small
+Petite
+; Small
+;
+MSG_Fonts_Small_Key
+P
+; S
+;
+MSG_Fonts_Large
+Grande
+; Large
+;
+MSG_Fonts_Large_Key
+G
+; L
+;
+MSG_Fonts_Fixed
+Fixe
+; Fixed
+;
+MSG_Fonts_Fixed_Key
+F
+; F
+;
+MSG_Fonts_H1
+H1
+; H1
+;
+MSG_Fonts_H1_Key
+1
+; 1
+;
+MSG_Fonts_H2
+H2
+; H2
+;
+MSG_Fonts_H2_Key
+2
+; 2
+;
+MSG_Fonts_H3
+H3
+; H3
+;
+MSG_Fonts_H3_Key
+3
+; 3
+;
+MSG_Fonts_H4
+H4
+; H4
+;
+MSG_Fonts_H4_Key
+4
+; 4
+;
+MSG_Fonts_H5
+H5
+; H5
+;
+MSG_Fonts_H5_Key
+5
+; 5
+;
+MSG_Fonts_H6
+H6
+; H6
+;
+MSG_Fonts_H6_Key
+6
+; 6
+;
+MSG_Colours_Title
+Couleurs
+; Colours
+;
+MSG_Colours_Backgound
+Arrière-plan
+; Background
+;
+MSG_Colours_Backgound_Key
+R
+; B
+;
+MSG_Colours_Text
+Texte
+; Text
+;
+MSG_Colours_Text_Key
+T
+; T
+;
+MSG_Colours_NormalLink
+Lien normal
+; Normal link
+;
+MSG_Colours_NormalLink_Key
+N
+; N
+;
+MSG_Colours_VisitedLink
+Lien visité
+; Visited link
+;
+MSG_Colours_VisitedLink_Key
+V
+; V
+;
+MSG_Colours_SelectedLink
+Lien sélectionné
+; Selected link
+;
+MSG_Colours_SelectedLink_Key
+S
+; S
+;
+MSG_Colours_IgnoreColours
+Ignorer les couleurs du documents
+; Ignore document provided colours
+;
+MSG_Colours_IgnoreColours_Key
+I
+; I
+;
+MSG_Images_Title
+Images
+; Images
+;
+MSG_Images_Listitems
+Images des éléments de liste
+; Listitem images
+;
+MSG_Images_Listitems_Key
+L
+; L
+;
+MSG_Images_Dither
+Diffusion
+; Dither
+;
+MSG_Images_Dither_Key
+D
+; D
+;
+MSG_Images_Dither_FS
+Floyd/Steinberg
+; Floyd/Steinberg
+;
+MSG_Images_Dither_None
+Aucune
+; None
+;
+MSG_Images_CacheSize
+Taille du cache
+; Cache size
+;
+MSG_Images_CacheSize_Key
+C
+; C
+;
+MSG_Images_Gamma
+Gamma correction
+; Gamma correction
+;
+MSG_Images_Gamma_Key
+G
+; G
+;
+MSG_PageScroll_Title
+Défilement
+; Page scroll
+;
+MSG_PageScroll_Smooth
+Fluide
+; Smooth
+;
+MSG_PageScroll_Smooth_Key
+F
+; S
+;
+MSG_PageScroll_Key
+Touche
+; Key
+;
+MSG_PageScroll_Key_Key
+T
+; K
+;
+MSG_Hotkey_Snoop
+Snoop
+; Snoop
+;
+MSG_PageScroll_Move
+Déplacement
+; Move
+;
+MSG_PageScroll_Move_Key
+D
+; M
+;
+MSG_PageScroll_Move_Down
+%ld%% vers le bas
+; %ld%% down
+;
+MSG_SampleButton
+Exemple
+; Sample
+;
+MSG_SampleButton_Key
+X
+; A
+;
+MSG_SampleWindow_Title
+Exemple HTMLview
+; HTMLview sample
+;
+MSG_Page_SampleText
+<html>\
+ <body>\
+  <p align=\"center\">\
+   <b><u>HTMLview</u></b><br>\
+   <small>mcc %ld.%ld<br></small>\
+   <small>mcp %ld.%ld<br><br></small>\
+   Copyright 1995-2000 par Allan Odgaard<br>\
+   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+   Décodeurs d'Image par Gunther Nikl<br>\
+  <hr>\
+  </p>\
+  <p align=\"center\">\
+   Pour la dernière version, essayez :<br>\
+   http://www.sourceforge.net/projects/htmlview-mcc/\
+   <br>\
+   <br>\
+   <br>\
+   <small>Vous pouvez lâcher des fichiers HTML sur ce gadget !</small>\
+  </p>\
+ </body>\
+</html>
+; <html>\
+;  <body>\
+;   <p align=\"center\">\
+;    <b><u>HTMLview</u></b><br>\
+;    <small>mcc %ld.%ld<br></small>\
+;    <small>mcp %ld.%ld<br><br></small>\
+;    Copyright 1995-2000 by Allan Odgaard<br>\
+;    Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+;    Image decoders by Gunther Nikl<br>\
+;   <hr>\
+;   </p>\
+;   <p align=\"center\">\
+;    For the latest version, try:<br>\
+;    http://www.sourceforge.net/projects/htmlview-mcc/\
+;    <br>\
+;    <br>\
+;    <br>\
+;    <small>You can drop HTML files onto this gadget!</small>\
+;   </p>\
+;  </body>\
+; </html>
+;

@@ -236,7 +236,8 @@ PREFOBJS= $(OBJDIR)/locale.o \
 
 # available catalog translations
 CATALOGS = $(LOCALE)/czech.catalog \
-           $(LOCALE)/italian.catalog
+           $(LOCALE)/italian.catalog \
+           $(LOCALE)/french.catalog
 
 #
 

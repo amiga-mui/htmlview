@@ -5,6 +5,11 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2010-05-08 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mcp/locale: added french catalog translation kindly provided by Alexandre
+    Balaban.
+
 2009-05-02 Ilkka Lehtoranta <ilkleht@isoveli.org>
 
   * include/mccinit.c: RTF_EXTENDED was not set for the MorphOS build making
