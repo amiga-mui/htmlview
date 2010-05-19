@@ -1,0 +1,289 @@
+## version $VER: htmlview_mcp.catalog 3.0 (18.05.2010)
+## language polski
+## codeset 5
+## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
+;
+MSG_Page_Fonts
+Czcionki
+; Fonts
+;
+MSG_Page_Graphics
+Grafika
+; Graphics
+;
+MSG_Page_Settings
+Ustawienia
+; Settings
+;
+MSG_Page_Sample
+Przyk³ad
+; Sample
+;
+MSG_Fonts_Normal
+Normalna
+; Normal
+;
+MSG_Fonts_Normal_Key
+N
+; N
+;
+MSG_Fonts_Small
+Ma³a
+; Small
+;
+MSG_Fonts_Small_Key
+M
+; S
+;
+MSG_Fonts_Large
+Du¿a
+; Large
+;
+MSG_Fonts_Large_Key
+D
+; L
+;
+MSG_Fonts_Fixed
+Nieprop.
+; Fixed
+;
+MSG_Fonts_Fixed_Key
+e
+; F
+;
+MSG_Fonts_H1
+H1
+; H1
+;
+MSG_Fonts_H1_Key
+1
+; 1
+;
+MSG_Fonts_H2
+H2
+; H2
+;
+MSG_Fonts_H2_Key
+2
+; 2
+;
+MSG_Fonts_H3
+H3
+; H3
+;
+MSG_Fonts_H3_Key
+3
+; 3
+;
+MSG_Fonts_H4
+H4
+; H4
+;
+MSG_Fonts_H4_Key
+4
+; 4
+;
+MSG_Fonts_H5
+H5
+; H5
+;
+MSG_Fonts_H5_Key
+5
+; 5
+;
+MSG_Fonts_H6
+H6
+; H6
+;
+MSG_Fonts_H6_Key
+6
+; 6
+;
+MSG_Colours_Title
+Kolory
+; Colours
+;
+MSG_Colours_Backgound
+Kolor t³a
+; Background
+;
+MSG_Colours_Backgound_Key
+K
+; B
+;
+MSG_Colours_Text
+Tekst
+; Text
+;
+MSG_Colours_Text_Key
+T
+; T
+;
+MSG_Colours_NormalLink
+Normalny odno¶nik
+; Normal link
+;
+MSG_Colours_NormalLink_Key
+N
+; N
+;
+MSG_Colours_VisitedLink
+Odwiedzony odno¶nik
+; Visited link
+;
+MSG_Colours_VisitedLink_Key
+O
+; V
+;
+MSG_Colours_SelectedLink
+Wybrany odno¶nik
+; Selected link
+;
+MSG_Colours_SelectedLink_Key
+W
+; S
+;
+MSG_Colours_IgnoreColours
+Ignoruj kolory z dokumentu
+; Ignore document provided colours
+;
+MSG_Colours_IgnoreColours_Key
+I
+; I
+;
+MSG_Images_Title
+Obrazki
+; Images
+;
+MSG_Images_Listitems
+Obrazki listy elementów
+; Listitem images
+;
+MSG_Images_Listitems_Key
+l
+; L
+;
+MSG_Images_Dither
+Roztrz±sanie
+; Dither
+;
+MSG_Images_Dither_Key
+R
+; D
+;
+MSG_Images_Dither_FS
+Floyda/Steinberga
+; Floyd/Steinberg
+;
+MSG_Images_Dither_None
+brak
+; None
+;
+MSG_Images_CacheSize
+Rozmiar bufora
+; Cache size
+;
+MSG_Images_CacheSize_Key
+b
+; C
+;
+MSG_Images_Gamma
+Korekcja gamma
+; Gamma correction
+;
+MSG_Images_Gamma_Key
+g
+; G
+;
+MSG_PageScroll_Title
+Przewijanie strony
+; Page scroll
+;
+MSG_PageScroll_Smooth
+G³adkie
+; Smooth
+;
+MSG_PageScroll_Smooth_Key
+G
+; S
+;
+MSG_PageScroll_Key
+Klawisz
+; Key
+;
+MSG_PageScroll_Key_Key
+K
+; K
+;
+MSG_Hotkey_Snoop
+Przechwyæ
+; Snoop
+;
+MSG_PageScroll_Move
+Przesuñ
+; Move
+;
+MSG_PageScroll_Move_Key
+P
+; M
+;
+MSG_PageScroll_Move_Down
+o %ld%% wysoko¶ci okna
+; %ld%% down
+;
+MSG_SampleButton
+Przyk³ad
+; Sample
+;
+MSG_SampleButton_Key
+a
+; A
+;
+MSG_SampleWindow_Title
+HTMLview - przyk³ad
+; HTMLview sample
+;
+MSG_Page_SampleText
+<html>\
+ <body>\
+  <p align=\"center\">\
+   <b><u>HTMLview</u></b><br>\
+   <small>mcc %ld.%ld<br></small>\
+   <small>mcp %ld.%ld<br><br></small>\
+   Copyright 1995-2000 by Allan Odgaard<br>\
+   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+   Dekodery obrazków - Gunther Nikl<br>\
+  <hr>\
+  </p>\
+  <p align=\"center\">\
+   Najnowsz± wersjê znajdziesz pod adresem:<br>\
+   http://www.sourceforge.net/projects/htmlview-mcc/\
+   <br>\
+   <br>\
+   <br>\
+   <small>Mo¿esz przeci±gn±æ plik HTML na ten gad¿et!</small>\
+  </p>\
+ </body>\
+</html>
+; <html>\
+;  <body>\
+;   <p align=\"center\">\
+;    <b><u>HTMLview</u></b><br>\
+;    <small>mcc %ld.%ld<br></small>\
+;    <small>mcp %ld.%ld<br><br></small>\
+;    Copyright 1995-2000 by Allan Odgaard<br>\
+;    Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+;    Image decoders by Gunther Nikl<br>\
+;   <hr>\
+;   </p>\
+;   <p align=\"center\">\
+;    For the latest version, try:<br>\
+;    http://www.sourceforge.net/projects/htmlview-mcc/\
+;    <br>\
+;    <br>\
+;    <br>\
+;    <small>You can drop HTML files onto this gadget!</small>\
+;   </p>\
+;  </body>\
+; </html>
+;

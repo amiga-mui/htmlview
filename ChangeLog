@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2010-05-19 Mariusz Danilewicz <mandi@interia.pl>
+
+  * mcp/locale: added Polish catalog translation.
+
 2010-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
   * mcp/locale: added french catalog translation kindly provided by Alexandre
