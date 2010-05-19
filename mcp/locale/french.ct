@@ -2,12 +2,9 @@
 ## language français
 ## codeset 0
 ;
-; Based on HTMLview_mcp.cd rev 64
 ;
-; HTMLview.cd - HTMLview MUI custom prefs catalog description file
-;
-;#version 3
-;#language english
+; HTMLview_mcp.ct - HTMLview MUI custom prefs catalog translation file
+; $Id$
 ;
 ;
 MSG_Page_Fonts

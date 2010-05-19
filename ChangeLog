@@ -5,6 +5,10 @@ MUI HTMLview MCC class - ChangeLog
 $Id$
 $URL$
 
+2010-05-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * mcp/locale: set some properties.
+
 2010-05-19 Mariusz Danilewicz <mandi@interia.pl>
 
   * mcp/locale: added Polish catalog translation.

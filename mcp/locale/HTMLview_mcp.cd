@@ -1,5 +1,6 @@
 ;
-; HTMLview.cd - HTMLview MUI custom prefs catalog description file
+; HTMLview_mcp.cd - HTMLview MUI custom prefs catalog description file
+; $Id$
 ;
 #version 3
 #language english

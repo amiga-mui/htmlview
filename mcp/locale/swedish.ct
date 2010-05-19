@@ -1,6 +1,12 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
 ## version $VER: HTMLview_mcp.ct 3.0 (06.03.08)
+;
+;
+; HTMLview_mcp.ct - HTMLview MUI custom prefs catalog translation file
+; $Id$
+;
+;
 MSG_Page_Fonts
 Typsnitt
 ;#DEF Fonts

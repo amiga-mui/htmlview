@@ -224,20 +224,22 @@ MCPOBJS = $(OBJDIR)/library.o \
           $(OBJDIR)/locale.o \
           $(OBJDIR)/CreatePrefsGroup.o \
           $(OBJDIR)/Dispatcher.o \
-			 $(OBJDIR)/pic.o \
+          $(OBJDIR)/pic.o \
           $(OBJDIR)/Debug.o
 
 PREFOBJS= $(OBJDIR)/locale.o \
           $(OBJDIR)/CreatePrefsGroup.o \
           $(OBJDIR)/Dispatcher.o \
           $(OBJDIR)/Preference.o \
-			 $(OBJDIR)/pic.o \
+          $(OBJDIR)/pic.o \
           $(OBJDIR)/Debug.o
 
 # available catalog translations
 CATALOGS = $(LOCALE)/czech.catalog \
            $(LOCALE)/italian.catalog \
-           $(LOCALE)/french.catalog
+           $(LOCALE)/french.catalog \
+           $(LOCALE)/polish.catalog \
+           $(LOCALE)/swedish.catalog
 
 #
 

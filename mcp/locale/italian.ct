@@ -3,7 +3,10 @@
 ## codeset 111
 ## chunk AUTH Alfonso Ranieri
 ;
-; flexcat HTMLview.cd HTMLview-ita.ct CATALOG locale:catalogs/italiano/HTMLview.catalog NOOPTIM
+;
+; HTMLview_mcp.ct - HTMLview MUI custom prefs catalog translation file
+; $Id$
+;
 ;
 MSG_Page_Fonts
 Caratteri

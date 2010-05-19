@@ -3,6 +3,11 @@
 ## codeset 5
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ;
+;
+; HTMLview_mcp.ct - HTMLview MUI custom prefs catalog translation file
+; $Id$
+;
+;
 MSG_Page_Fonts
 Czcionki
 ; Fonts
