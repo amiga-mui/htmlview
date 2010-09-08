@@ -2,7 +2,7 @@
 
  HTMLview.mcc - HTMLview MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005-2007 by HTMLview.mcc Open Source Team
+ Copyright (C) 2005-2010 by HTMLview.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -29,5 +29,13 @@ Dwight Meese       <ikepgh@suddenlink.net>
 Ilkka Lehtoranta   <ilkleht@isoveli.org>
 Jens Langner       <Jens.Langner@light-speed.de>
 Thore Boeckelmann  <tboeckel@gmx.de>
+
+Translations provided and maintained by following people:
+
+Czech:     Vit Sindlar <sindlarv at centrum dot cz>
+French:    Alexandre Balaban
+Italian:   Alfonso Ranieri    <alforan@tin.it>
+Polish:    Mariusz Danilewicz <mandi@interia.pl>
+Swedish:   Pär Boberg <pbobbenb@spray.se>
 
 The development of HTMLview.mcc is hosted by SourceForge http://www.sf.net/
