@@ -1,253 +1,277 @@
-## chunk AUTH Pär Boberg
+## version $VER: HTMLview_mcp.ct 3.0 (17.09.2010)
 ## language svenska
-## version $VER: HTMLview_mcp.ct 3.0 (06.03.08)
+## codeset 0
 ;
+## chunk AUTH Pär Boberg
 ;
 ; HTMLview_mcp.ct - HTMLview MUI custom prefs catalog translation file
 ; $Id$
 ;
+;#version 3
+;#language english
+;
 ;
 MSG_Page_Fonts
 Typsnitt
-;#DEF Fonts
-;#SET (1000//)
+; Fonts
+;
 MSG_Page_Graphics
 Grafik
-;#DEF Graphics
-;#SET (//)
+; Graphics
+;
 MSG_Page_Settings
 Inställningar
-;#DEF Settings
-;#SET (//)
+; Settings
+;
 MSG_Page_Sample
 Exempel
-;#DEF Sample
-;#SET (//)
+; Sample
+;
 MSG_Fonts_Normal
 Normal
-;#DEF Normal
-;#SET (1050//)
+; Normal
+;
 MSG_Fonts_Normal_Key
 N
-;#DEF N
-;#SET (//)
+; N
+;
 MSG_Fonts_Small
 Liten
-;#DEF Small
-;#SET (//)
+; Small
+;
 MSG_Fonts_Small_Key
 S
-;#DEF S
-;#SET (//)
+; S
+;
 MSG_Fonts_Large
 Stor
-;#DEF Large
-;#SET (//)
+; Large
+;
 MSG_Fonts_Large_Key
 L
-;#DEF L
-;#SET (//)
+; L
+;
 MSG_Fonts_Fixed
 Fast
-;#DEF Fixed
-;#SET (//)
+; Fixed
+;
 MSG_Fonts_Fixed_Key
 F
-;#DEF F
-;#SET (//)
+; F
+;
 MSG_Fonts_H1
 H1
-;#DEF H1
-;#SET (//)
+; H1
+;
 MSG_Fonts_H1_Key
 1
-;#DEF 1
-;#SET (//)
+; 1
+;
 MSG_Fonts_H2
 H2
-;#DEF H2
-;#SET (//)
+; H2
+;
 MSG_Fonts_H2_Key
 2
-;#DEF 2
-;#SET (//)
+; 2
+;
 MSG_Fonts_H3
 H3
-;#DEF H3
-;#SET (//)
+; H3
+;
 MSG_Fonts_H3_Key
 3
-;#DEF 3
-;#SET (//)
+; 3
+;
 MSG_Fonts_H4
 H4
-;#DEF H4
-;#SET (//)
+; H4
+;
 MSG_Fonts_H4_Key
 4
-;#DEF 4
-;#SET (//)
+; 4
+;
 MSG_Fonts_H5
 H5
-;#DEF H5
-;#SET (//)
+; H5
+;
 MSG_Fonts_H5_Key
 5
-;#DEF 5
-;#SET (//)
+; 5
+;
 MSG_Fonts_H6
 H6
-;#DEF H6
-;#SET (//)
+; H6
+;
 MSG_Fonts_H6_Key
 6
-;#DEF 6
-;#SET (//)
+; 6
+;
 MSG_Colours_Title
 Färger
-;#DEF Colours
-;#SET (1010//)
+; Colours
+;
 MSG_Colours_Backgound
 Bakgrund
-;#DEF Background
-;#SET (//)
+; Background
+;
 MSG_Colours_Backgound_Key
 B
-;#DEF B
-;#SET (//)
+; B
+;
 MSG_Colours_Text
 Text
-;#DEF Text
-;#SET (//)
+; Text
+;
 MSG_Colours_Text_Key
 T
-;#DEF T
-;#SET (//)
+; T
+;
 MSG_Colours_NormalLink
 Normal länk
-;#DEF Normal link
-;#SET (//)
+; Normal link
+;
 MSG_Colours_NormalLink_Key
 N
-;#DEF N
-;#SET (//)
+; N
+;
 MSG_Colours_VisitedLink
 Besökt länk
-;#DEF Visited link
-;#SET (//)
+; Visited link
+;
 MSG_Colours_VisitedLink_Key
 V
-;#DEF V
-;#SET (//)
+; V
+;
 MSG_Colours_SelectedLink
 Vald länk
-;#DEF Selected link
-;#SET (//)
+; Selected link
+;
 MSG_Colours_SelectedLink_Key
 S
-;#DEF S
-;#SET (//)
+; S
+;
 MSG_Colours_IgnoreColours
 Ignorera dokumentets angivna färger
-;#DEF Ignore document provided colours
-;#SET (//)
+; Ignore document provided colours
+;
 MSG_Colours_IgnoreColours_Key
 I
-;#DEF I
-;#SET (//)
+; I
+;
 MSG_Images_Title
 Bilder
-;#DEF Images
-;#SET (1150//)
+; Images
+;
 MSG_Images_Listitems
 List bilder
-;#DEF Listitem images
-;#SET (//)
+; Listitem images
+;
 MSG_Images_Listitems_Key
 L
-;#DEF L
-;#SET (//)
+; L
+;
 MSG_Images_Dither
 Dither
-;#DEF Dither
-;#SET (//)
+; Dither
+;
 MSG_Images_Dither_Key
 D
-;#DEF D
-;#SET (//)
+; D
+;
 MSG_Images_Dither_FS
 Floyd/Steinberg
-;#DEF Floyd/Steinberg
-;#SET (//)
+; Floyd/Steinberg
+;
 MSG_Images_Dither_None
 Ingen
-;#DEF None
-;#SET (//)
+; None
+;
 MSG_Images_CacheSize
 Bufferstorlek
-;#DEF Cache size
-;#SET (//)
+; Cache size
+;
 MSG_Images_CacheSize_Key
 C
-;#DEF C
-;#SET (//)
+; C
+;
 MSG_Images_Gamma
 Gamma justering
-;#DEF Gamma correction
-;#SET (//)
+; Gamma correction
+;
 MSG_Images_Gamma_Key
 G
-;#DEF G
-;#SET (//)
+; G
+;
 MSG_PageScroll_Title
 Sidrullning
-;#DEF Page scroll
-;#SET (1200//)
+; Page scroll
+;
 MSG_PageScroll_Smooth
 Mjuk
-;#DEF Smooth
-;#SET (//)
+; Smooth
+;
 MSG_PageScroll_Smooth_Key
 S
-;#DEF S
-;#SET (//)
+; S
+;
 MSG_PageScroll_Key
 Tangent
-;#DEF Key
-;#SET (//)
+; Key
+;
 MSG_PageScroll_Key_Key
 K
-;#DEF K
-;#SET (//)
+; K
+;
 MSG_Hotkey_Snoop
 Läs av
-;#DEF Snoop
-;#SET (//)
+; Snoop
+;
 MSG_PageScroll_Move
 Flytta
-;#DEF Move
-;#SET (//)
+; Move
+;
 MSG_PageScroll_Move_Key
 M
-;#DEF M
-;#SET (//)
+; M
+;
 MSG_PageScroll_Move_Down
 %ld%% ned
-;#DEF %ld%% down
-;#SET (//)
+; %ld%% down
+;
 MSG_SampleButton
 Exempel
-;#DEF Sample
-;#SET (1250//)
+; Sample
+;
 MSG_SampleButton_Key
 A
-;#DEF A
-;#SET (//)
+; A
+;
 MSG_SampleWindow_Title
 HTMLview exempel
-;#DEF HTMLview sample
-;#SET (//)
+; HTMLview sample
+;
 MSG_Page_SampleText
 <html> <body>  <p align=\"center\">  <b><u>HTMLview</u></b><br>  <small>mcc %ld.%ld<br></small>  <small>mcp %ld.%ld<br><br></small>  Kopieringsrätt 1995-2000 av Allan Odgaard<br>  Kopieringsrätt 2005-2008 HTMLview.mcc Open Source Team<br>  Bildavkodare av Gunther Nikl<br> <hr> </p> <p align=\"center\">  För senaste versionen, kolla:<br> http://www.sourceforge.net/projects/htmlview.mcc/  <br> <br> <br> <small>Du kan släppa HTML-filer på denna grunka!</small> </p> </body></html>
-;#DEF <html> <body>  <p align=\"center\">   <b><u>HTMLview</u></b><br>   <small>mcc %ld.%ld<br></small>   <small>mcp %ld.%ld<br><br></small>   Copyright 1995-2000 by Allan Odgaard<br>   Copyright 2005-2007 HTMLview.mcc Open Source Team<br>   Image decoders by Gunther Nikl<br>  <hr>  </p>  <p align=\"center\">   For the latest version, try:<br>   http://www.sourceforge.net/projects/htmlview-mcc/   <br>   <br>   <br>   <small>You can drop HTML files onto this gadget!</small>  </p> </body></html>
-;#SET (//)
+; <html>\
+;  <body>\
+;   <p align=\"center\">\
+;    <b><u>HTMLview</u></b><br>\
+;    <small>mcc %ld.%ld<br></small>\
+;    <small>mcp %ld.%ld<br><br></small>\
+;    Copyright 1995-2000 by Allan Odgaard<br>\
+;    Copyright 2005-2007 HTMLview.mcc Open Source Team<br>\
+;    Image decoders by Gunther Nikl<br>\
+;   <hr>\
+;   </p>\
+;   <p align=\"center\">\
+;    For the latest version, try:<br>\
+;    http://www.sourceforge.net/projects/htmlview-mcc/\
+;    <br>\
+;    <br>\
+;    <br>\
+;    <small>You can drop HTML files onto this gadget!</small>\
+;   </p>\
+;  </body>\
+; </html>
+;
