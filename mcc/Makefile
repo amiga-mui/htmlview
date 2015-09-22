@@ -156,9 +156,9 @@ ifeq ($(OS), os4)
 
   # Compiler/Linker flags
   CRT      = newlib
-  CPU      = -mcpu=powerpc 
+  CPU      = -mcpu=powerpc
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
-              -Wa,-mregnames -DNO_PPCINLINE_STDARG
+              -D__USE_CLASSIC_MINTERM__ -Wa,-mregnames -DNO_PPCINLINE_STDARG
   LDFLAGS  += -mcrt=$(CRT)
 
   # additional object files required
@@ -384,42 +384,42 @@ all: $(BINDIR) $(OBJDIR) $(MCCTARGET) $(TESTTARGET)
 
 # make the object directories
 $(OBJDIR):
-	@printf '\033[33mGenerating $@ directory\033[0m\n'
+	@echo "  MKDIR @@"
 	@$(MKDIR) $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/classes
 
 # make the binary directories
 $(BINDIR):
-	@printf '\033[33mGenerating $@ directory\033[0m\n'
+	@echo "  MKDIR @@"
 	@$(MKDIR) $(BINDIR)
 
 #
 
 $(OBJDIR)/%.o: %.c
-	@printf '\033[32mCompiling $<\033[0m\n'
+	@echo "  CXX   $<"
 	@$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o: %.cpp
-	@printf '\033[32mCompiling $<\033[0m\n'
+	@echo "  CXX   $<"
 	@$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/mccclass_68k.o: ../include/mccclass_68k.c
-	@printf '\033[32mCompiling $<\033[0m\n'
+	@echo "  CXX   $<"
 	@$(CC) $(CFLAGS) $< -o $@
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct
-	@printf '\033[33mGenerating $@\033[0m\n'
+	@echo "  GN    $@"
 	@$(FC) $(LOCALE)/HTMLview_mcc.cd $< CATALOG $@
 
 #
 
 $(MCCTARGET): $(M68KSTUBS) $(MCCOBJS)
-	@printf '\033[32mLinking \033[1m$@\033[0m\n'
+	@echo "  LD    $@"
 	@$(CXX) -nostartfiles $(LDFLAGS) -o $@.debug $(MCCOBJS) $(M68KSTUBS) $(LDLIBS) -Wl,-Map,$@.map
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
 $(TESTTARGET): $(TESTOBJS) $(OBJDIR)/HTMLview-Test.o
-	@printf '\033[32mLinking \033[1m$@\033[0m\n'
+	@echo "  LD    $@"
 	@$(CXX) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS) -Wl,-Map,$@.map
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
@@ -428,13 +428,13 @@ $(OBJDIR)/library.o: library.cpp ../include/mccinit.c \
 
 locale.h: locale.c
 locale.c: locale/HTMLview_mcc.cd locale_c.sd locale_h.sd
-	@printf '\033[33mGenerating locale file $@...\033[0m\n'
+	@echo "  GN    $@"
 	@$(FC) locale/HTMLview_mcc.cd locale.h=locale_h.sd locale.c=locale_c.sd
 
 ## CATALOG GENERATION #################
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct
-	@printf '\033[33mGenerating $@\033[0m\n'
+	@echo "  GN    $@"
 	@$(FC) $(LOCALE)/HTMLview_mcc.cd $< CATALOG $@
 
 .IGNORE: $(CATALOGS)

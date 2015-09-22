@@ -60,6 +60,8 @@
 #include "private.h"
 #include <stdio.h>
 
+#include "Debug.h"
+
 #undef NewObject
 extern "C" APTR NewObject ( struct IClass *classPtr , STRPTR classID , ...);
 #undef MUI_NewObject
@@ -88,7 +90,7 @@ BOOL MUI_PulseNode::Stop (Object *obj)
   return(res);
 }
 
-HOOKPROTONH(DefaultLoadFunc, ULONG, Object* htmlview, struct HTMLview_LoadMsg* lmsg)
+HOOKPROTONHNO(DefaultLoadFunc, ULONG, struct HTMLview_LoadMsg* lmsg)
 {
   switch(lmsg->lm_Type)
   {
@@ -136,7 +138,7 @@ VOID RemoveChildren (Object *group, struct HTMLviewData *data)
 
 extern struct MUI_CustomClass  *ThisClass;
 
-HOOKPROTO(LayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
+HOOKPROTONH(LayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
 {
   ULONG result;
 
@@ -160,7 +162,7 @@ HOOKPROTO(LayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
       struct HTMLviewData *data = (struct HTMLviewData *)INST_DATA(ThisClass->mcc_Class,obj);
 
       BOOL frames = (data->Height != lmsg->lm_Layout.Height && data->HostObject && data->HostObject->Body && data->HostObject->Body->id() == tag_FRAMESET);
-      
+
       data->Height = lmsg->lm_Layout.Height;
 
       if(data->Width != lmsg->lm_Layout.Width || frames || data->Share->Flags & FLG_NewConfig)
@@ -298,8 +300,8 @@ DISPATCHER(_Dispatcher)
 
 
         int sigBit;
-		
-        if (tag = FindTagItem(MUIA_HTMLview_SigBit,nmsg->ops_AttrList))
+
+        if((tag = FindTagItem(MUIA_HTMLview_SigBit,nmsg->ops_AttrList)) != NULL)
         {
 		  sigBit = (int)tag->ti_Data;
 		  data->SigBit = -1;
@@ -478,7 +480,7 @@ DISPATCHER(_Dispatcher)
 
       Object *child;
       struct List *childs = (struct List *)xget(obj, MUIA_Group_ChildList);
-      struct Node *head = childs->lh_Head;
+      Object *head = (Object *)childs->lh_Head;
 
       while((child = (Object *)NextObject(&head)))
       {
@@ -575,7 +577,7 @@ DISPATCHER(_Dispatcher)
 
   		if (!(l==_mleft(obj) && t==_mtop(obj) && r==_mright(obj) && b==_mbottom(obj)))
         {
-	        NewRawDoFmt("HTMLview: %ld %ld, %ld %ld, %ld %ld, %ld %ld\n",(void * (*)(void *, UBYTE))1,NULL,
+	        D(DBF_ALWAYS, "HTMLview: %ld %ld, %ld %ld, %ld %ld, %ld %ld",
   		  	l,_mleft(obj),t,_mtop(obj),r,_mright(obj),b,_mbottom(obj));
 
             return 0;
@@ -784,7 +786,7 @@ DISPATCHER(_Dispatcher)
     {
       ENTER();
 
-      struct MUIP_Show *smsg = (struct MUIP_Show *)msg;
+    //struct MUIP_Show *smsg = (struct MUIP_Show *)msg;
       struct MUI_AreaData *ad = muiAreaData(obj);
 
       data->XOffset = ad->mad_Box.Left + ad->mad_addleft;
@@ -952,7 +954,7 @@ DISPATCHER(_Dispatcher)
             class AClass *anchor;
             if(data->HostObject && (anchor = data->HostObject->FindAnchor(url+baselen+pagelen+1)))
             {
-              ULONG top = (anchor->top() > 5) ? anchor->top()-5 : 0;
+              LONG top = (anchor->top() > 5) ? anchor->top()-5 : 0;
               if(top != data->Top)
                 SetAttrs(obj, MUIA_Virtgroup_Top, top, TAG_DONE);
             }

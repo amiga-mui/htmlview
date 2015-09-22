@@ -65,7 +65,7 @@ BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg)
       {
         LONG top = data->Top, diff;
         data->Top = (data->VirtHeight > data->Height) ? MIN(data->VirtHeight-data->Height, MAX(0, ti_Data)) : 0;
-        if(diff = data->Top - top)
+        if((diff = data->Top - top) != 0)
         {
           if(data->PMsg)
             data->TopChange = 0;

@@ -35,12 +35,12 @@
 
 struct PictureFrame
 {
-  PictureFrame (ULONG width, ULONG height, ULONG leftofs, ULONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags);
+  PictureFrame (LONG width, LONG height, LONG leftofs, LONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags);
   ~PictureFrame ();
   VOID LockPicture ();
   VOID UnLockPicture ();
   ULONG Size ();
-  BOOL MatchSize (ULONG width, ULONG height);
+  BOOL MatchSize (LONG width, LONG height);
 
   struct PictureFrame *Next;
   LONG Width, Height, Depth; /* Depth is only > 1 when interleaved */

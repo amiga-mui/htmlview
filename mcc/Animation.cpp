@@ -26,6 +26,9 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#if defined(__amigaos4__)
+#include <graphics/minterm.h>
+#endif
 
 #include "Animation.h"
 #include "IM_Render.h"

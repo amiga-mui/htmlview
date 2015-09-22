@@ -225,7 +225,8 @@ BOOL DecodeItem::Update ()
   Enter();
   BOOL result = Status == StatusPending || Status == StatusDecoding;
   BOOL rem = Status == StatusDone || Status == StatusError;
-  LONG y = CurrentY, pass = CurrentPass;
+  LONG y = CurrentY;
+  ULONG pass = CurrentPass;
   BOOL done = Picture && Picture->Next;
   Leave();
 
@@ -502,7 +503,7 @@ DISPATCHER(DecoderDispatcher)
           if((data->ImgObj = img))
             return((ULONG)obj);
         }
-        
+
         CoerceMethod(cl, obj, OM_DISPOSE);
       }
     }
@@ -714,7 +715,7 @@ struct DecoderInfo
 BOOL MatchGIF (UBYTE *x) { return(*((ULONG *)x) == MAKE_ID('G','I','F','8')); }
 BOOL MatchJPG (UBYTE *x) { return(*((ULONG *)x) == 0xFFD8FFE0 && (*((ULONG *)(((UBYTE *)x) + 6)) == MAKE_ID('J','F','I','F'))); }
 BOOL MatchPNG (UBYTE *x) { return(*((ULONG *)x) == 0x89504e47 && ((ULONG *)x)[1] == 0x0d0a1a0a); }
-BOOL MatchDT  (UBYTE *x) { return(TRUE); }
+BOOL MatchDT  (UNUSED UBYTE *x) { return(TRUE); }
 #define GIFDecoder "gif.decoder"
 #define JPGDecoder "jfif.decoder"
 #define PNGDecoder "png.decoder"
@@ -896,7 +897,7 @@ static const BOOL FBlit = FALSE;
 BOOL FBlit = FindPort("FBlit") ? TRUE : FALSE;
 #endif
 
-VOID DecodeImage (Object *obj, struct IClass *cl, struct ImageList *image, struct HTMLviewData *data)
+VOID DecodeImage (Object *obj, UNUSED struct IClass *cl, struct ImageList *image, struct HTMLviewData *data)
 {
   LONG sigbit = 0;
   if(image && (sigbit = AllocSignal(-1)) > 0)

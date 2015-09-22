@@ -28,6 +28,9 @@
 #include <proto/graphics.h>
 #include <proto/intuition.h>
 #include <clib/macros.h>
+#if defined(__amigaos4__)
+#include <graphics/blitattr.h>
+#endif
 
 #include "ImageManager.h"
 #include "IM_ColourManager.h"
@@ -36,7 +39,7 @@
 #include "General.h"
 #include <new>
 
-PictureFrame::PictureFrame (ULONG width, ULONG height, ULONG leftofs, ULONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags)
+PictureFrame::PictureFrame (LONG width, LONG height, LONG leftofs, LONG topofs, ULONG animdelay, ULONG disposal, struct RGBPixel *background, struct BitMap *bmp, UBYTE *mask, ULONG flags)
 {
   Width = width, Height = height;
   LeftOfs = leftofs, TopOfs = topofs;
@@ -86,7 +89,7 @@ ULONG PictureFrame::Size ()
   return(size + (Next ? Next->Size() : 0));
 }
 
-BOOL PictureFrame::MatchSize (ULONG width, ULONG height)
+BOOL PictureFrame::MatchSize (LONG width, LONG height)
 {
   return((width ? Width == width : !(Flags & PicFLG_ScaledX)) && (height ? Height == height : !(Flags & PicFLG_ScaledY)));
 }
@@ -242,14 +245,31 @@ VOID RenderEngine::WriteMask (struct RGBPixel *srcline, ULONG width, ULONG y)
 
 VOID RenderEngine::WriteLine (ULONG width, struct RGBPixel *line, ULONG y)
 {
+#if defined(__amigaos4__)
+  #warning BLITT_ARGB32 is wrong, because we are using RGBA instead of ARGB
+  BltBitMapTags(BLITA_Source, line,
+                BLITA_Dest, &BMpRP,
+                BLITA_SrcX, 0,
+                BLITA_SrcY, 0,
+                BLITA_DestX, 0,
+                BLITA_DestY, y,
+                BLITA_Width, width,
+                BLITA_Height, 1,
+                BLITA_SrcType, BLITT_ARGB32,
+                BLITA_DestType, BLITT_RASTPORT,
+                BLITA_SrcBytesPerRow, width,
+                BLITA_UseSrcAlpha, TRUE,
+                TAG_DONE);
+#else
   WritePixelArray(
-    line,                       //    srcRect
+    (uint8 *)line,              //    srcRect
     0, 0,                       //    (SrcX,SrcY)
     0,                          //    SrcMod
     &BMpRP,                     //    RastPort
     0, y,                       //    (DestX,DestY)
     width, 1,                   //    (SizeX,SizeY)
     PIXEL_FORMAT);
+#endif
 
   Data->StatusItem->Enter();
   if(Data->StatusItem->CurrentY > y)

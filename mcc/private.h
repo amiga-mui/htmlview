@@ -105,7 +105,7 @@ struct HTMLviewData
 
   struct Hook *LoadHook, *ImageLoadHook;
 
-  ULONG Left, Top, Width, Height, XOffset, YOffset, VirtWidth, VirtHeight;
+  LONG Left, Top, Width, Height, XOffset, YOffset, VirtWidth, VirtHeight;
   ULONG TopChange;
   struct MUI_PulseNode Period, RefreshTimer;
 

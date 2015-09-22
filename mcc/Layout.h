@@ -124,12 +124,12 @@ struct LayoutMessage
   LONG ScrHeight;
 
   /* Margin, adjustable by frame-elements */
-  ULONG MarginWidth, MarginHeight;
+  LONG MarginWidth, MarginHeight;
 
   /* Indentation */
-  ULONG Indent;
-  ULONG ImageLeftIndent, ImageRightIndent;
-  ULONG LIIndent; /* How much should <LI> add? */
+  LONG Indent;
+  LONG ImageLeftIndent, ImageRightIndent;
+  LONG LIIndent; /* How much should <LI> add? */
   UWORD OL_Type;
 
   /* Current styles */

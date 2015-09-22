@@ -73,7 +73,7 @@ struct DecodeItem
   BOOL Abort, Started;
   struct PictureFrame *Picture;
   struct AnimInfo *Anim;
-  ULONG CurrentY, LastY;
+  LONG CurrentY, LastY;
   ULONG CurrentPass, LastPass;
 
   Object *Obj;

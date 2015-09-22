@@ -222,13 +222,13 @@ VOID _INIT_4_InitMem ()
 {
   #ifndef __MORPHOS__
 	  #if defined(__amigaos4__)
-	  MemoryPool = IExec->AllocSysObjectTags(ASOT_MEMPOOL,
-                                         ASOPOOL_MFlags,     MEMF_CLEAR | MEMF_SHARED,
-                                         ASOPOOL_Puddle,     32*1024,
-                                         ASOPOOL_Threshold,  8*1024,
-                                         ASOPOOL_Protected,  TRUE,
-                                         ASOPOOL_Name,       "HTMLview.mcc",
-                                         TAG_DONE);
+	  MemoryPool = AllocSysObjectTags(ASOT_MEMPOOL,
+                                      ASOPOOL_MFlags,     MEMF_CLEAR | MEMF_SHARED,
+                                      ASOPOOL_Puddle,     32*1024,
+                                      ASOPOOL_Threshold,  8*1024,
+                                      ASOPOOL_Protected,  TRUE,
+                                      ASOPOOL_Name,       "HTMLview.mcc",
+                                      TAG_DONE);
 	  #else
 	  MemoryPool = CreatePool(MEMF_CLEAR | MEMF_ANY | MEMF_SEM_PROTECTED, 32*1024, 8*1024);
 	  #endif

@@ -145,7 +145,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
 
 //        get(_win(obj), MUIA_Window_DefaultObject, &def);
 //        printf("%p, %p, %p\n", obj, act, def);
-        
+
         if(act != data->Share->Obj && act)
           return(0);
       }
@@ -155,7 +155,7 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
           muikey = NumPadMovement(emsg->imsg);
       else  muikey = emsg->muikey;
 
-      ULONG xvalue = data->Left, yvalue = data->Top;
+      LONG xvalue = data->Left, yvalue = data->Top;
       switch(muikey)
       {
         case MUIKEY_TOP:
@@ -227,9 +227,9 @@ ULONG HostClass::HandleEvent (Object *obj, struct IClass *cl UNUSED, struct MUIP
 
           if(MatchKey(imsg, event, data->Share->PageScrollKey))
           {
-            ULONG scroll_height = (data->Height*data->Share->PageScrollMove) / 100;
-            ULONG bottom = min(data->VirtHeight-data->Height, data->Top + scroll_height);
-            ULONG top = data->Top, height = (bottom - top) / 2;
+            LONG scroll_height = (data->Height*data->Share->PageScrollMove) / 100;
+            LONG bottom = min(data->VirtHeight-data->Height, data->Top + scroll_height);
+            LONG top = data->Top, height = (bottom - top) / 2;
             if(height)
             {
               if(data->Share->Flags & FLG_SmoothPageScroll)

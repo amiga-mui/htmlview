@@ -48,9 +48,9 @@ VOID StackCheck ()
   StackUsage = max(StackUsage, (ULONG)FindTask(NULL)->tc_SPUpper-StackReg());
 }*/
 
-static struct SignalSemaphore mutex;
+/*static struct SignalSemaphore mutex;
 
-/*extern "C" VOID _INIT_5_ParseThreadSemaphore();
+extern "C" VOID _INIT_5_ParseThreadSemaphore();
 VOID _INIT_5_ParseThreadSemaphore()
 {
   memset(&mutex, 0, sizeof(struct SignalSemaphore));

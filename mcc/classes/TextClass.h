@@ -50,7 +50,7 @@ class TextClass : public SuperClass
     LONG FindChar (LONG x, LONG y, BOOL newline);
     VOID RenderMarked (struct RastPort *rp, LONG markbegin, LONG markend, LONG xoffset, LONG yoffset);
 
-    ULONG MarkBegin, MarkEnd;
+    LONG MarkBegin, MarkEnd;
     STRPTR Contents;
 
   protected:
