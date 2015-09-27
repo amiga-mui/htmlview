@@ -384,13 +384,13 @@ all: $(BINDIR) $(OBJDIR) $(MCCTARGET) $(TESTTARGET)
 
 # make the object directories
 $(OBJDIR):
-	@echo "  MKDIR @@"
+	@echo "  MKDIR $@"
 	@$(MKDIR) $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/classes
 
 # make the binary directories
 $(BINDIR):
-	@echo "  MKDIR @@"
+	@echo "  MKDIR $@"
 	@$(MKDIR) $(BINDIR)
 
 #
