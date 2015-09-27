@@ -16,7 +16,7 @@
 
  HTMLview class Support Site:  http://www.sf.net/projects/htmlview-mcc/
 
- $Id$
+ $Id: Mark.cpp 59 2007-11-24 23:13:52Z damato $
 
 ***************************************************************************/
 
@@ -38,10 +38,20 @@
 
 BOOL MarkMessage::OpenTheClipboard ()
 {
-  if((ClipPort = CreateMsgPort()))
+#if defined(__amigaos4__)
+  if((ClipPort = (struct MsgPort *)AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    if((ClipReq = (struct IOClipReq *)CreateIORequest(ClipPort, sizeof(IOClipReq))))
+    if((ClipReq = (struct IOClipReq *)AllocSysObjectTags(ASOT_IOREQUEST,
+      ASOIOR_Size, sizeof(struct IOClipReq),
+      ASOIOR_ReplyPort, ClipPort,
+      TAG_DONE)) != NULL)
     {
+#else
+  if((ClipPort = CreateMsgPort()) != NULL)
+  {
+    if((ClipReq = (struct IOClipReq *)CreateIORequest(ClipPort, sizeof(struct IOClipReq))) != NULL)
+    {
+#endif
       if(!OpenDevice("clipboard.device", 0, IOReq, 0))
       {
         ClipBuffer = new (std::nothrow) UBYTE [CLIPBUFFERSIZE];
@@ -52,10 +62,17 @@ BOOL MarkMessage::OpenTheClipboard ()
         	ClipReq->io_Command = CMD_WRITE;
 	        return(TRUE);
 		}
+#if defined(__amigaos4__)
+      }
+      FreeSysObject(ASOT_IOREQUEST, IOReq);
+    }
+    FreeSysObject(ASOT_PORT, ClipPort);
+#else
       }
       DeleteIORequest(IOReq);
     }
     DeleteMsgPort(ClipPort);
+#endif
   }
   return(FALSE);
 }
@@ -77,8 +94,13 @@ VOID MarkMessage::CloseTheClipboard ()
   DoIO(IOReq);
 
   CloseDevice(IOReq);
+#if defined(__amigaos4__)
+  FreeSysObject(ASOT_IOREQUEST, IOReq);
+  FreeSysObject(ASOT_PORT, ClipPort);
+#else
   DeleteIORequest(IOReq);
   DeleteMsgPort(ClipPort);
+#endif
 }
 
 VOID MarkMessage::WriteLF ()
