@@ -282,7 +282,7 @@ $(OBJDIR)/library.o: library.c ../include/mccinit.c \
 
 locale.h: locale.c
 locale.c: locale/HTMLview_mcp.cd locale_c.sd locale_h.sd
-	@printf '\033[33mGenerating locale file $@...\033[0m\n'
+	@echo "  FC    $@"
 	@$(FC) locale/HTMLview_mcp.cd locale.h=locale_h.sd locale.c=locale_c.sd
 
 ## CATALOG GENERATION #################
