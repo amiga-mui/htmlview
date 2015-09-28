@@ -247,37 +247,34 @@ all: $(BINDIR) $(OBJDIR) locale.c $(MCPTARGET) $(PREFTARGET)
 
 # make the object directories
 $(OBJDIR):
-	@printf '\033[33mGenerating $@ directory\033[0m\n'
+	@echo "  MKDIR $@"
 	@$(MKDIR) $(OBJDIR)
+	@$(MKDIR) $(OBJDIR)/classes
 
 # make the binary directories
 $(BINDIR):
-	@printf '\033[33mGenerating $@ directory\033[0m\n'
+	@echo "  MKDIR $@"
 	@$(MKDIR) $(BINDIR)
 
 #
 
 $(OBJDIR)/%.o: %.c
-	@printf '\033[32mCompiling $<\033[0m\n'
+	@echo "  CC    $<"
 	@$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/mccclass_68k.o: ../include/mccclass_68k.c
-	@printf '\033[32mCompiling $<\033[0m\n'
+	@echo "  CC    $<"
 	@$(CC) $(CFLAGS) $< -o $@
-
-$(LOCALE)/%.catalog: $(LOCALE)/%.ct
-	@printf '\033[33mGenerating $@\033[0m\n'
-	@$(FC) $(LOCALE)/HTMLview_mcp.cd $< CATALOG $@
 
 #
 
 $(MCPTARGET): $(M68KSTUBS) $(MCPOBJS)
-	@printf '\033[32mLinking \033[1m$@\033[0m\n'
+	@echo "  LD    $@"
 	@$(CC) -nostartfiles $(LDFLAGS) -o $@.debug $(MCPOBJS) $(M68KSTUBS) $(LDLIBS) -Wl,-Map,$@.map
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
 $(PREFTARGET): $(PREFOBJS) $(OBJDIR)/Preference.o
-	@printf '\033[32mLinking \033[1m$@\033[0m\n'
+	@echo "  LD    $@"
 	@$(CC) $(LDFLAGS) -o $@.debug $(PREFOBJS) $(LDLIBS) -Wl,-Map,$@.map
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
@@ -292,7 +289,7 @@ locale.c: locale/HTMLview_mcp.cd locale_c.sd locale_h.sd
 ## CATALOG GENERATION #################
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct
-	@printf '\033[33mGenerating $@\033[0m\n'
+	@echo "  FC    $@"
 	@$(FC) $(LOCALE)/HTMLview_mcp.cd $< CATALOG $@
 
 .IGNORE: $(CATALOGS)

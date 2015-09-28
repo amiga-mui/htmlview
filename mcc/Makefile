@@ -404,12 +404,8 @@ $(OBJDIR)/%.o: %.cpp
 	@$(CXX) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/mccclass_68k.o: ../include/mccclass_68k.c
-	@echo "  CXX   $<"
+	@echo "  CC    $<"
 	@$(CC) $(CFLAGS) $< -o $@
-
-$(LOCALE)/%.catalog: $(LOCALE)/%.ct
-	@echo "  GN    $@"
-	@$(FC) $(LOCALE)/HTMLview_mcc.cd $< CATALOG $@
 
 #
 
@@ -434,7 +430,7 @@ locale.c: locale/HTMLview_mcc.cd locale_c.sd locale_h.sd
 ## CATALOG GENERATION #################
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct
-	@echo "  GN    $@"
+	@echo "  FC    $@"
 	@$(FC) $(LOCALE)/HTMLview_mcc.cd $< CATALOG $@
 
 .IGNORE: $(CATALOGS)
