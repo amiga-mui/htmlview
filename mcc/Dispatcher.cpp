@@ -96,7 +96,7 @@ HOOKPROTONHNO(DefaultLoadFunc, ULONG, struct HTMLview_LoadMsg* lmsg)
   {
     case HTMLview_Open:
     {
-      STRPTR file = lmsg->lm_Open.URL+7;
+      STRPTR file = lmsg->lm_Params.lm_Open.URL+7;
       APTR result = lmsg->lm_Userdata = (APTR)Open(file, MODE_OLDFILE);
       return((ULONG)result);
     }
@@ -104,7 +104,7 @@ HOOKPROTONHNO(DefaultLoadFunc, ULONG, struct HTMLview_LoadMsg* lmsg)
 
     case HTMLview_Read:
     {
-      APTR fh = lmsg->lm_Userdata; STRPTR buf = lmsg->lm_Read.Buffer; LONG len = lmsg->lm_Read.Size;
+      APTR fh = lmsg->lm_Userdata; STRPTR buf = lmsg->lm_Params.lm_Read.Buffer; LONG len = lmsg->lm_Params.lm_Read.Size;
       len = Read((BPTR)fh, buf, len);
       return(len > 0 ? len : 0);
     }

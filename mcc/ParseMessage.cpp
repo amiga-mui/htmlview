@@ -35,8 +35,8 @@ BOOL ParseMessage::OpenURL (STRPTR url, Object *htmlview, ULONG flags)
   HTMLview = htmlview;
   LoadMsg.lm_Type = HTMLview_Open;
   LoadMsg.lm_PageID = PageID;
-  LoadMsg.lm_Open.URL = url;
-  LoadMsg.lm_Open.Flags = flags;
+  LoadMsg.lm_Params.lm_Open.URL = url;
+  LoadMsg.lm_Params.lm_Open.Flags = flags;
   LoadMsg.lm_App = _app(htmlview);
   BOOL result = CallHookPkt(LoadHook, htmlview, &LoadMsg) ? TRUE : FALSE;
 
@@ -45,8 +45,8 @@ BOOL ParseMessage::OpenURL (STRPTR url, Object *htmlview, ULONG flags)
 
 LONG ParseMessage::ReadURL (STRPTR buffer, ULONG size)
 {
-  LoadMsg.lm_Read.Buffer = buffer;
-  LoadMsg.lm_Read.Size = size;
+  LoadMsg.lm_Params.lm_Read.Buffer = buffer;
+  LoadMsg.lm_Params.lm_Read.Size = size;
   return(CallHookPkt(LoadHook, HTMLview, &LoadMsg));
 }
 
@@ -55,8 +55,8 @@ VOID ParseMessage::WriteURL (STRPTR buffer)
   if(buffer)
   {
     LoadMsg.lm_Type = HTMLview_Write;
-    LoadMsg.lm_Write.Buffer = buffer;
-    LoadMsg.lm_Write.Size = strlen(buffer);
+    LoadMsg.lm_Params.lm_Write.Buffer = buffer;
+    LoadMsg.lm_Params.lm_Write.Size = strlen(buffer);
     CallHookPkt(LoadHook, HTMLview, &LoadMsg);
   }
   LoadMsg.lm_Type = HTMLview_Read;

@@ -562,8 +562,8 @@ DISPATCHER(DecoderDispatcher)
         data->BytesInBuffer -= result;
       }
 
-      data->LoadMsg->lm_Read.Buffer = buf;
-      data->LoadMsg->lm_Read.Size = len;
+      data->LoadMsg->lm_Params.lm_Read.Buffer = buf;
+      data->LoadMsg->lm_Params.lm_Read.Size = len;
       result += CallHookPkt(data->LoadHook, data->HTMLview, data->LoadMsg);
     }
     break;
@@ -583,8 +583,8 @@ DISPATCHER(DecoderDispatcher)
 
       while(left > 0)
       {
-        data->LoadMsg->lm_Read.Buffer = (STRPTR)skip;
-        data->LoadMsg->lm_Read.Size = left > 512 ? 512 : left;
+        data->LoadMsg->lm_Params.lm_Read.Buffer = (STRPTR)skip;
+        data->LoadMsg->lm_Params.lm_Read.Size = left > 512 ? 512 : left;
         LONG sub = CallHookPkt(data->LoadHook, data->HTMLview, data->LoadMsg);
         if(!sub)
           break;
@@ -847,14 +847,14 @@ VOID DecoderThread(REG(a0, STRPTR arguments))
 
     loadmsg.lm_Type = HTMLview_Open;
     loadmsg.lm_PageID = item->PageID;
-    loadmsg.lm_Open.URL = args->Name;
-    loadmsg.lm_Open.Flags = MUIF_HTMLview_LoadMsg_Image;
+    loadmsg.lm_Params.lm_Open.URL = args->Name;
+    loadmsg.lm_Params.lm_Open.Flags = MUIF_HTMLview_LoadMsg_Image;
     if(CallHookPkt(loadhook, args->Obj, &loadmsg))
     {
       UBYTE buf[12];
       loadmsg.lm_Type = HTMLview_Read;
-      loadmsg.lm_Read.Buffer = (char *)buf;
-      loadmsg.lm_Read.Size = 10;
+      loadmsg.lm_Params.lm_Read.Buffer = (char *)buf;
+      loadmsg.lm_Params.lm_Read.Size = 10;
       ULONG len = CallHookPkt(loadhook, args->Obj, &loadmsg);
 
   	  struct TagItem attrs[] =
