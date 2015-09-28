@@ -234,6 +234,11 @@ PREFOBJS= $(OBJDIR)/locale.o \
           $(OBJDIR)/pic.o \
           $(OBJDIR)/Debug.o
 
+ifeq ($(OS), os3)
+MCPOBJS  += $(OBJDIR)/vastubs.o
+PREFOBJS += $(OBJDIR)/vastubs.o
+endif
+
 # available catalog translations
 CATALOGS = $(LOCALE)/czech.catalog \
            $(LOCALE)/italian.catalog \
