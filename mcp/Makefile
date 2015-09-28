@@ -249,7 +249,6 @@ all: $(BINDIR) $(OBJDIR) locale.c $(MCPTARGET) $(PREFTARGET)
 $(OBJDIR):
 	@echo "  MKDIR $@"
 	@$(MKDIR) $(OBJDIR)
-	@$(MKDIR) $(OBJDIR)/classes
 
 # make the binary directories
 $(BINDIR):
