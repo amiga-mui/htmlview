@@ -4,10 +4,10 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.16 (06.10.2006)
-        Author:         SDI & Jens Langner
+        Versionstring:  $VER: SDI_hook.h 1.27 (04.04.2015)
+        Authors:        Dirk Stoecker, Jens Maus
         Distribution:   PD
-        Project page:   http://www.sf.net/projects/sditools/
+        Project page:   https://github.com/adtools/SDI
         Description:    defines to hide compiler specific hook stuff
 
  1.0   21.06.02 : based on the work made for freeciv and YAM with
@@ -42,6 +42,23 @@
                   DISPATCHERPROTO() definition. Now the DISPATCHERPROTO() should
                   only be used to get the correct prototype and the plain
                   DISPATCHER() for defining the dispatcher itself.
+ 1.17  14.07.08 : added "_" to all UNUSED variable specifications to make sure
+                  a user does not use those definition on accident.
+ 1.18  20.03.09 : modified macros to be somewhat more compatible for an AROS
+                  usage (Pavel Fedin)
+ 1.19  25.03.09 : fixed the DISPATCHERPROTO() macros for x86_64 AROS.
+ 1.20  26.03.09 : fixed m68k define checks.
+ 1.21  19.05.09 : added SDISPATCHER() to generate a static dispatcher.
+ 1.22  24.06.10 : fixed AROS macros (Matthias Rustler).
+ 1.23  12.08.10 : added missing proto/alib.h include for AROS
+ 1.24  03.03.11 : fixed AROS macros for m68k (Jason McMullan)
+ 1.25  18.07.12 : added crosscall macros for functions with 1 and 2 parameters.
+                  These macros are to be used in case i.e. PPC code is to be called
+                  from m68k code. The function pointer must be passed with ENTRY().
+ 1.26  17.10.12 : added crosscall macros for functions with 1 and 2 parameters but
+                  no return value.
+ 1.27  04.04.15 : fixed HOOKPROTO for vbcc (Fredrik Wikstrom)
+
 */
 
 /*
@@ -54,9 +71,9 @@
 ** (e.g. add your name or nick name).
 **
 ** Find the latest version of this file at:
-** http://cvs.sourceforge.net/viewcvs.py/sditools/sditools/headers/
+** https://github.com/adtools/SDI
 **
-** Jens Langner <Jens.Langner@light-speed.de> and
+** Jens Maus <mail@jens-maus.de>
 ** Dirk Stoecker <soft@dstoecker.de>
 */
 
@@ -65,7 +82,7 @@
 /*
 ** Hook macros to handle the creation of Hooks/Dispatchers for different
 ** Operating System versions.
-** Currently AmigaOS and MorphOS is supported.
+** Currently AmigaOS, AROS, and MorphOS are supported.
 **
 ** For more information about hooks see include file <utility/hooks.h> or
 ** the relevant descriptions in utility.library autodocs.
@@ -104,23 +121,7 @@
 ** The ENTRY macro, which also gets the function name as argument.
 */
 
-#if  defined(__PPC__) || defined(__AROS__)
-  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ret                 \
-    name(struct Hook *hook, obj, param)
-  #define HOOKPROTONO(name, ret, param) static SAVEDS ret                    \
-    name(struct Hook *hook, UNUSED APTR obj, param)
-  #define HOOKPROTONP(name, ret, obj) static SAVEDS ret                      \
-    name(struct Hook *hook, obj, UNUSED APTR param)
-  #define HOOKPROTONONP(name, ret) static SAVEDS ret                         \
-    name(struct Hook *hook, UNUSED APTR obj, UNUSED APTR param)
-  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ret               \
-    name(UNUSED struct Hook *hook, obj, param)
-  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ret                  \
-    name(UNUSED struct Hook *hook, UNUSED APTR obj, param)
-  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ret                    \
-    name(UNUSED struct Hook *hook, obj, UNUSED APTR param)
-  #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
-#else
+#if !defined(__AROS__) && (defined(_M68000) || defined(__M68000) || defined(__mc68000) || defined(_M68K__))
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONO(name, ret, param) static SAVEDS ASM ret                \
@@ -135,6 +136,24 @@
     name(REG(a1, param))
   #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM ret                \
     name(REG(a2, obj))
+  #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
+#else
+  /* NOTE: This is fine for AROS, since HookEntry will handle stack params
+   */
+  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ret                 \
+    name(struct Hook *hook, obj, param)
+  #define HOOKPROTONO(name, ret, param) static SAVEDS ret                    \
+    name(struct Hook *hook, UNUSED APTR _obj, param)
+  #define HOOKPROTONP(name, ret, obj) static SAVEDS ret                      \
+    name(struct Hook *hook, obj, UNUSED APTR _param)
+  #define HOOKPROTONONP(name, ret) static SAVEDS ret                         \
+    name(struct Hook *hook, UNUSED APTR _obj, UNUSED APTR _param)
+  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ret               \
+    name(UNUSED struct Hook *_hook, obj, param)
+  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ret                  \
+    name(UNUSED struct Hook *_hook, UNUSED APTR _obj, param)
+  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ret                    \
+    name(UNUSED struct Hook *_hook, obj, UNUSED APTR _param)
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
 #endif
 
@@ -171,26 +190,121 @@
     const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,            \
     (APTR) Trampoline_##name};                                               \
     ULONG name(struct IClass * cl, Object * obj, Msg msg)
+  #define SDISPATCHER(name)                                                  \
+    struct IClass;                                                           \
+    static ULONG name(struct IClass * cl, Object * obj, Msg msg);            \
+    static ULONG Trampoline_##name(void) {return name((struct IClass *)      \
+    REG_A0, (Object *) REG_A2, (Msg) REG_A1);}                               \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static ULONG name(struct IClass * cl, Object * obj, Msg msg)
+  #define CROSSCALL1(name, ret, type1, param1)                               \
+    static STDARGS SAVEDS ret name(type1 param1);                            \
+    static ret Trampoline_##name(void)                                       \
+    {                                                                        \
+      ULONG *stk = (ULONG *)REG_A7;                                          \
+      type1 param1 = (type1)stk[1];                                          \
+      return name(param1);                                                   \
+    }                                                                        \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+  #define CROSSCALL1NR(name, type1, param1)                                  \
+    static STDARGS SAVEDS void name(type1 param1);                           \
+    static void Trampoline_##name(void)                                      \
+    {                                                                        \
+      ULONG *stk = (ULONG *)REG_A7;                                          \
+      type1 param1 = (type1)stk[1];                                          \
+      name(param1);                                                          \
+    }                                                                        \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static STDARGS SAVEDS void name(type1 param1)
+  #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
+    static STDARGS SAVEDS ret name(type1 param1, type2 param2);              \
+    static ret Trampoline_##name(void)                                       \
+    {                                                                        \
+      ULONG *stk = (ULONG *)REG_A7;                                          \
+      type1 param1 = (type1)stk[1];                                          \
+      type2 param2 = (type2)stk[2];                                          \
+      return name(param1, param2);                                           \
+    }                                                                        \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+  #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2);             \
+    static void Trampoline_##name(void)                                      \
+    {                                                                        \
+      ULONG *stk = (ULONG *)REG_A7;                                          \
+      type1 param1 = (type1)stk[1];                                          \
+      type2 param2 = (type2)stk[2];                                          \
+      name(param1, param2);                                                  \
+    }                                                                        \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2)
   #define ENTRY(func) (APTR)&Gate_##func
 
-#else /* !__MORPHOS__ */
+#elif defined(__AROS__)
+  #include <proto/alib.h>
+
+  #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
+    (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+  #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
+    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, (APTR)data}
+  #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
+    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+  #define DISPATCHERPROTO(name)  \
+    IPTR name(struct IClass * cl, Object * obj, Msg msg); \
+    AROS_UFP3(IPTR, Gate_##name, \
+          AROS_UFPA(struct IClass *, cl, A0), \
+          AROS_UFPA(Object *, obj, A2), \
+          AROS_UFPA(Msg, msg, A1))
+  #define DISPATCHERx(x,name) \
+    x IPTR name(struct IClass * cl, Object * obj, Msg msg); \
+    x AROS_UFH3(IPTR, Gate_##name, \
+          AROS_UFHA(struct IClass *, cl, A0), \
+          AROS_UFHA(Object *, obj, A2), \
+          AROS_UFHA(Msg, msg, A1)) \
+    { AROS_USERFUNC_INIT \
+      return name(cl, obj, msg); \
+      AROS_USERFUNC_EXIT \
+    } \
+    x IPTR name(struct IClass * cl, Object * obj, Msg msg)
+  #define DISPATCHER(name)  DISPATCHERx(,name)
+  #define SDISPATCHER(name) DISPATCHERx(static,name)
+  #define CROSSCALL1(name, ret, type1, param1)                               \
+    static STDARGS SAVEDS ret Gate_##name(type1 param1)
+  #define CROSSCALL1NR(name, type1, param1)                                  \
+    static STDARGS SAVEDS void Gate_##name(type1 param1)
+  #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
+    static STDARGS SAVEDS ret Gate_##name(type1 param1, type2 param2)
+  #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
+    static STDARGS SAVEDS void Gate_##name(type1 param1, type2 param2)
+  #define ENTRY(func) (APTR)Gate_##func
+
+#else /* !__MORPHOS__ && !__AROS__*/
+
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
     (HOOKFUNC)funcname, NULL, NULL}
   #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
     {{NULL, NULL}, (HOOKFUNC)funcname, NULL, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
     {{NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL}
-  #define ENTRY(func) (APTR)func
-
-  #if defined(__AROS__)
-    #define DISPATCHERPROTO(name) IPTR                                       \
-    name( struct IClass * cl, Object * obj, Msg msg)
-  #else
-    #define DISPATCHERPROTO(name) SAVEDS ASM ULONG  name(REG(a0,             \
+  #define DISPATCHERPROTO(name) SAVEDS ASM IPTR name(REG(a0,                 \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
-  #endif
-
   #define DISPATCHER(name) DISPATCHERPROTO(name)
+  #define SDISPATCHER(name) static DISPATCHERPROTO(name)
+  #define CROSSCALL1(name, ret, type1, param1)                               \
+    static STDARGS SAVEDS ret name(type1 param1)
+  #define CROSSCALL1NR(name, type1, param1)                                  \
+    static STDARGS SAVEDS void name(type1 param1)
+  #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
+    static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+  #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2)
+  #define ENTRY(func) (APTR)func
 
 #endif
 
@@ -198,4 +312,3 @@
   (hook)->h_SubEntry = (orighook).h_SubEntry,(hook)->h_Data = (APTR)(data))
 
 #endif /* SDI_HOOK_H */
-
