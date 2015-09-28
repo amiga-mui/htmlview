@@ -80,7 +80,7 @@ struct FindMessage *HostClass::Find (STRPTR str, ULONG top, ULONG flags)
     {
       FindMsg.StrCmp = strncmp;
       while(*str)
-        map[*str++] = step--;
+        map[(int)*str++] = step--;
     }
     else
     {

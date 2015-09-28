@@ -62,7 +62,7 @@ class TextClass *TextClass::Find (struct FindMessage &fmsg)
       STRPTR contents = Contents + len-1, upper = Contents + Length;
       while(contents < upper)
       {
-        skip = map[*contents];
+        skip = map[(int)*contents];
         contents += skip;
         if(skip <= 0)
         {

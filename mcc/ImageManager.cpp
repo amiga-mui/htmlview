@@ -379,7 +379,7 @@ ULONG DecodeQueueManager::DumpQueue ()
   ULONG total = 0;
   ObtainSemaphore(&Mutex);
   struct DecodeItem *prev, *first = Queue;
-  BOOL result = first ? TRUE : FALSE;
+//BOOL result = first ? TRUE : FALSE;
   while(first)
   {
     prev = first;
@@ -387,7 +387,7 @@ ULONG DecodeQueueManager::DumpQueue ()
     if(prev->Update())
     {
       total++;
-      result = FALSE;
+    //result = FALSE;
     }
   }
   ReleaseSemaphore(&Mutex);
@@ -415,7 +415,7 @@ VOID DecodeQueueManager::InvalidateQueue (Object *obj)
 
 DISPATCHER(DecoderDispatcher)
 {
-  ULONG result = NULL;
+  ULONG result = 0;
   struct DecoderData *data;
 
 	//return 0;

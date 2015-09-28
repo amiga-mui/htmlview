@@ -218,7 +218,7 @@ struct alfieMsg
 
 DISPATCHER(_Dispatcher)
 {
-  ULONG result = NULL;
+  ULONG result = 0;
   struct HTMLviewData *data;
 
   if (msg->MethodID!=OM_NEW)
@@ -495,7 +495,7 @@ DISPATCHER(_Dispatcher)
       ENTER();
 
       struct opSet *smsg = (struct opSet *)msg;
-      BOOL forward = mSet(obj, cl, smsg);
+      ULONG forward = mSet(obj, cl, smsg);
 
       struct TagItem newtags[] =
       {
@@ -1426,7 +1426,7 @@ DISPATCHER(_Dispatcher)
       ENTER();
       struct MUIP_HTMLview_AddSingleAnim *amsg = (struct MUIP_HTMLview_AddSingleAnim *)msg;
       struct ObjectList *receivers = new (std::nothrow) struct ObjectList(amsg->receiver);
-      if (!receivers) return NULL;
+      if (!receivers) return 0;
       struct AnimInfo *item;
       if((item = data->Share->AddAnim(obj, data, amsg->picture, receivers)))
         item->Flags |= AnimFLG_DeleteObjList;
