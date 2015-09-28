@@ -104,7 +104,7 @@ Object *BuildApp(void)
 		SubWindow, win = WindowObject,
 			MUIA_Window_ID,    MAKE_ID('M','A','I','N'),
 			MUIA_Window_Title, "HTMLview-Demo",
-			MUIA_Window_DefaultObject, htmlview,
+			//MUIA_Window_DefaultObject, htmlview,
 			MUIA_Window_UseBottomBorderScroller, TRUE,
 			MUIA_Window_UseRightBorderScroller, TRUE,
 
@@ -250,6 +250,7 @@ Object *BuildApp(void)
 
 		SetAttrs(vscroll, 0x804236ce, TRUE, TAG_DONE);
 		SetAttrs(hscroll, 0x804236ce, TRUE, TAG_DONE);
+		SetAttrs(win, MUIA_Window_DefaultObject, htmlview, TAG_DONE);
 
 		DoMethod(win, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
 //		set(app, MUIA_Application_Iconified, TRUE);
