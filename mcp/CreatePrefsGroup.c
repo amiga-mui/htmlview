@@ -92,7 +92,7 @@ ocheck(APTR key,APTR help)
 {
     Object *obj;
 
-    if (obj = MUI_MakeObject(MUIO_Checkmark,NULL))
+    if((obj = MUI_MakeObject(MUIO_Checkmark,NULL)) != NULL)
         SetAttrs(obj,MUIA_CycleChain,TRUE,MUIA_ControlChar,GetKeyChar(key,TRUE),_HELP(help),TAG_DONE);
 
     return obj;
@@ -128,12 +128,12 @@ otclabel(APTR id,APTR key)
 Object *
 obutton(APTR text,APTR key,APTR help)
 {
-    register Object *obj;
+    Object *obj;
 
-    if (obj = MUI_MakeObject(MUIO_Button,(ULONG)GetStr(text)))
+    if((obj = MUI_MakeObject(MUIO_Button,(ULONG)GetStr(text))) != NULL)
     {
-        UBYTE k = GetKeyChar(key,FALSE), kl = GetKeyChar(key,TRUE);
-        
+        UBYTE kl = GetKeyChar(key,TRUE);
+
         SetAttrs(obj,MUIA_CycleChain,TRUE,MUIA_ControlChar,kl,MUIA_Text_ControlChar,kl,_HELP(help),TAG_DONE);
 	}
 
@@ -143,7 +143,7 @@ obutton(APTR text,APTR key,APTR help)
 /***********************************************************************/
 
 Object *
-opoppen(APTR key,APTR title,APTR help)
+opoppen(APTR key,UNUSED APTR title,APTR help)
 {
     return PoppenObject,
         MUIA_ControlChar,  GetKeyChar(key,TRUE),
