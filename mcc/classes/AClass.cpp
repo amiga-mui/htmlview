@@ -51,7 +51,7 @@ class AClass *AClass::FindAnchor (STRPTR name)
   return((Name && !strcmp(Name, name)) ? this : TreeClass::FindAnchor(name));
 }
 
-VOID AClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID AClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

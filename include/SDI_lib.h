@@ -166,11 +166,19 @@
 #else
   #define LIBFUNC SAVEDS ASM
   #if (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
-    #define LIBPROTO(name, ret, ...) LIBFUNC ret LIB_##name(__VA_ARGS__)
-    #define LIBPROTOVA(name, ret, ...)
-    #define LIBSTUB(name, ret, ...)
-    #define CALL_LFUNC_NP(name, ...) LIB_##name(__BASE_OR_IFACE_VAR)
-    #define CALL_LFUNC(name, ...) LIB_##name(__BASE_OR_IFACE_VAR, __VA_ARGS__)
+    #if defined(__cplusplus)
+      #define LIBPROTO
+      #define LIBPROTOVA
+      #define LIBSTUB
+      #define CALL_LFUNC_NP
+      #define CALL_LFUNC
+    #else
+      #define LIBPROTO(name, ret, ...) LIBFUNC ret LIB_##name(__VA_ARGS__)
+      #define LIBPROTOVA(name, ret, ...)
+      #define LIBSTUB(name, ret, ...)
+      #define CALL_LFUNC_NP(name, ...) LIB_##name(__BASE_OR_IFACE_VAR)
+      #define CALL_LFUNC(name, ...) LIB_##name(__BASE_OR_IFACE_VAR, __VA_ARGS__)
+    #endif
   #endif
   #define LFUNC_FAS(name) LIB_##name
   #define LFUNC_VAS(name)

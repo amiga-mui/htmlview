@@ -48,7 +48,7 @@ VOID LIClass::NumToStr (STRPTR str, UWORD type)
     case OL_UpperAlpha:
     {
       char num = Number + 'A' - 1;
-      
+
          while(num > 'Z')
         num -= 'Z' - 'A' + 1;
 
@@ -158,7 +158,7 @@ VOID LIClass::MinMax (struct MinMaxMessage &mmsg)
   mmsg.Indent -= 14;
 }
 
-VOID LIClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID LIClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

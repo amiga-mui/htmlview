@@ -116,7 +116,7 @@ BOOL MUIG_ScrollDamage(REG(a0) struct RastPort *rp,REG(d0) WORD dx,REG(d1) WORD 
 
 
 
-LONG MUIG_ScrollRaster(REG(a0) struct RastPort *rp,REG(d0) WORD dx,REG(d1) WORD dy,REG(d2) WORD left,REG(d3) WORD top,REG(d4) WORD right,REG(d5) WORD bottom)
+LONG MUIG_ScrollRaster(struct RastPort *rp, WORD dx, WORD dy, WORD left, WORD top, WORD right, WORD bottom)
 {
 	WORD width  = right - left + 1;
 	WORD height = bottom - top + 1;

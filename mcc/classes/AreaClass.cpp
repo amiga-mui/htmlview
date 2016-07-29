@@ -123,7 +123,7 @@ BOOL AreaClass::UseMap (struct UseMapMessage &umsg)
   return(result);
 }
 
-VOID AreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID AreaClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
   pmsg.SkipSpaces();

@@ -32,7 +32,7 @@ class BaseClass : public AttrClass
   public:
     BaseClass () : AttrClass() { ; }
     ~BaseClass () { delete URL; delete Target; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 
     STRPTR URL, Target;
 };

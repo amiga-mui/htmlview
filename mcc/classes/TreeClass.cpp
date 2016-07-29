@@ -337,7 +337,7 @@ VOID TreeClass::MinMax (struct MinMaxMessage &mmsg)
   Flags |= FLG_KnowsMinMax;
 }
 
-VOID TreeClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TreeClass::Parse(struct ParseMessage &pmsg)
 {
   ENTER();
 
@@ -610,7 +610,7 @@ VOID TreeClass::Restore(UBYTE *opencounts, ULONG len, APTR handle)
 
     opencounts[actual] = count;
   }
-  
+
   delete[] (UWORD*)handle;
 }
 

@@ -28,6 +28,7 @@
 #include "General.h"
 #include "TagInfo.h"
 #include "TernaryTrees.h"
+#include "private.h"
 
 struct TagInfo TagTable[] =
 {
@@ -104,8 +105,7 @@ UBYTE WhitespaceTable [256];
 
 typedef unsigned char uint8;
 
-extern "C" VOID _INIT_6_CharTables ();
-VOID _INIT_6_CharTables ()
+CONSTRUCTOR(CharTables, 8)
 {
    memset(TagEndTable, FALSE, 256);
    STRPTR tagenders = (STRPTR)"\f\r\n\t >";
@@ -157,14 +157,12 @@ BOOL NotTagEnd (REG(d0) UBYTE c)
 
 struct TNode *TagTree = NULL;
 
-extern "C" ULONG _INIT_7_BuildTagTree ();
-ULONG _INIT_7_BuildTagTree ()
+CONSTRUCTOR(BuildTagTree, 3)
 {
-	return BinaryInsert(TagTree, TagTable, (ULONG)0, (ULONG)sizeof(TagTable) / sizeof(TagInfo) - 2);
+	/*return*/ BinaryInsert(TagTree, TagTable, (ULONG)0, (ULONG)sizeof(TagTable) / sizeof(TagInfo) - 2);
 }
 
-extern "C" VOID _EXIT_7_DisposeTagTree ();
-VOID _EXIT_7_DisposeTagTree ()
+DESTRUCTOR(DisposeTagTree, 3)
 {
    if (TagTree) delete TagTree;
    TagTree = NULL;

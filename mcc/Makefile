@@ -136,7 +136,7 @@ TESTTARGET= $(BINDIR)/HTMLview-Test
 WARN     = -W -Wall -Wwrite-strings
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG -O0
-DEBUGSYM = -gstabs
+DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -I../mcp -I../include $(CPU) $(WARN) $(OPTFLAGS) \
            $(DEBUG) $(DEBUGSYM) -c
 LDFLAGS  = $(CPU) $(DEBUGSYM)
@@ -178,7 +178,7 @@ ifeq ($(OS), os3)
 
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
-  CFLAGS  += -noixemul -DNO_INLINE_STDARG
+  CFLAGS  += -noixemul -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug -lmui
 
@@ -226,6 +226,8 @@ endif
 
 MCCOBJS = \
           $(OBJDIR)/library.o \
+          $(OBJDIR)/library_cpp.o \
+          $(OBJDIR)/ctor_dtor.o \
           $(OBJDIR)/classes/AClass.o \
           $(OBJDIR)/classes/AreaClass.o \
           $(OBJDIR)/classes/AttrClass.o \
@@ -301,6 +303,8 @@ MCCOBJS = \
           $(OBJDIR)/Debug.o
 
 TESTOBJS= $(OBJDIR)/HTMLview-Test.o \
+          $(OBJDIR)/library_cpp.o \
+          $(OBJDIR)/ctor_dtor.o \
           $(OBJDIR)/classes/AClass.o \
           $(OBJDIR)/classes/AreaClass.o \
           $(OBJDIR)/classes/AttrClass.o \
@@ -375,6 +379,14 @@ TESTOBJS= $(OBJDIR)/HTMLview-Test.o \
           $(OBJDIR)/StringClass.o \
           $(OBJDIR)/Debug.o
 
+ifeq ($(OS), os3)
+MCCOBJS += \
+          $(OBJDIR)/vastubs.o
+
+TESTOBJS += \
+          $(OBJDIR)/vastubs.o
+endif
+
 # available catalog translations
 CATALOGS = $(LOCALE)/deutsch.catalog
 
@@ -396,8 +408,8 @@ $(BINDIR):
 #
 
 $(OBJDIR)/%.o: %.c
-	@echo "  CXX   $<"
-	@$(CXX) $(CFLAGS) $< -o $@
+	@echo "  CC    $<"
+	@$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o: %.cpp
 	@echo "  CXX   $<"
@@ -419,7 +431,7 @@ $(TESTTARGET): $(TESTOBJS) $(OBJDIR)/HTMLview-Test.o
 	@$(CXX) $(LDFLAGS) -o $@.debug $(TESTOBJS) $(LDLIBS) -Wl,-Map,$@.map
 	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
 
-$(OBJDIR)/library.o: library.cpp ../include/mccinit.c \
+$(OBJDIR)/library.o: library.c ../include/mccinit.c \
   HTMLview_mcc.h private.h rev.h
 
 locale.h: locale.c

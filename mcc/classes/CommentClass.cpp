@@ -24,7 +24,7 @@
 
 #include "ParseMessage.h"
 
-VOID CommentClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID CommentClass::Parse(struct ParseMessage &pmsg)
 {
   BOOL out_of_comment = FALSE;
   pmsg.SetLock(); /* we don't want to buffer the entire comment */

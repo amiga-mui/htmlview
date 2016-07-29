@@ -24,7 +24,7 @@
 
 #include "ParseMessage.h"
 
-VOID DummyClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID DummyClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

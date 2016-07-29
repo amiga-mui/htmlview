@@ -27,12 +27,12 @@
 
 #include "IM_ColourManager.h"
 #include <new>
+#include "private.h"
 
 struct SignalSemaphore Mutex;
 class ColourManager *FirstCMap = NULL;
 
-extern "C" VOID _INIT_5_CMapMutex ();
-VOID _INIT_5_CMapMutex ()
+CONSTRUCTOR(CMapMutex, 9)
 {
   memset(&Mutex, 0, sizeof(Mutex));
   InitSemaphore(&Mutex);

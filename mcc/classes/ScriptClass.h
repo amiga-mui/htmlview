@@ -32,7 +32,7 @@ class ScriptClass : public AttrClass
   public:
     ScriptClass () : AttrClass() { ; }
     ~ScriptClass () { delete Script; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 
   private:
     STRPTR Script;

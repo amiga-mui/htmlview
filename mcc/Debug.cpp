@@ -36,6 +36,9 @@
 #include "Debug.h"
 #include "rev.h"
 
+extern "C"
+{
+
 // special flagging macros
 #define isFlagSet(v,f)      (((v) & (f)) == (f))  // return TRUE if the flag is set
 #define hasFlag(v,f)        (((v) & (f)) != 0)    // return TRUE if one of the flags in f is set in v
@@ -442,5 +445,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 }
 
 /****************************************************************************/
+
+} // extern "C"
 
 #endif

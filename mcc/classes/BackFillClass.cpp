@@ -84,7 +84,7 @@ VOID BackFillClass::FindImage (struct LayoutMessage &lmsg)
   }
 }
 
-VOID BackFillClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID BackFillClass::Parse(struct ParseMessage &pmsg)
 {
   struct ArgList args[] =
   {
@@ -211,7 +211,7 @@ HOOKPROTO(BackFillCode, VOID, struct RastPort *rp, struct LayerMsg *lmsg)
     }
   }
 }
-//MakeStaticHook(BackFillHook, BackFillCode);
+//MakeStaticCppHook(BackFillHook, BackFillCode);
 
 VOID BackFillClass::DrawBackground (struct RenderMessage &rmsg, LONG minx, LONG miny, LONG maxx, LONG maxy, LONG left, LONG top)
 {
@@ -221,7 +221,7 @@ VOID BackFillClass::DrawBackground (struct RenderMessage &rmsg, LONG minx, LONG 
   {
     struct BackfillInfo info = { Picture, left, top, minx, miny };
     struct Rectangle rect = { minx, miny, maxx, maxy };
-    MakeHook(BackFillHook,BackFillCode);
+    MakeCppHook(BackFillHook,BackFillCode);
 
 	BackFillHook.h_Data = &info;
     //InitHook(&BackFillHook, BackFillHook, &info);

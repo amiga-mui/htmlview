@@ -51,14 +51,24 @@
 #include "SDI_stdarg.h"
 #include <stdio.h>
 #include <new>
+#include "private.h"
 
 #ifdef __amigaos4__
 #define GetImageDecoderClass(base) ( (struct IClass *)(IExec->EmulateTags)(base, ET_Offset, -30, ET_RegisterA6, base, ET_SaveRegs, TRUE, TAG_DONE) )
 #elif defined(__MORPHOS__)
 #define GetImageDecoderClass(base) (struct IClass *)({ REG_A6 = (ULONG) (base); MyEmulHandle->EmulCallDirectOS(-30); })
+#elif defined(__cplusplus)
+#warning FIXME
+#define GetImageDecoderClass(base) NULL
 #else
 #define GetImageDecoderClass(base) ( (struct IClass *(*)(REG(a6, struct Library *))) ((UBYTE *)base-30) )(base)
 #endif
+
+struct DecoderThreadStartupMessage
+{
+	struct Message message;
+	struct Args *args;
+};
 
 ImageCacheItem::ImageCacheItem (STRPTR url, struct PictureFrame *pic)
 {
@@ -413,7 +423,7 @@ VOID DecodeQueueManager::InvalidateQueue (Object *obj)
   ReleaseSemaphore(&Mutex);
 }
 
-DISPATCHER(DecoderDispatcher)
+CPPDISPATCHER(DecoderDispatcher)
 {
   ULONG result = 0;
   struct DecoderData *data;
@@ -426,7 +436,7 @@ DISPATCHER(DecoderDispatcher)
   {
     case OM_NEW:
     {
-      if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
+      if((obj = (Object *)DoSuperMethodA(cl, obj, (Msg)msg)))
       {
         struct DecoderData *data = (struct DecoderData *)INST_DATA(cl, obj);
         struct opSet *nmsg = (struct opSet *)msg;
@@ -511,7 +521,7 @@ DISPATCHER(DecoderDispatcher)
 
     case IDM_Decode:
     {
-      if((result = DoSuperMethodA(cl, obj, msg)))
+      if((result = DoSuperMethodA(cl, obj, (Msg)msg)))
         data->ImgObj->FlushBuffers();
     }
     break;
@@ -519,7 +529,7 @@ DISPATCHER(DecoderDispatcher)
     case OM_DISPOSE:
     {
       delete data->ImgObj;
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
 
@@ -540,7 +550,7 @@ DISPATCHER(DecoderDispatcher)
         break;
 
         default:
-          result = DoSuperMethodA(cl, obj, msg);
+          result = DoSuperMethodA(cl, obj, (Msg)msg);
         break;
       }
     }
@@ -663,7 +673,7 @@ DISPATCHER(DecoderDispatcher)
 
     default:
     {
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
   }
@@ -781,9 +791,15 @@ Object *NewDecoderObjectA(UBYTE *buf,struct TagItem *attrs)
         {
           if((cl = MakeClass(NULL, NULL, GetImageDecoderClass(decoders->Base), sizeof(DecoderData), 0L)))
           {
-            cl->cl_Dispatcher.h_SubEntry = 0;
-            cl->cl_Dispatcher.h_Entry    = (ULONG(*)())ENTRY(DecoderDispatcher);
+            #if defined(__amigaos3__)
+            cl->cl_Dispatcher.h_SubEntry = (HOOKFUNC)ENTRY(DecoderDispatcher);
+            cl->cl_Dispatcher.h_Entry    = (HOOKFUNC)HookEntry;
             cl->cl_Dispatcher.h_Data     = 0;
+            #else
+            cl->cl_Dispatcher.h_SubEntry = 0;
+            cl->cl_Dispatcher.h_Entry    = (HOOKFUNC)ENTRY(DecoderDispatcher);
+            cl->cl_Dispatcher.h_Data     = 0;
+            #endif
 
             decoders->Class = cl;
           }
@@ -803,15 +819,13 @@ Object *NewDecoderObjectA(UBYTE *buf,struct TagItem *attrs)
   else return(NULL);
 }
 
-extern "C" VOID _INIT_7_PrepareDecoders ();
-VOID _INIT_7_PrepareDecoders ()
+CONSTRUCTOR(PrepareDecoders, 4)
 {
   memset(&DecoderMutex,0,sizeof(struct SignalSemaphore));
   InitSemaphore(&DecoderMutex);
 }
 
-extern "C" VOID _EXIT_7_FlushDecoders ();
-VOID _EXIT_7_FlushDecoders ()
+DESTRUCTOR(FlushDecoders, 4)
 {
   struct DecoderInfo *decoders = Decoders;
   while(decoders->Name)
@@ -825,77 +839,79 @@ VOID _EXIT_7_FlushDecoders ()
   }
 }
 
-VOID DecoderThread(REG(a0, STRPTR arguments))
+extern "C" void DecoderThread(void)
 {
-  struct Args *args = (struct Args *)arguments;
-  //sscanf(arguments, "%x", (unsigned int*)&args);
+  struct Process *me = (struct Process *)FindTask(NULL);
+  struct DecoderThreadStartupMessage *startup;
 
-  BOOL result = FALSE;
-  struct ImageList *image = args->Img;
-  ULONG width = image->Width, height = image->Height;
-  BOOL dither = args->Data->Share->DitherType;
-  ULONG gamma = args->Data->Share->GammaCorrection;
-  struct Hook *loadhook = args->Data->ImageLoadHook;
-  struct HTMLview_LoadMsg loadmsg;
-  loadmsg.lm_App = _app(args->Obj);
-
-  struct DecodeItem *item = new (std::nothrow) struct DecodeItem(args->Obj, args->Data, image);
-  if (item)
+  WaitPort(&me->pr_MsgPort);
+  if((startup = (struct DecoderThreadStartupMessage *)GetMsg(&me->pr_MsgPort)) != NULL)
   {
-    args->Data->Share->DecodeQueue.InsertElm(item);
-    Signal(args->ParentTask, 1 << args->SigBit);
+    struct Args *args = startup->args;
 
-    loadmsg.lm_Type = HTMLview_Open;
-    loadmsg.lm_PageID = item->PageID;
-    loadmsg.lm_Params.lm_Open.URL = args->Name;
-    loadmsg.lm_Params.lm_Open.Flags = MUIF_HTMLview_LoadMsg_Image;
-    if(CallHookPkt(loadhook, args->Obj, &loadmsg))
+    ReplyMsg((struct Message *)startup);
+
+    BOOL result = FALSE;
+    struct ImageList *image = args->Img;
+    ULONG width = image->Width, height = image->Height;
+    BOOL dither = args->Data->Share->DitherType;
+    ULONG gamma = args->Data->Share->GammaCorrection;
+    struct Hook *loadhook = args->Data->ImageLoadHook;
+    struct HTMLview_LoadMsg loadmsg;
+    loadmsg.lm_App = _app(args->Obj);
+
+    struct DecodeItem *item = new (std::nothrow) struct DecodeItem(args->Obj, args->Data, image);
+    if (item)
     {
-      UBYTE buf[12];
-      loadmsg.lm_Type = HTMLview_Read;
-      loadmsg.lm_Params.lm_Read.Buffer = (char *)buf;
-      loadmsg.lm_Params.lm_Read.Size = 10;
-      ULONG len = CallHookPkt(loadhook, args->Obj, &loadmsg);
+      args->Data->Share->DecodeQueue.InsertElm(item);
+      Signal(args->ParentTask, 1 << args->SigBit);
 
-  	  struct TagItem attrs[] =
-       {{IDA_StartBuffer,  (ULONG)buf},
-        {IDA_BytesInBuffer,(ULONG)len},
-        {IDA_Width,        (ULONG)width},
-        {IDA_Height,       (ULONG)height},
-        {IDA_Screen,       (ULONG)args->Scr},
-        {IDA_HTMLview,     (ULONG)args->Obj},
-        {IDA_LoadHook,     (ULONG)loadhook},
-        {IDA_LoadMsg,      (ULONG)&loadmsg},
-        {IDA_StatusStruct, (ULONG)item},
-        {IDA_NoDither,     (ULONG)dither},
-        {IDA_Gamma,        (ULONG)gamma},
-        {TAG_DONE,0}};
-      Object *decoder = NewDecoderObjectA(buf,attrs);
-
-      if(decoder)
+      loadmsg.lm_Type = HTMLview_Open;
+      loadmsg.lm_PageID = item->PageID;
+      loadmsg.lm_Params.lm_Open.URL = args->Name;
+      loadmsg.lm_Params.lm_Open.Flags = MUIF_HTMLview_LoadMsg_Image;
+      if(CallHookPkt(loadhook, args->Obj, &loadmsg))
       {
-        result = DoMethod(decoder, IDM_Decode);
-        DisposeObject(decoder);
+        UBYTE buf[12];
+        loadmsg.lm_Type = HTMLview_Read;
+        loadmsg.lm_Params.lm_Read.Buffer = (char *)buf;
+        loadmsg.lm_Params.lm_Read.Size = 10;
+        ULONG len = CallHookPkt(loadhook, args->Obj, &loadmsg);
+
+    	  struct TagItem attrs[] =
+         {{IDA_StartBuffer,  (ULONG)buf},
+          {IDA_BytesInBuffer,(ULONG)len},
+          {IDA_Width,        (ULONG)width},
+          {IDA_Height,       (ULONG)height},
+          {IDA_Screen,       (ULONG)args->Scr},
+          {IDA_HTMLview,     (ULONG)args->Obj},
+          {IDA_LoadHook,     (ULONG)loadhook},
+          {IDA_LoadMsg,      (ULONG)&loadmsg},
+          {IDA_StatusStruct, (ULONG)item},
+          {IDA_NoDither,     (ULONG)dither},
+          {IDA_Gamma,        (ULONG)gamma},
+          {TAG_DONE,0}};
+        Object *decoder = NewDecoderObjectA(buf,attrs);
+
+        if(decoder)
+        {
+          result = DoMethod(decoder, IDM_Decode);
+          DisposeObject(decoder);
+        }
+
+        loadmsg.lm_Type = HTMLview_Close;
+        CallHookPkt(loadhook, args->Obj, &loadmsg);
       }
 
-      loadmsg.lm_Type = HTMLview_Close;
-      CallHookPkt(loadhook, args->Obj, &loadmsg);
+      delete args;
+
+      item->Enter();
+      item->Status = result ? StatusDone : StatusError;
+      item->Thread = NULL;
+      item->Leave();
     }
-
-    delete args;
-
-    item->Enter();
-    item->Status = result ? StatusDone : StatusError;
-    item->Thread = NULL;
-    item->Leave();
   }
 }
-
-#if defined(__PPC__)
-static const BOOL FBlit = FALSE;
-#else
-BOOL FBlit = FindPort("FBlit") ? TRUE : FALSE;
-#endif
 
 VOID DecodeImage (Object *obj, UNUSED struct IClass *cl, struct ImageList *image, struct HTMLviewData *data)
 {
@@ -928,29 +944,51 @@ VOID DecodeImage (Object *obj, UNUSED struct IClass *cl, struct ImageList *image
         UnlockPubScreen(NULL,lock);
         return;
     }
-    char str_args[10];
-    sprintf(str_args, "%lx", (ULONG)args);
+    /*char str_args[10];
+      sprintf(str_args, "%lx", (ULONG)args);*/
+
+    #if defined(__PPC__)
+    static const BOOL FBlit = FALSE;
+    #else
+    BOOL FBlit = FindPort("FBlit") ? TRUE : FALSE;
+    #endif
 
     STRPTR taskname = FBlit ? (char *)"HTMLview ImageDecoder" : args->TaskName;
-    if(CreateNewProcTags(
+    struct Process *thread;
+    if((thread = CreateNewProcTags(
       NP_Entry,        (ULONG)DecoderThread,
       NP_Priority,     (ULONG)-1,
       NP_Name,         (ULONG)taskname,
       #if defined(__MORPHOS__)
-      NP_PPC_Arg1,     (ULONG)args,
       NP_CodeType, 	   CODETYPE_PPC,
-	    NP_PPCStackSize, STACKSIZEPPC,
+	  NP_PPCStackSize, STACKSIZEPPC,
       NP_StackSize,    STACKSIZE68K,
-	    NP_CopyVars,     FALSE,
+	  NP_CopyVars,     FALSE,
       NP_Input,        NULL,
       NP_CloseInput,   FALSE,
       NP_Output,       NULL,
-	    NP_CloseOutput,  FALSE,
+	  NP_CloseOutput,  FALSE,
       NP_Error,        NULL,
       NP_CloseError,   FALSE,
       #endif
-      TAG_DONE))
+      TAG_DONE)) != NULL)
     {
+      struct MsgPort replyPort;
+      struct DecoderThreadStartupMessage startup;
+
+      memset(&replyPort, 0, sizeof(replyPort));
+      replyPort.mp_Node.ln_Type = NT_MSGPORT;
+      NewList(&replyPort.mp_MsgList);
+      replyPort.mp_SigBit = SIGB_SINGLE;
+      replyPort.mp_SigTask = FindTask(NULL);
+
+      memset(&startup, 0, sizeof(startup));
+      startup.message.mn_ReplyPort = &replyPort;
+      startup.args = args;
+
+      PutMsg(&thread->pr_MsgPort, (struct Message *)&startup);
+      Remove((struct Node *)WaitPort(&replyPort));
+
       Wait(1 << sigbit);
     }
 

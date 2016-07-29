@@ -58,7 +58,7 @@ struct RastPort *RenderMessage::ObtainDoubleBuffer (ULONG width, ULONG height)
   }
   else
   {
-    BufferRP = new (std::nothrow) struct RastPort;
+    BufferRP = new (std::nothrow) struct RastPort[1];
     if (!BufferRP) return NULL;
 
     InitRastPort(BufferRP);

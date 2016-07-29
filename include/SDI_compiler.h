@@ -133,9 +133,15 @@
   #define ASM __asm
 /*************************************************************************/
 #elif defined(__GNUC__)
-  #define UNUSED __attribute__((unused)) /* for functions, variables and types */
-  #define USED   __attribute__((used))   /* for functions only! */
-  #define DEPRECATED __attribute__((deprecated))
+  #if defined(__cplusplus)
+    #define UNUSED
+    #define USED
+    #define DEPRECATED
+  #else
+    #define UNUSED __attribute__((unused)) /* for functions, variables and types */
+    #define USED   __attribute__((used))   /* for functions only! */
+    #define DEPRECATED __attribute__((deprecated))
+  #endif
   #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
     #define USED_VAR USED /* for variables only! */
     #define INLINE static __inline __attribute__((always_inline))

@@ -31,18 +31,10 @@
 /*                                                                            */
 /******************************************************************************/
 
-extern "C"
-{
-  #include "constructors.h"
-};
-
+#include "HTMLview_mcc.h"
 #include "ScrollGroup.h"
-#ifdef USEMUISTRINGS
-#include "StringClass.h"
-#endif
-
-#include "private.h"
 #include "rev.h"
+#include "Debug.h"
 
 #define VERSION       LIB_VERSION
 #define REVISION      LIB_REVISION
@@ -50,7 +42,7 @@ extern "C"
 #define CLASS         MUIC_HTMLview
 #define SUPERCLASS    MUIC_Virtgroup
 
-#define INSTDATA      HTMLviewData
+#define INSTDATASIZE  GetHTMLviewDataSize()
 
 #define USERLIBID     CLASS " " LIB_REV_STRING CPU " (" LIB_DATE ") " LIB_COPYRIGHT
 #define MASTERVERSION 19
@@ -78,10 +70,17 @@ struct DataTypesIFace*    IDataTypes = NULL;
 /******************************************************************************/
 /* define the functions used by the startup code ahead of including mccinit.c */
 /******************************************************************************/
-static BOOL ClassInit(UNUSED struct Library *base);
-static VOID ClassExpunge(UNUSED struct Library *base);
-static ULONG initCPP(void);
-static VOID cleanupCPP(void);
+static BOOL ClassInit(struct Library *base);
+static VOID ClassExpunge(struct Library *base);
+extern void _init(void);
+extern void _fini(void);
+extern ULONG GetHTMLviewDataSize(void);
+
+CPPDISPATCHERGATE(_Dispatcher);
+CPPDISPATCHERGATE(ScrollGroupDispatcher);
+#ifdef USEMUISTRINGS
+CPPDISPATCHERGATE(StringDispatcher);
+#endif
 
 /******************************************************************************/
 /* include the lib startup code for the mcc/mcp  (and muimaster inlines)      */
@@ -102,31 +101,30 @@ static BOOL ClassInit(UNUSED struct Library *base)
   InitSemaphore(&ttt);
   tttfail=0;
 
-  if(initCPP())
+  _init();
+
+  if((LayersBase = OpenLibrary("layers.library", 36)) &&
+    GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
+  if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
+    GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
+  if((CxBase = OpenLibrary("commodities.library", 36)) &&
+    GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
+  if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
+    GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
+  if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
+    GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
+  if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
+    GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
   {
-    if((LayersBase = OpenLibrary("layers.library", 36)) &&
-      GETINTERFACE(ILayers, struct LayersIFace*, LayersBase))
-    if((KeymapBase = OpenLibrary("keymap.library", 36)) &&
-      GETINTERFACE(IKeymap, struct KeymapIFace*, KeymapBase))
-    if((CxBase = OpenLibrary("commodities.library", 36)) &&
-      GETINTERFACE(ICommodities, struct CommoditiesIFace*, CxBase))
-    if((DiskfontBase = OpenLibrary("diskfont.library", 36)) &&
-      GETINTERFACE(IDiskfont, struct DiskfontIFace*, DiskfontBase))
-    if((DataTypesBase = OpenLibrary("datatypes.library", 36)) &&
-      GETINTERFACE(IDataTypes, struct DataTypesIFace*, DataTypesBase))
-    if((CyberGfxBase = OpenLibrary("cybergraphics.library", 40)) &&
-      GETINTERFACE(ICyberGfx, struct CyberGfxIFace*, CyberGfxBase))
+    if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, GetScrollGroupDataSize(), CPPDISPATCHERENTRY(ScrollGroupDispatcher))))
     {
-  	  if((ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher))))
-      {
-  		  #ifdef USEMUISTRINGS
-	  	  if((StringClass = MUI_CreateCustomClass(NULL, MUIC_String, NULL, sizeof(StringData), ENTRY(StringDispatcher))))
-        #endif
-    	  {
-  	    	RETURN(TRUE);
-	        return TRUE;
-    	  }
-      }
+  	  #ifdef USEMUISTRINGS
+      if((StringClass = MUI_CreateCustomClass(NULL, MUIC_String, NULL, sizeof(struct StringData), CPPDISPATCHERENTRY(StringDispatcher))))
+      #endif
+  	  {
+      	RETURN(TRUE);
+        return TRUE;
+  	  }
     }
   }
 
@@ -196,84 +194,7 @@ static VOID ClassExpunge(UNUSED struct Library *base)
     LayersBase = NULL;
   }
 
-  cleanupCPP();
+  _fini();
 
   LEAVE();
-}
-
-// In this section we setup specfic C++ related things. In fact, we initialize
-// the vtables for various classes, including running certain constructors
-// defined by the C-runtime libraries involved
-// Here we
-
-extern "C"
-{
-
-// prototypes for the C++ virtual tables setup/cleanup
-// functions automatically defined by the C++ compiler of GCC
-
-// C++ virtual table init functions
-extern void _INIT_4_InitMem(void);
-extern void _INIT_5_CMapMutex(void);
-extern void _INIT_6_CharTables(void);
-extern ULONG _INIT_7_BuildTagTree(void);
-extern ULONG _INIT_7_BuildColourTree(void);
-extern ULONG _INIT_7_BuildEntityTree(void);
-extern void _INIT_7_PrepareDecoders(void);
-//extern void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
-//extern void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
-//extern void _INIT_5_ParseThreadSemaphore();
-
-// C++ virtual table exit/cleanup functions
-extern void _EXIT_4_CleanupMem(void);
-extern void _EXIT_7_FlushDecoders(void);
-extern void _EXIT_7_DisposeTagTree(void);
-extern void _EXIT_7_DisposeColourTree(void);
-extern void _EXIT_7_DisposeEntityTree(void);
-
-// C-runtime specific constructor/destructor
-// initialization routines.
-#if defined(__MORPHOS__)
-#include "libnix.c"
-#endif
-
-} // extern "C"
-
-static ULONG initCPP(void)
-{
-  #if defined(__MORPHOS__)
-  if (!run_constructors())
-		return 0;
-  #endif
-
-  _INIT_4_InitMem();
-  _INIT_5_CMapMutex();
-  _INIT_6_CharTables();
-
-  if (!_INIT_7_BuildTagTree() ||
-  	  !_INIT_7_BuildColourTree() ||
-      !_INIT_7_BuildEntityTree()) return 0;
-
-  _INIT_7_PrepareDecoders();
-//    _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
-//    _Z41__static_initialization_and_destruction_0ii(1, 65535);
-//  _INIT_5_ParseThreadSemaphore();
-
-  return 1;
-}
-
-
-static VOID cleanupCPP(void)
-{
-  // cleanup the virtual tables of various
-  // classes
-  _EXIT_7_FlushDecoders();
-  _EXIT_7_DisposeTagTree();
-  _EXIT_7_DisposeColourTree();
-  _EXIT_7_DisposeEntityTree();
-  _EXIT_4_CleanupMem();
-
-  #if defined(__MORPHOS__)
-  run_destructors();
-  #endif
 }

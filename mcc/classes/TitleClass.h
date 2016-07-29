@@ -31,7 +31,7 @@ class TitleClass : public TreeClass
 {
   public:
     TitleClass () : TreeClass() { ; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 };
 
 #endif // TITLECLASS_H

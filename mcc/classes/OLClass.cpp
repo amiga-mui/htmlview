@@ -46,7 +46,7 @@ BOOL OLClass::Mark (struct MarkMessage &mmsg)
    return TRUE;
 }
 
-VOID OLClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID OLClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

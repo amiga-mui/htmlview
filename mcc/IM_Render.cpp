@@ -255,14 +255,14 @@ VOID RenderEngine::WriteLine (ULONG width, struct RGBPixel *line, ULONG y)
                 BLITA_DestY, y,
                 BLITA_Width, width,
                 BLITA_Height, 1,
-                BLITA_SrcType, BLITT_ARGB32,
+                BLITA_SrcType, BLITT_RGBA32,
                 BLITA_DestType, BLITT_RASTPORT,
                 BLITA_SrcBytesPerRow, width,
                 BLITA_UseSrcAlpha, TRUE,
                 TAG_DONE);
 #else
   WritePixelArray(
-    (uint8 *)line,              //    srcRect
+    (APTR)line,                 //    srcRect
     0, 0,                       //    (SrcX,SrcY)
     0,                          //    SrcMod
     &BMpRP,                     //    RastPort

@@ -24,7 +24,7 @@
 
 #include "ParseMessage.h"
 
-VOID NoFramesClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID NoFramesClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

@@ -118,12 +118,12 @@ HOOKPROTONH(ScrollGroupLayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lms
 
   return 0;
 }
-MakeHook(ScrollGroupLayoutHook, ScrollGroupLayoutCode);
+MakeStaticCppHook(ScrollGroupLayoutHook, ScrollGroupLayoutCode);
 
 #define GetConfigVal(o, i, v) GetConfigItemA(o, i, (ULONG)v, TRUE)
 
-static inline LONG mmin(LONG a,LONG b) __attribute((always_inline));
-static inline LONG mmax(LONG a,LONG b) __attribute((always_inline));
+static inline LONG mmin(LONG a,LONG b); //__attribute((always_inline));
+static inline LONG mmax(LONG a,LONG b); //__attribute((always_inline));
 
 static inline LONG mmin(LONG a,LONG b)
 {
@@ -135,7 +135,7 @@ static inline LONG mmax(LONG a,LONG b)
 	return a>b ? a : b;
 }
 
-DISPATCHER(ScrollGroupDispatcher)
+CPPDISPATCHER(ScrollGroupDispatcher)
 {
   ULONG result = 0;
   struct ScrollGroupData *data;
@@ -259,7 +259,7 @@ DISPATCHER(ScrollGroupDispatcher)
       }
       else
       {
-        result = DoSuperMethodA(cl, obj, msg);
+        result = DoSuperMethodA(cl, obj, (Msg)msg);
       }
     }
     break;
@@ -273,7 +273,7 @@ DISPATCHER(ScrollGroupDispatcher)
       if(gmsg->opg_AttrID == MUIA_ScrollGroup_HTMLview)
         *gmsg->opg_Storage = (ULONG)data->HTMLview, result = TRUE;
       else
-        result = DoSuperMethodA(cl, obj, msg);
+        result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
 
@@ -281,7 +281,7 @@ DISPATCHER(ScrollGroupDispatcher)
     {
       ENTER();
 
-      if((result = DoSuperMethodA(cl, obj, msg)))
+      if((result = DoSuperMethodA(cl, obj, (Msg)msg)))
       {
         if(GetConfigVal(data->HTMLview, MUICFG_HTMLview_PageScrollSmooth, TRUE))
         {
@@ -304,7 +304,7 @@ DISPATCHER(ScrollGroupDispatcher)
       ENTER();
 
       DoMethod(_win(obj), MUIM_Window_RemEventHandler, (ULONG)&data->Events);
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
 
@@ -312,7 +312,7 @@ DISPATCHER(ScrollGroupDispatcher)
     {
       struct MUIP_HandleEvent *hmsg = (struct MUIP_HandleEvent *)msg;
       struct IntuiMessage *imsg = hmsg->imsg;
-      
+
       ENTER();
 
       if(imsg && data->Flags & FLG_KnobVisible)
@@ -417,7 +417,7 @@ DISPATCHER(ScrollGroupDispatcher)
 
       ENTER();
 
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
 
       amsg->MinMaxInfo->MinWidth  = _subwidth(obj)  + _minwidth(data->HTMLview);
       amsg->MinMaxInfo->MinHeight = _subheight(obj) + _minheight(data->HTMLview);
@@ -431,7 +431,7 @@ DISPATCHER(ScrollGroupDispatcher)
     default:
     {
       ENTER();
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
   }
@@ -442,5 +442,10 @@ DISPATCHER(ScrollGroupDispatcher)
 
 /*****************************************************************************************************/
 /*****************************************************************************************************/
+
+ULONG GetScrollGroupDataSize(void)
+{
+	return sizeof(struct ScrollGroupData);
+}
 
 } // extern "C"

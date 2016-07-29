@@ -66,8 +66,8 @@ inline VOID FreePen (struct ColorMap *cmap, ULONG pen)
 }
 */
 
-static inline ULONG mmin(ULONG a,ULONG b) __attribute((always_inline));
-static inline ULONG mmax(ULONG a,ULONG b) __attribute((always_inline));
+static inline ULONG mmin(ULONG a,ULONG b); //__attribute((always_inline));
+static inline ULONG mmax(ULONG a,ULONG b); //__attribute((always_inline));
 
 static inline ULONG mmin(ULONG a,ULONG b)
 {

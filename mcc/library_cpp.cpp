@@ -20,22 +20,15 @@
 
 ***************************************************************************/
 
-#include "ScriptClass.h"
+#include "constructors.h"
+#include "private.h"
 
-#include "ParseMessage.h"
-
-VOID ScriptClass::Parse(struct ParseMessage &pmsg)
+extern "C"
 {
-  pmsg.SetLock();
-#ifdef OUTPUT
-  PrintTag("<SCRIPT>");
-#endif
 
-  do {
-
-    pmsg.NextEndBracket();
-    if(*pmsg.Current != '<')
-      pmsg.NextStartBracket();
-
-  } while (pmsg.Fetch(10) && strnicmp(pmsg.Current+1, "/SCRIPT>", 7));
+ULONG GetHTMLviewDataSize(void)
+{
+  return sizeof(struct HTMLviewData);
 }
+
+} // extern "C"

@@ -31,7 +31,7 @@ class CommentClass : public AttrClass
 {
   public:
     CommentClass () : AttrClass() { ; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 };
 
 #endif // COMMENTCLASS_H

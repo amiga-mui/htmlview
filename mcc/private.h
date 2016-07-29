@@ -169,6 +169,43 @@ struct HTMLviewData
 #define STACKSIZEPPC 32000
 #define STACKSIZE68K 32000
 
-extern "C" DISPATCHERPROTO(_Dispatcher);
+#ifdef __GNUC__
+
+// borrowed from clib2 to be able to intermix C and C++ code with the AmigaOS3 g++ 2.95.3
+#if defined(__amigaos4__)
+
+#define CONSTRUCTOR(name,pri) \
+	STATIC VOID __attribute__((used)) name##_ctor(VOID); \
+	STATIC VOID (*__##name##_ctor)(VOID) __attribute__((used,section(".ctors._" #pri))) = name##_ctor; \
+	STATIC VOID name##_ctor(VOID)
+
+#define DESTRUCTOR(name,pri) \
+	STATIC VOID __attribute__((used)) name##_dtor(VOID); \
+	STATIC VOID (*__##name##_dtor)(VOID) __attribute__((used,section(".dtors._" #pri))) = name##_dtor; \
+	STATIC VOID name##_dtor(VOID)
+
+#else
+
+#define CONSTRUCTOR(name,pri) \
+	asm(".stabs \"___INIT_LIST__\",22,0,0,___ctor_" #name); \
+	asm(".stabs \"___INIT_LIST__\",20,0,0," #pri); \
+	extern "C" VOID __ctor_##name##(VOID); \
+	extern "C" VOID __ctor_##name##(VOID)
+
+#define DESTRUCTOR(name,pri) \
+	asm(".stabs \"___EXIT_LIST__\",22,0,0,___dtor_" #name); \
+	asm(".stabs \"___EXIT_LIST__\",20,0,0," #pri); \
+	extern "C" VOID __dtor_##name##(VOID); \
+	extern "C" VOID __dtor_##name##(VOID)
+
+#endif /* __amigaos4__ */
+
+#define CONSTRUCTOR_SUCCEED() \
+	return
+
+#define CONSTRUCTOR_FAIL() \
+	exit(RETURN_FAIL)
+
+#endif /* __GNUC__ */
 
 #endif

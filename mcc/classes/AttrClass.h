@@ -33,7 +33,7 @@ class AttrClass : public SuperClass
     AttrClass () : SuperClass() { Flags |= FLG_Attribute; }
     virtual ~AttrClass () { ; }
 
-    virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    virtual VOID Parse (struct ParseMessage &pmsg);
     virtual BOOL Layout (struct LayoutMessage &lmsg);
 };
 

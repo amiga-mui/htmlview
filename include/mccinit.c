@@ -160,6 +160,10 @@
 #include <proto/graphics.h>
 #include <proto/intuition.h>
 
+#include "SDI_compiler.h"
+#include "SDI_hook.h"
+#include "SDI_lib.h"
+
 #if defined(__amigaos4__)
 struct Library *MUIMasterBase = NULL;
 struct Library *SysBase       = NULL;
@@ -209,12 +213,12 @@ static const char UserLibID[]   = "$VER: " USERLIBID;
 
 #ifdef SUPERCLASS
 /*static*/ struct MUI_CustomClass *ThisClass = NULL;
-DISPATCHERPROTO(_Dispatcher);
+CPPDISPATCHERPROTO(_Dispatcher);
 #endif
 
 #ifdef SUPERCLASSP
 /*static*/ struct MUI_CustomClass *ThisClassP = NULL;
-DISPATCHERPROTO(_DispatcherP);
+CPPDISPATCHERPROTO(_DispatcherP);
 #endif
 
 #ifdef __GNUC__
@@ -662,12 +666,12 @@ static ULONG mccLibInit(struct LibraryHeader *base)
       #endif
       {
         #ifdef SUPERCLASS
-        ThisClass = MUI_CreateCustomClass(&base->lh_Library, (STRPTR)SUPERCLASS, NULL, sizeof(struct INSTDATA), ENTRY(_Dispatcher));
+        ThisClass = MUI_CreateCustomClass(&base->lh_Library, (STRPTR)SUPERCLASS, NULL, INSTDATASIZE, CPPDISPATCHERENTRY(_Dispatcher));
         if(ThisClass)
         #endif
         {
           #ifdef SUPERCLASSP
-          if((ThisClassP = MUI_CreateCustomClass(&base->lh_Library, (STRPTR)SUPERCLASSP, NULL, sizeof(struct INSTDATAP), ENTRY(_DispatcherP))))
+          if((ThisClassP = MUI_CreateCustomClass(&base->lh_Library, (STRPTR)SUPERCLASSP, NULL, INSTDATAPSIZE, CPPDISPATCHERENTRY(_DispatcherP))))
           #endif
           {
             #ifdef SUPERCLASS

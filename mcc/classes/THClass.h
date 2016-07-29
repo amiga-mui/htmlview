@@ -31,7 +31,7 @@ class THClass : public TDClass
 {
   public:
     THClass () : TDClass() { ; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID TDRender (struct RenderMessage &rmsg);
 };
 

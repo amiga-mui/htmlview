@@ -97,7 +97,7 @@ VOID HRClass::MinMax (struct MinMaxMessage &mmsg)
   Flags |= FLG_KnowsMinMax;
 }
 
-VOID HRClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID HRClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
 

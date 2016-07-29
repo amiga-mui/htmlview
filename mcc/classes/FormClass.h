@@ -32,7 +32,7 @@ class FormClass : public TreeClass
   public:
     FormClass () : TreeClass() { ; }
     ~FormClass () { delete Action; delete EncType; delete Target; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID AppendGadget (struct AppendGadgetMessage &amsg);
     VOID ExportForm (struct ExportFormMessage &emsg);
     VOID ResetForm ();

@@ -32,7 +32,7 @@ class BodyClass : public BackFillClass
   public:
     BodyClass () : BackFillClass() { TextRGB = LinkRGB = VLinkRGB = ALinkRGB = -1; }
     ~BodyClass ();
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     BOOL Layout (struct LayoutMessage &lmsg);
     VOID Render (struct RenderMessage &rmsg);
     BOOL HitTest (struct HitTestMessage &hmsg);

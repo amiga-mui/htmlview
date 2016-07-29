@@ -59,7 +59,7 @@ VOID ULClass::MinMax (struct MinMaxMessage &mmsg)
   mmsg.Indent -= 20;
 }
 
-VOID ULClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID ULClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

@@ -36,7 +36,7 @@ BOOL MapClass::UseMap (struct UseMapMessage &umsg)
   return(TreeClass::UseMap(umsg) && umsg.URL);
 }
 
-VOID MapClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID MapClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

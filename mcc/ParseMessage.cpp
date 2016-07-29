@@ -222,7 +222,7 @@ BOOL ParseMessage::Fetch (UWORD len)
   return(Current < Upper); // && !Status);
 }
 
-BufferParseMessage::BufferParseMessage (STRPTR buf, ULONG size  __attribute__((unused))) : ParseMessage(NULL, 0, NULL, 0)
+BufferParseMessage::BufferParseMessage (STRPTR buf, ULONG size) : ParseMessage(NULL, 0, NULL, 0)
 {
   ULONG len = strlen(buf) + 1;
   STRPTR buffer = new (std::nothrow) char[len];
@@ -239,7 +239,7 @@ BufferParseMessage::BufferParseMessage (STRPTR buf, ULONG size  __attribute__((u
     NextStartBracket();
 }
 
-BOOL BufferParseMessage::Fetch (UWORD len  __attribute__((unused)))
+BOOL BufferParseMessage::Fetch (UWORD len)
 {
   return(Current < Upper);
 }

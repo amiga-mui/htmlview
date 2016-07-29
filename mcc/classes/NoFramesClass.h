@@ -31,7 +31,7 @@ class NoFramesClass : public TreeClass
 {
   public:
     NoFramesClass () : TreeClass() { ; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 };
 
 #endif // NOFRAMESCLASS_H

@@ -57,7 +57,7 @@ Object *FramesetClass::FindDefaultFrame (ULONG &size)
       result = t_result;
     first = first->Next;
   }
-  
+
   return(result);
 }
 
@@ -72,7 +72,7 @@ Object *FramesetClass::HandleMUIEvent (struct MUIP_HandleEvent *emsg)
       result = t_result;
     first = first->Next;
   }
-  
+
   return(result);
 }
 
@@ -131,7 +131,7 @@ BOOL FramesetClass::Layout (struct LayoutMessage &lmsg)
   return TRUE;
 }
 
-VOID FramesetClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID FramesetClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

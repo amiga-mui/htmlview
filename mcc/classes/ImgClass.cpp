@@ -322,7 +322,7 @@ VOID ImgClass::MinMax (struct MinMaxMessage &mmsg)
   Flags |= FLG_KnowsMinMax;
 }
 
-VOID ImgClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID ImgClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
 

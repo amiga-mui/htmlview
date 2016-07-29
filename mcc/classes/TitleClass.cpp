@@ -25,7 +25,7 @@
 
 #include "ParseMessage.h"
 
-VOID TitleClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TitleClass::Parse(struct ParseMessage &pmsg)
 {
 	pmsg.SetLock();
 	pmsg.NextEndBracket();

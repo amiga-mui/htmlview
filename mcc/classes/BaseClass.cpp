@@ -26,7 +26,7 @@
 #include "ParseMessage.h"
 #include "ScanArgs.h"
 
-VOID BaseClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID BaseClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
   pmsg.SkipSpaces();

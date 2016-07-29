@@ -37,7 +37,7 @@ class TreeClass : public SuperClass
     }
     virtual ~TreeClass ();
 
-    virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    virtual VOID Parse (struct ParseMessage &pmsg);
     virtual VOID AppendGadget (struct AppendGadgetMessage &amsg);
     virtual VOID MinMax (struct MinMaxMessage &mmsg);
     virtual BOOL Layout (struct LayoutMessage &lmsg);

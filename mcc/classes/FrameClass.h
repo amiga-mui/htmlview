@@ -32,7 +32,7 @@ class FrameClass : public AttrClass
   public:
     FrameClass () : AttrClass() { ; }
     ~FrameClass () { delete Name; delete Src; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID AppendGadget (struct AppendGadgetMessage &amsg);
     BOOL Layout (struct LayoutMessage &lmsg);
     VOID Render (struct RenderMessage &rmsg);

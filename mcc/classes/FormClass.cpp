@@ -99,7 +99,7 @@ VOID FormClass::ResetForm ()
   TreeClass::ResetForm();
 }
 
-VOID FormClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID FormClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

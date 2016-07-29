@@ -32,7 +32,7 @@ class ImgClass : public AttrClass
   public:
     ImgClass () : AttrClass() { ; }
     ~ImgClass ();
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID MinMax (struct MinMaxMessage &mmsg);
     BOOL Layout (struct LayoutMessage &lmsg);
     VOID Relayout (BOOL all);

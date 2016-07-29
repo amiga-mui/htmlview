@@ -117,7 +117,7 @@ VOID IsIndexClass::MinMax (struct MinMaxMessage &mmsg)
   }
 }
 
-VOID IsIndexClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID IsIndexClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
 

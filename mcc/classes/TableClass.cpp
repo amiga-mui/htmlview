@@ -115,7 +115,7 @@ BOOL TableClass::Layout (struct LayoutMessage &lmsg)
       else
             Width = max(GivenWidth->Size-(Columns+1)*Spacing-2*BorderSize, Min);
     }
-    else 
+    else
          Width = (Min <= scr_width) ? min(scr_width, Max) : Min;
 
     /* Set all cells to their min or max width */
@@ -380,7 +380,7 @@ BOOL TableClass::Mark (struct MarkMessage &mmsg)
 
 VOID TableClass::MinMax (struct MinMaxMessage &mmsg)
 {
-  struct CountCellsMessage *cmsg = new (std::nothrow) struct CountCellsMessage;
+  struct CountCellsMessage *cmsg = new (std::nothrow) struct CountCellsMessage[1];
   if (!cmsg) return;
   struct ChildsList *first = FirstChild;
   while(first)
@@ -447,7 +447,7 @@ VOID TableClass::MinMax (struct MinMaxMessage &mmsg)
   Flags |= FLG_KnowsMinMax;
 }
 
-VOID TableClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TableClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

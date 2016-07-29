@@ -79,17 +79,24 @@ VOID PrintTag (STRPTR tag)
 
 //#undef OUTPUT
 
-//VOID ParseThread(REG(a0, STRPTR arguments ))
-VOID ParseThread(REG(a0,STRPTR arguments))
+extern "C" void ParseThread(void)
 {
-    struct ParseThreadArgs *args = (struct ParseThreadArgs *)arguments;
+  struct Process *me = (struct Process *)FindTask(NULL);
+  struct ParseThreadStartupMessage *startup;
 
-    struct Hook *loadhook = args->Data->LoadHook;
-
+  WaitPort(&me->pr_MsgPort);
+  if((startup = (struct ParseThreadStartupMessage *)GetMsg(&me->pr_MsgPort)) != NULL)
+  {
+    struct ParseThreadArgs *args = startup->args;
+    struct Hook *loadhook;
     struct MsgPort myport;
 
-	myport.mp_Flags = PA_SIGNAL;
-	myport.mp_SigBit = (UBYTE)AllocSignal(-1);
+    ReplyMsg((struct Message *)startup);
+
+    loadhook = args->Data->LoadHook;
+
+    myport.mp_Flags = PA_SIGNAL;
+    myport.mp_SigBit = (UBYTE)AllocSignal(-1);
     myport.mp_SigTask = FindTask(NULL);
     NewList(&myport.mp_MsgList);
 
@@ -172,4 +179,5 @@ VOID ParseThread(REG(a0,STRPTR arguments))
 
     delete args;
 //  kprintf("ParseStack: %ld\n", StackUsage);
+  }
 }

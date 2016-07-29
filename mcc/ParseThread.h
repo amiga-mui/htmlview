@@ -22,11 +22,9 @@
 
 #ifndef PARSETHREAD_H
 #define PARSETHREAD_H
+
 #include <new>
-
-/* Protos */
-
-VOID ParseThread(STRPTR arguments);
+#include "SDI_compiler.h"
 
 /* Messages */
 
@@ -74,5 +72,15 @@ struct ParseInfoMsg
 #define ParseMsg_Startup  0
 #define ParseMsg_Shutdown 1
 #define ParseMsg_Abort    2
+
+struct ParseThreadStartupMessage
+{
+	struct Message message;
+	struct ParseThreadArgs *args;
+};
+
+/* Protos */
+
+extern "C" void ParseThread(void);
 
 #endif

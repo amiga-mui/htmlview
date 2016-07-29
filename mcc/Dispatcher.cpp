@@ -28,6 +28,7 @@
 #include <dos/dostags.h>
 #include <graphics/gfxmacros.h>
 #include <graphics/rpattr.h>
+#include <intuition/classusr.h>
 #include <libraries/mui.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>
@@ -69,7 +70,7 @@
 BOOL mSet (Object *obj, struct IClass *cl, struct opSet *msg);
 ULONG mGet (Object *obj, struct IClass *cl, struct opGet *msg);
 
-LONG MUIG_ScrollRaster(REG(a0, struct RastPort *rp), REG(d0, WORD dx), REG(d1, WORD dy), REG(d2, WORD left), REG(d3, WORD top), REG(d4, WORD right), REG(d5, WORD bottom));
+LONG MUIG_ScrollRaster(struct RastPort *rp, WORD dx, WORD dy, WORD left, WORD top, WORD right, WORD bottom);
 
 #define MAX_HEIGHT 0x0fffffff
 #define IMAGE_QUEUE_SIZE 8
@@ -120,7 +121,7 @@ HOOKPROTONHNO(DefaultLoadFunc, ULONG, struct HTMLview_LoadMsg* lmsg)
 
   return 0;
 }
-MakeStaticHook(DefaultLoadHook, DefaultLoadFunc);
+MakeStaticCppHook(DefaultLoadHook, DefaultLoadFunc);
 
 VOID RemoveChildren (Object *group, struct HTMLviewData *data)
 {
@@ -205,7 +206,7 @@ HOOKPROTONH(LayoutCode, ULONG, Object *obj, struct MUI_LayoutMsg *lmsg)
   RETURN(result);
   return result;
 }
-MakeStaticHook(LayoutHook, LayoutCode);
+MakeStaticCppHook(LayoutHook, LayoutCode);
 
 struct alfieMsg
 {
@@ -213,10 +214,12 @@ struct alfieMsg
     struct ParseThreadArgs *args;
 };
 
+/*
 #define NewRawDoFmt(__p0, __p1, __p2, ...) \
 	(((STRPTR (*)(void *, CONST_STRPTR , APTR (*)(APTR, UBYTE), STRPTR , ...))*(void**)((long)(EXEC_BASE_NAME) - 922))((void*)(EXEC_BASE_NAME), __p0, __p1, __p2, __VA_ARGS__))
+*/
 
-DISPATCHER(_Dispatcher)
+CPPDISPATCHER(_Dispatcher)
 {
   ULONG result = 0;
   struct HTMLviewData *data;
@@ -224,7 +227,7 @@ DISPATCHER(_Dispatcher)
   if (msg->MethodID!=OM_NEW)
 	data = (struct HTMLviewData *)INST_DATA(cl, obj);
 
-//  kprintf("HTMLview: Method = 0x%08lx\n", msg->MethodID);
+  //kprintf("HTMLview: cl %08lx obj %08lx Method = 0x%08lx\n", cl, obj, msg->MethodID);
   switch(msg->MethodID)
   {
     case OM_NEW:
@@ -451,7 +454,7 @@ DISPATCHER(_Dispatcher)
         delete data->Share;
 
       //kprintf("--------- DISPOSE 10 %lx\n",obj);
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
       //kprintf("--------- DISPOSE 11 %lx\n",obj);
     }
     break;
@@ -461,7 +464,7 @@ DISPATCHER(_Dispatcher)
       ENTER();
 
       struct MUIP_AskMinMax *amsg = (struct MUIP_AskMinMax *)msg;
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
 
       amsg->MinMaxInfo->MinWidth  = _subwidth(obj)+1;;
       amsg->MinMaxInfo->MinHeight = _subheight(obj)+1;
@@ -518,7 +521,7 @@ DISPATCHER(_Dispatcher)
       ENTER();
       struct MUIP_Draw *dmsg = (struct MUIP_Draw *)msg;
 
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
 
       if(dmsg->flags & MADF_DRAWUPDATE)
       {
@@ -564,6 +567,7 @@ DISPATCHER(_Dispatcher)
       **  problem, I suppose.
       */
 
+      D(DBF_ALWAYS, "HTMLview: MUIM_Backfill");
 	  {
 
 	  	LONG l, r, t, b;
@@ -589,10 +593,14 @@ DISPATCHER(_Dispatcher)
       data->Left = xget(obj, MUIA_Virtgroup_Left);
       data->Top = xget(obj, MUIA_Virtgroup_Top);
 
+      SHOWVALUE(DBF_ALWAYS, data->HostObject);
+      if(data->HostObject)
+        SHOWVALUE(DBF_ALWAYS, data->HostObject->Body);
       if(!data->HostObject || (!data->HostObject->Body && (data->Flags & FLG_HostObjNotUsed)))
       {
         if(!(data->Flags & FLG_NoBackfill))
         {
+          D(DBF_ALWAYS, "HTMLview: no nobackfill");
           data->Flags &= ~FLG_NoBackfill;
           SetAPen(rp, data->Share->Pens[Col_Background]);
           RectFill(rp, data->XOffset, data->YOffset, data->XOffset+data->Width-1, data->YOffset+data->Height-1);
@@ -693,6 +701,7 @@ DISPATCHER(_Dispatcher)
 				bmsg->top,   miny,
 				bmsg->bottom,maxy);*/
 
+            D(DBF_ALWAYS, "HTMLview: render");
             data->RenderMsg.Reset(minx, miny, maxx, maxy, data->Left-data->XOffset, data->Top-data->YOffset, data->Left + (minx - data->XOffset), data->Top + (miny - data->YOffset), data->Share->Pens);
             data->HostObject->Render(data->RenderMsg);
           }
@@ -719,7 +728,7 @@ DISPATCHER(_Dispatcher)
         MUIA_HTMLview_Prop_VDeltaFactor, data->Share->VDeltaFactor,
         TAG_DONE);
 
-      if((result = DoSuperMethodA(cl, obj, msg)))
+      if((result = DoSuperMethodA(cl, obj, (Msg)msg)))
       {
         data->ihnode.Start(obj);
 
@@ -775,7 +784,7 @@ DISPATCHER(_Dispatcher)
       data->Share->DecodeQueue.InvalidateQueue(obj);
       data->Share->StopAnims(obj);
 
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
 
       if(data->Flags & FLG_RootObj)
         data->Share->Cleanup();
@@ -819,7 +828,7 @@ DISPATCHER(_Dispatcher)
         //SetAttrs(_win(obj), MUIA_Window_Sleep, FALSE, TAG_DONE);
       }
 
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
 
@@ -833,7 +842,7 @@ DISPATCHER(_Dispatcher)
         //SetAttrs(_win(obj), MUIA_Window_Sleep, TRUE, TAG_DONE);
       }
 
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
 
@@ -927,7 +936,7 @@ DISPATCHER(_Dispatcher)
         {
           if(dst != obj)
           {
-            DoMethodA(dst, msg);
+            DoMethodA(dst, (Msg)msg);
             return(data->PageID);
           }
           else
@@ -1032,14 +1041,14 @@ DISPATCHER(_Dispatcher)
       sprintf(str_args, "%lx", (ULONG)args);*/
 
       data->ParseThread = CreateNewProcTags(
-        NP_Entry,     (ULONG)ParseThread,
+        NP_Entry,     (ULONG)ENTRY(ParseThread),
         NP_Name,      (ULONG)data->ParseThreadName,
         #if !defined(__MORPHOS__)
         NP_StackSize, 512*1024,
-        NP_Arguments, (ULONG)args,
+        #if defined(__amigaos4__)
         NP_Child,     TRUE,
+        #endif
         #else
-        NP_PPC_Arg1,     (ULONG)args,
         NP_CodeType,     CODETYPE_PPC,
         NP_PPCStackSize, STACKSIZEPPC,
         NP_StackSize,    STACKSIZE68K,
@@ -1054,7 +1063,25 @@ DISPATCHER(_Dispatcher)
         TAG_DONE);
 
       if (data->ParseThread)
+      {
+        struct MsgPort replyPort;
+        struct ParseThreadStartupMessage startup;
+
+        memset(&replyPort, 0, sizeof(replyPort));
+        replyPort.mp_Node.ln_Type = NT_MSGPORT;
+        NewList(&replyPort.mp_MsgList);
+        replyPort.mp_SigBit = SIGB_SINGLE;
+        replyPort.mp_SigTask = FindTask(NULL);
+
+        memset(&startup, 0, sizeof(startup));
+        startup.message.mn_ReplyPort = &replyPort;
+        startup.args = args;
+
+        PutMsg(&data->ParseThread->pr_MsgPort, (struct Message *)&startup);
+        Remove((struct Node *)WaitPort(&replyPort));
+
         data->ParseCount++;
+      }
       else
         delete args;
 
@@ -1510,7 +1537,7 @@ DISPATCHER(_Dispatcher)
     default:
     {
       ENTER();
-      result = DoSuperMethodA(cl, obj, msg);
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
     }
     break;
   }

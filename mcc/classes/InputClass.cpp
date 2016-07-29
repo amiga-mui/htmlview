@@ -48,7 +48,7 @@ HOOKPROTONHNO(ExportFormCode, VOID, class FormClass **form)
 {
   (*form)->ExportForm(*((struct ExportFormMessage *)NULL));
 }
-MakeStaticHook(ExportFormHook, ExportFormCode);
+MakeStaticCppHook(ExportFormHook, ExportFormCode);
 
 VOID InputClass::AppendGadget (struct AppendGadgetMessage &amsg)
 {
@@ -251,7 +251,7 @@ VOID InputClass::MinMax (struct MinMaxMessage &mmsg)
   }
 }
 
-VOID InputClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID InputClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
 

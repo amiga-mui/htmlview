@@ -186,7 +186,7 @@ BOOL FrameClass::Layout (struct LayoutMessage &lmsg)
   return TRUE;
 }
 
-VOID FrameClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID FrameClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
 

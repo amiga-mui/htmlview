@@ -25,6 +25,7 @@
 
 #include "Entities.h"
 #include "TernaryTrees.h"
+#include "private.h"
 
 struct EntityInfo EntityTable[] =
 {
@@ -162,14 +163,12 @@ static struct EntityInfo *TFind (struct TNode *node, CONST_STRPTR str)
 
 struct TNode *EntityTree = NULL;
 
-extern "C" ULONG _INIT_7_BuildEntityTree ();
-ULONG _INIT_7_BuildEntityTree ()
+CONSTRUCTOR(BuildEntityTree, 5)
 {
-  return BinaryInsert(EntityTree, EntityTable, (ULONG)0, (ULONG)sizeof(EntityTable) / sizeof(EntityInfo) - 2);
+  /*return*/ BinaryInsert(EntityTree, EntityTable, (ULONG)0, (ULONG)sizeof(EntityTable) / sizeof(EntityInfo) - 2);
 }
 
-extern "C" VOID _EXIT_7_DisposeEntityTree ();
-VOID _EXIT_7_DisposeEntityTree ()
+DESTRUCTOR(DisposeEntityTree, 5)
 {
   if (EntityTree) delete EntityTree;
 }

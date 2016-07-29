@@ -62,7 +62,7 @@ BOOL PClass::Mark (struct MarkMessage &mmsg)
   return(TreeClass::Mark(mmsg));
 }
 
-VOID PClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID PClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

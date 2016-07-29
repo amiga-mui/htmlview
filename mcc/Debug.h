@@ -39,6 +39,11 @@
 #undef W
 #undef ASSERT
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
 #if defined(DEBUG)
 
 #include <assert.h>
@@ -130,5 +135,9 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 #define ASSERT(expression)  ((void)0)
 
 #endif // DEBUG
+
+#if defined(__cplusplus)
+} // extern "C"
+#endif
 
 #endif // DEBUG_H

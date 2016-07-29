@@ -131,7 +131,7 @@ VOID SelectClass::MinMax (struct MinMaxMessage &mmsg)
   }
 }
 
-VOID SelectClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID SelectClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

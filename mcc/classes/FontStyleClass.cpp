@@ -95,7 +95,7 @@ VOID FontStyleClass::MinMax (struct MinMaxMessage &mmsg)
   mmsg.Font = oldfont;
 }
 
-VOID FontStyleClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID FontStyleClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

@@ -23,6 +23,8 @@
 #ifndef CONSTRUCTORS_H
 #define CONSTRUCTORS_H
 
+#include <exec/types.h>
+
 ULONG run_constructors(void);
 VOID run_destructors(void);
 

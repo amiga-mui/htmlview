@@ -218,7 +218,7 @@ VOID ScanArgs (STRPTR tag, struct ArgList *args)
           }
           case ARG_VALUE:
           {
-            struct ArgSize *size = new (std::nothrow) struct ArgSize;
+            struct ArgSize *size = new (std::nothrow) struct ArgSize[1];
             if (!size) return;
             LONG len = StrToLong(value, (LONG *)&size->Size);
             if(len > 0 && (LONG)size->Size >= 0)

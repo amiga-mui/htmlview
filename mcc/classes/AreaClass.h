@@ -38,7 +38,7 @@ class AreaClass : public AttrClass
       if(Shape == Area_Poly)
         delete Poly.Coords;
     }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     BOOL UseMap (struct UseMapMessage &umsg);
 
   protected:

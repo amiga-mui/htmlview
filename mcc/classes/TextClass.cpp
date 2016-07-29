@@ -444,7 +444,7 @@ VOID TextClass::MinMax (struct MinMaxMessage &mmsg)
   Flags |= FLG_KnowsMinMax;
 }
 
-VOID TextClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TextClass::Parse(struct ParseMessage &pmsg)
 {
   ULONG length = pmsg.Current-pmsg.Locked;
   Contents = new (std::nothrow) char[length+2];

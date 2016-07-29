@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <new>
 
-VOID MetaClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID MetaClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
 

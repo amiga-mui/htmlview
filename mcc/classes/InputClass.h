@@ -32,7 +32,7 @@ class InputClass : public AttrClass
   public:
     InputClass () : AttrClass() { Flags |= FLG_Gadget; }
     ~InputClass () { delete Name; delete Value; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID MinMax (struct MinMaxMessage &mmsg);
     VOID AppendGadget (struct AppendGadgetMessage &amsg);
     BOOL Layout (struct LayoutMessage &lmsg);

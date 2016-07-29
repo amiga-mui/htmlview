@@ -214,7 +214,7 @@ VOID TRClass::TRMinMax (struct MinMaxMessage &mmsg)
 	Flags |= FLG_KnowsMinMax;
 }
 
-VOID TRClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TRClass::Parse(struct ParseMessage &pmsg)
 {
 	pmsg.SetLock();
 	pmsg.NextEndBracket();

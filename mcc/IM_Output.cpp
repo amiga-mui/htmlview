@@ -117,6 +117,7 @@ inline VOID Round (UBYTE *col, WORD *add)
 }
 */
 
+#ifdef FAST_DITHER
 extern "C" VOID FSDither (
 	REG(a0, struct RGBPixel *line),
 	REG(a1, UBYTE *cunky),
@@ -124,6 +125,7 @@ extern "C" VOID FSDither (
 	REG(a3, struct RGBPixel *cmap),
 	REG(a4, struct RGBPixel *below),
 	REG(d0, ULONG width));
+#endif
 
 VOID LowColourEngine::RenderLine (struct RGBPixel *dstline, ULONG y)
 {

@@ -30,13 +30,14 @@
 extern "C" {
 #endif
 
-extern DISPATCHERPROTO(ScrollGroupDispatcher);
+//DISPATCHERPROTO(ScrollGroupDispatcher);
+extern ULONG GetScrollGroupDataSize(void);
 extern struct MUI_CustomClass *ScrollGroupClass;
 
 #ifdef __cplusplus
 }
 #endif
- 
+
 #define MUIA_ScrollGroup_HTMLview         HTMLview_ID(100) /* Private */
 #define MUIA_ScrollGroup_Scrolling        HTMLview_ID(101) /* Private */
 #define MUIA_ScrollGroup_Smooth           HTMLview_ID(102) /* Private */

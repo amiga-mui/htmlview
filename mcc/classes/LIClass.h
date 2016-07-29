@@ -31,7 +31,7 @@ class LIClass : public TreeClass
 {
   public:
     LIClass () : TreeClass() { Flags |= FLG_Newline; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID MinMax (struct MinMaxMessage &mmsg);
     BOOL Layout (struct LayoutMessage &lmsg);
     VOID AdjustPosition (LONG x, LONG y);

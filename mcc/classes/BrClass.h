@@ -31,7 +31,7 @@ class BrClass : public AttrClass
 {
   public:
     BrClass () : AttrClass() { Flags |= FLG_Newline; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID MinMax (struct MinMaxMessage &mmsg);
     BOOL Layout (struct LayoutMessage &lmsg);
     BOOL Mark (struct MarkMessage &mmsg);

@@ -30,13 +30,13 @@
 extern "C" {
 #endif
 
-extern DISPATCHERPROTO(StringDispatcher);
+//DISPATCHERPROTO(StringDispatcher);
 extern struct MUI_CustomClass *StringClass;
 
 #ifdef __cplusplus
 }
 #endif
- 
+
 struct StringData
 {
   struct RastPort rp;

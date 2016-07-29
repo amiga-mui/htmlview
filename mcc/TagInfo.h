@@ -44,9 +44,9 @@ extern struct TagInfo TagTable[];
 struct TagInfo
 {
   CONST_STRPTR  Name;
-  CONST UBYTE   Flags;
-  CONST UBYTE   ID;
-  CONST UBYTE   Group;
+  UBYTE   Flags;
+  UBYTE   ID;
+  UBYTE   Group;
   CONST_APTR    GetData () { return this; }
 };
 

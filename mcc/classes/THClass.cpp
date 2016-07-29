@@ -24,7 +24,7 @@
 
 #include "ParseMessage.h"
 
-VOID THClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID THClass::Parse(struct ParseMessage &pmsg)
 {
   TDClass::Parse(pmsg);
   if(Alignment == Align_None)

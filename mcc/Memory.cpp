@@ -33,6 +33,7 @@
 #include "Debug.h"
 #include "General.h"
 #include <new>
+#include "private.h"
 
 //#define MEMWATCH
 #define THREAD_SAFE
@@ -47,6 +48,10 @@ extern APTR mempool;
 #define MemoryPool mempool
 #else
 APTR MemoryPool = NULL;
+#endif
+
+#if defined(__amigaos3__)
+struct SignalSemaphore MemoryPoolSema;
 #endif
 
 #if defined(__MORPHOS__)
@@ -120,7 +125,7 @@ void *realloc(void *mem, size_t size)
 
 /*******************************************************************/
 
-#define CANTFAILNONONO
+//#define CANTFAILNONONO
 
 #ifdef CANTFAILNONONO
 
@@ -217,8 +222,38 @@ VOID operator delete (APTR mem)
 
 /*******************************************************************/
 
-extern "C" VOID _INIT_4_InitMem ();
-VOID _INIT_4_InitMem ()
+#if defined(__amigaos3__)
+APTR AllocVecPooled(APTR pool, ULONG size)
+{
+	ULONG *mem;
+
+	size += sizeof(*mem);
+
+	ObtainSemaphore(&MemoryPoolSema);
+	if((mem = (ULONG *)AllocPooled(pool, size)) != NULL)
+		*mem++ = size;
+	ReleaseSemaphore(&MemoryPoolSema);
+
+	return (APTR)mem;
+}
+
+void FreeVecPooled(APTR pool, APTR mem)
+{
+	if(mem != NULL)
+	{
+		ULONG *p, size;
+
+		p = (ULONG *)mem;
+		size = *--p;
+
+		ObtainSemaphore(&MemoryPoolSema);
+		FreePooled(pool, p, size);
+		ReleaseSemaphore(&MemoryPoolSema);
+	}
+}
+#endif
+
+CONSTRUCTOR(InitMem, 10)
 {
   #ifndef __MORPHOS__
 	  #if defined(__amigaos4__)
@@ -229,16 +264,16 @@ VOID _INIT_4_InitMem ()
                                       ASOPOOL_Protected,  TRUE,
                                       ASOPOOL_Name,       "HTMLview.mcc",
                                       TAG_DONE);
+	  #elif defined(__amigaos3__)
+	  InitSemaphore(&MemoryPoolSema);
+	  MemoryPool = CreatePool(MEMF_CLEAR | MEMF_ANY, 32*1024, 8*1024);
 	  #else
 	  MemoryPool = CreatePool(MEMF_CLEAR | MEMF_ANY | MEMF_SEM_PROTECTED, 32*1024, 8*1024);
 	  #endif
   #endif
 }
 
-/*******************************************************************/
-
-extern "C" VOID _EXIT_4_CleanupMem ();
-VOID _EXIT_4_CleanupMem ()
+DESTRUCTOR(CleanupMem, 10)
 {
   if(MemoryPool)
   {
@@ -259,7 +294,8 @@ VOID _EXIT_4_CleanupMem ()
 #ifndef __MORPHOS__
 void *malloc(size_t size)
 {
-   ULONG *mem = (ULONG *)AllocVecPooled(MemoryPool, size + 4);
+   ULONG *mem;
+   mem = (ULONG *)AllocVecPooled(MemoryPool, size + 4);
    if (mem)
    {
       *mem++ = size;

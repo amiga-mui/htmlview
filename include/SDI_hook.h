@@ -78,6 +78,7 @@
 */
 
 #include "SDI_compiler.h"
+#include <intuition/classusr.h>
 
 /*
 ** Hook macros to handle the creation of Hooks/Dispatchers for different
@@ -121,7 +122,7 @@
 ** The ENTRY macro, which also gets the function name as argument.
 */
 
-#if !defined(__AROS__) && (defined(_M68000) || defined(__M68000) || defined(__mc68000) || defined(_M68K__))
+#if !defined(__AROS__) && !defined(__cplusplus) && (defined(_M68000) || defined(__M68000) || defined(__mc68000) || defined(_M68K__))
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONO(name, ret, param) static SAVEDS ASM ret                \
@@ -292,6 +293,25 @@
     {{NULL, NULL}, (HOOKFUNC)funcname, NULL, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
     {{NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL}
+
+  #if !defined(__amigaos4__)
+    #define MakeCppHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
+      (HOOKFUNC)funcname, NULL, NULL}
+    #define MakeCppHookWithData(hookname, funcname, data) struct Hook hookname =  \
+      {{NULL, NULL}, (HOOKFUNC)funcname, NULL, (APTR)data}
+    #define MakeStaticCppHook(hookname, funcname) static struct Hook hookname =   \
+      {{NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL}
+  #else
+    // the AmigaOS3 g++ 2.95.3 cannot handle explicit register definitions and
+    // hence requires HookEntry() as gate function
+    #define MakeCppHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
+      (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+    #define MakeCppHookWithData(hookname, funcname, data) struct Hook hookname =  \
+      {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, (APTR)data}
+    #define MakeStaticCppHook(hookname, funcname) static struct Hook hookname =   \
+      {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+  #endif
+
   #define DISPATCHERPROTO(name) SAVEDS ASM IPTR name(REG(a0,                 \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #define DISPATCHER(name) DISPATCHERPROTO(name)
@@ -305,6 +325,25 @@
   #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
     static STDARGS SAVEDS void name(type1 param1, type2 param2)
   #define ENTRY(func) (APTR)func
+
+  #if defined(__amigaos4_)
+    #define CPPDISPATCHERPROTO(name) DISPATCHERPROTO(name)
+    #define CPPDISPATCHER(name)      DISPATCHERPROTO(name)
+    #define CPPDISPATCHERENTRY(name) ENTRY(name)
+  #else
+    // the AmigaOS3 g++ 2.95.3 cannot handle explicit register definitions and
+    // hence requires a gate function compile by gcc instead of g++
+    // Furthermore this g++ doesn't like the "anonymous" definition of Intuition's
+    // Msg type.
+    struct IMsg { ULONG MethodID; };
+    #define CPPDISPATCHERPROTO(name) IPTR name(struct IClass *cl, Object *obj, struct IMsg *msg)
+    #define CPPDISPATCHER(name) extern "C" CPPDISPATCHERPROTO(name)
+    #define CPPDISPATCHERGATE(name) \
+      CPPDISPATCHERPROTO(name); \
+      SAVEDS ASM IPTR gate_##name(REG(a0, struct IClass *cl), REG(a2, Object *obj), REG(a1, struct IMsg *msg)) \
+      { return name(cl, obj, msg); }
+    #define CPPDISPATCHERENTRY(name) (APTR)gate_##name
+  #endif
 
 #endif
 

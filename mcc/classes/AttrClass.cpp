@@ -32,7 +32,7 @@ BOOL AttrClass::Layout (struct LayoutMessage &lmsg)
   return TRUE;
 }
 
-VOID AttrClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID AttrClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.AdvancedNextEndBracket();

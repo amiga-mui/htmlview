@@ -32,7 +32,7 @@ struct EntityInfo *GetEntityInfo (CONST_STRPTR entity);
 struct EntityInfo
 {
   CONST_STRPTR  Name;
-  CONST UBYTE   ByteCode;
+  UBYTE   ByteCode;
   CONST_APTR    GetData () { return this; }
 };
 

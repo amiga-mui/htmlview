@@ -25,6 +25,7 @@
 #include <exec/memory.h>
 #include <exec/tasks.h>
 #include <libraries/mui.h>
+#include <libraries/iffparse.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -36,7 +37,10 @@
 //#include <mui/ipc_mcc.h>
 
 #include "HTMLview_mcc.h"
-#include "private.h"
+#include "mcc_common.h"
+#include "SDI_hook.h"
+#include "Debug.h"
+//#include "private.h"
 #include "ScrollGroup.h"
 
 struct MUI_CustomClass* ThisClass = NULL;
@@ -70,17 +74,35 @@ struct GraphicsIFace*     IGraphics = NULL;
 struct UtilityIFace*      IUtility = NULL;
 #endif
 
-DISPATCHERPROTO(_Dispatcher);
+extern ULONG GetHTMLviewDataSize(void);
+
+extern void _init(void);
+extern void _fini(void);
+
+ULONG xget(Object *obj, const ULONG attr);
+#if defined(__GNUC__) || ((__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L))
+  // please note that we do not evaluate the return value of GetAttr()
+  // as some attributes (e.g. MUIA_Selected) always return FALSE, even
+  // when they are supported by the object. But setting b=0 right before
+  // the GetAttr() should catch the case when attr doesn't exist at all
+  #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
+#endif
 
 HOOKPROTONH(GotoURLCode, ULONG, Object* htmlview, STRPTR *url)
 {
 	STRPTR target = (STRPTR)xget(htmlview, MUIA_HTMLview_Target);
-	
+
   DoMethod(htmlview, MUIM_HTMLview_GotoURL, *url, target);
 
   return 0;
 }
 MakeStaticHook(GotoURLHook, GotoURLCode);
+
+CPPDISPATCHERGATE(_Dispatcher);
+CPPDISPATCHERGATE(ScrollGroupDispatcher);
+#ifdef USEMUISTRINGS
+CPPDISPATCHERGATE(StringDispatcher);
+#endif
 
 Object *BuildApp(void)
 {
@@ -167,6 +189,7 @@ Object *BuildApp(void)
 
 				Child, BalanceObject, End,
 */
+/*
 #ifndef __amigaos4__
 #ifndef __MORPHOS__
 //				Child, ScrollgroupObject,
@@ -176,6 +199,7 @@ Object *BuildApp(void)
 					End,
 #endif
 #endif
+*/
 
 				Child, ColGroup(2),
 					MUIA_Group_Spacing, 0,
@@ -291,6 +315,9 @@ void *mempool;
 
 int main(void)
 {
+  kprintf("%s\n", __FUNCTION__);
+  _init();
+
   #if defined(__libnix__)
   mempool = CreatePool(MEMF_CLEAR | MEMF_SEM_PROTECTED, 12*1024, 6*1024);
   #endif
@@ -333,10 +360,11 @@ int main(void)
     if((MUIMasterBase = OpenLibrary("muimaster.library", MUIMASTER_VMIN)) &&
       GETINTERFACE(IMUIMaster, struct MUIMasterIFace*, MUIMasterBase))
     {
-		  ThisClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(HTMLviewData), ENTRY(_Dispatcher));
-			ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, sizeof(ScrollGroupData), ENTRY(ScrollGroupDispatcher));
-
   		Object *app;
+
+		  ThisClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, GetHTMLviewDataSize(), CPPDISPATCHERENTRY(_Dispatcher));
+			ScrollGroupClass = MUI_CreateCustomClass(NULL, MUIC_Virtgroup, NULL, GetScrollGroupDataSize(), CPPDISPATCHERENTRY(ScrollGroupDispatcher));
+
 	  	if((app = BuildApp()))
 		  {
 			  MainLoop(app);
@@ -418,97 +446,9 @@ int main(void)
     }
 	}
 
+  _fini();
+
 
   RETURN(0);
   return 0;
 }
-
-extern "C" {
-
-// C++ virtual table init functions
-extern void _INIT_4_InitMem(void);
-extern void _INIT_5_CMapMutex(void);
-extern void _INIT_6_CharTables(void);
-extern void _INIT_7_BuildTagTree(void);
-extern void _INIT_7_BuildColourTree(void);
-extern void _INIT_7_BuildEntityTree(void);
-extern void _INIT_7_PrepareDecoders(void);
-//extern void _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame(void);
-//extern void _Z41__static_initialization_and_destruction_0ii(uint32, uint32);
-
-__attribute__((constructor)) void AAA_call_constructors(void)
-{
-  // call the virtual tables setup in the
-  // correct priority
-  _INIT_4_InitMem();
-  _INIT_5_CMapMutex();
-  _INIT_6_CharTables();
-  _INIT_7_BuildTagTree();
-  _INIT_7_BuildColourTree();
-  _INIT_7_BuildEntityTree();
-  _INIT_7_PrepareDecoders();
-//    _GLOBAL__I__ZN14ImageCacheItemC2EPcP12PictureFrame();
-//    _Z41__static_initialization_and_destruction_0ii(1, 65535);
-}
-
-// C++ virtual table exit/cleanup functions
-extern void _EXIT_4_CleanupMem(void);
-extern void _EXIT_7_FlushDecoders(void);
-extern void _EXIT_7_DisposeTagTree(void);
-extern void _EXIT_7_DisposeColourTree(void);
-extern void _EXIT_7_DisposeEntityTree(void);
-
-__attribute__((destructor)) void ____call_destructors(void)
-{
-  // cleanup the virtual tables of various
-  // classes
-  _EXIT_7_FlushDecoders();
-  _EXIT_7_DisposeTagTree();
-  _EXIT_7_DisposeColourTree();
-  _EXIT_7_DisposeEntityTree();
-  _EXIT_4_CleanupMem();
-}
-
-#if defined(__libnix__)
-//static void *mempool;
-
-void *malloc(size_t size)
-{
-	ULONG *p = NULL;
-
-	if (!mempool)
-	{
-		mempool = CreatePool(MEMF_CLEAR | MEMF_SEM_PROTECTED, 12*1024, 6*1024);
-
-		if (!mempool)
-			return p;
-	}
-
-	if (size)
-	{
-		size += 4;
-
-		//p = (ULONG *)AllocPooledAligned(mempool, size, 8, 4);
-		p = (ULONG *)AllocPooled(mempool, size);
-
-		if (p)
-		{
-			*p++ = size;
-		}
-	}
-
-	return (void *)p;
-}
-
-void free(void *p)
-{
-	if (p && mempool)
-	{
-		ULONG size, *ptr = (ULONG *)p;
-		size = *--ptr;
-		FreePooled(mempool, ptr, size);
-	}
-}
-#endif
-
-} // extern "C"

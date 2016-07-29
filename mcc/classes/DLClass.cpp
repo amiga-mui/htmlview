@@ -53,7 +53,7 @@ VOID DLClass::MinMax (struct MinMaxMessage &mmsg)
   mmsg.Indent -= 5;
 }
 
-VOID DLClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID DLClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

@@ -32,7 +32,7 @@ class FramesetClass : public TreeClass
   public:
     FramesetClass () : TreeClass() { ; }
     ~FramesetClass () { delete ColumnsStr; delete RowsStr; delete Columns; delete Rows; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     BOOL Layout (struct LayoutMessage &lmsg);
     VOID Render (struct RenderMessage &rmsg);
     Object *LookupFrame (STRPTR name, class HostClass *hclass);

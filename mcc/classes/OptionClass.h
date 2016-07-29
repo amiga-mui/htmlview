@@ -32,7 +32,7 @@ class OptionClass : public TreeClass
   public:
     OptionClass () : TreeClass() { ; }
     ~OptionClass () { delete Value; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 
 //  protected:
     STRPTR Value, Contents;

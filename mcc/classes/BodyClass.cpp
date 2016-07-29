@@ -121,7 +121,7 @@ BOOL BodyClass::Layout (struct LayoutMessage &lmsg)
   return TRUE;
 }
 
-VOID BodyClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID BodyClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

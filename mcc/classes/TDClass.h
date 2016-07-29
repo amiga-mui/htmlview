@@ -38,7 +38,7 @@ class TDClass : public BackFillClass
       VAlignment = Align_Middle;
     }
     ~TDClass () { delete GivenWidth; }
-    virtual VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    virtual VOID Parse (struct ParseMessage &pmsg);
     VOID TDMinMax (struct MinMaxMessage &mmsg);
     BOOL TDLayout (struct LayoutMessage &lmsg);
     VOID AdjustPosition (LONG x, LONG y);

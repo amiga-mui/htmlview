@@ -56,7 +56,7 @@ VOID BrClass::MinMax (struct MinMaxMessage &mmsg)
   Flags |= FLG_KnowsMinMax;
 }
 
-VOID BrClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID BrClass::Parse(struct ParseMessage &pmsg)
 {
   AttrClass::Parse(pmsg);
   pmsg.SkipSpaces();

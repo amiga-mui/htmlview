@@ -221,7 +221,7 @@ VOID TDClass::TDMinMax (struct MinMaxMessage &mmsg)
     *mmsg.RowOpenCounts++ = RowSpan-1;
 }
 
-VOID TDClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TDClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

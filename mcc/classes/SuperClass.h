@@ -37,8 +37,8 @@ class SuperClass
   public:
     SuperClass() {}
     virtual ~SuperClass() {}
-    
-    virtual VOID Parse(REG(a2, struct ParseMessage& pmsg)) = 0;
+
+    virtual VOID Parse(struct ParseMessage& pmsg) = 0;
     virtual BOOL Layout(struct LayoutMessage& lmsg) = 0;
 
     virtual VOID AppendGadget(struct AppendGadgetMessage&) {}

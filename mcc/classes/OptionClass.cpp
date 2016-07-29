@@ -27,7 +27,7 @@
 #include "ScanArgs.h"
 #include <new>
 
-VOID OptionClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID OptionClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();

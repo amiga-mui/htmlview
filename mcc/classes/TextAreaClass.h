@@ -32,7 +32,7 @@ class TextAreaClass : public TreeClass
   public:
     TextAreaClass () : TreeClass() { Flags |= FLG_Gadget; }
     ~TextAreaClass () { delete Name; delete Contents; }
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
     VOID AppendGadget (struct AppendGadgetMessage &amsg);
     VOID MinMax (struct MinMaxMessage &mmsg);
     BOOL Layout (struct LayoutMessage &lmsg);
@@ -46,6 +46,6 @@ class TextAreaClass : public TreeClass
     LONG Left, Baseline;
     ULONG Columns, Rows, Width, Height;
     Object *MUIGadget;
-};            
+};
 
 #endif // TEXTAREACLASS_H

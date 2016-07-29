@@ -32,7 +32,7 @@ class BackFillClass : public TreeClass
   public:
     BackFillClass () : TreeClass() { BackgroundRGB = -1; }
     ~BackFillClass ();
-    VOID Parse (REG(a2, struct ParseMessage &pmsg));
+    VOID Parse (struct ParseMessage &pmsg);
 
     VOID FindImage (struct LayoutMessage &lmsg);
     VOID GetImages (struct GetImagesMessage &gmsg);

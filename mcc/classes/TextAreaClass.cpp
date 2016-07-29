@@ -137,7 +137,7 @@ VOID TextAreaClass::MinMax (struct MinMaxMessage &mmsg)
   }
 }
 
-VOID TextAreaClass::Parse(REG(a2, struct ParseMessage &pmsg))
+VOID TextAreaClass::Parse(struct ParseMessage &pmsg)
 {
   pmsg.SetLock();
   pmsg.NextEndBracket();
