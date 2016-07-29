@@ -25,6 +25,8 @@
 
 #include <intuition/classusr.h>
 
+struct HTMLviewData;
+
 extern STRPTR ImageDecoderName;
 
 LONG MyTextLength(struct TextFont *font, STRPTR text, LONG length);
