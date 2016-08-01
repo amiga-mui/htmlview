@@ -294,7 +294,7 @@
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
     {{NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL}
 
-  #if !defined(__amigaos4__)
+  #if defined(__amigaos4__)
     #define MakeCppHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
       (HOOKFUNC)funcname, NULL, NULL}
     #define MakeCppHookWithData(hookname, funcname, data) struct Hook hookname =  \
