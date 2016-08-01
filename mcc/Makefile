@@ -157,7 +157,7 @@ ifeq ($(OS), os4)
   # Compiler/Linker flags
   CRT      = newlib
   CPU      = -mcpu=powerpc
-  WARN     += -Wno-unused-parameter -Wno-narrowing
+  WARN     += -Wno-unused-parameter -Wno-narrowing -Wno-sign-compare
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               -D__USE_CLASSIC_MINTERM__ -Wa,-mregnames -DNO_PPCINLINE_STDARG
   LDFLAGS  += -mcrt=$(CRT)
