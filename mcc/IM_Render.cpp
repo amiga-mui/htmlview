@@ -167,7 +167,7 @@ BOOL RenderEngine::AllocateFrame (ULONG width, ULONG height, ULONG animdelay, UL
           FreeBitMap(TmpRP.BitMap);
         }
 
-        if(!(TmpRP.BitMap = AllocBitMap((width+15) & ~15, 1, 8, NULL, friend_bmp)))
+        if(!(TmpRP.BitMap = AllocBitMap((width+15) & ~15, 1, 8, 0, friend_bmp)))
           goto error;
       }
 
