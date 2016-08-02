@@ -178,7 +178,8 @@ ifeq ($(OS), os3)
   OBJDUMP = m68k-amigaos-objdump
 
   # Compiler/Linker flags
-  CPU	    = -m68020-60 -msoft-float
+  CPU	  = -m68020-60 -msoft-float
+  WARN    += -Wno-sign-compare
   CFLAGS  += -noixemul -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug -lmui
