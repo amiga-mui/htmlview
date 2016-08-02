@@ -22,6 +22,7 @@
 
 #include <proto/exec.h>
 #include <proto/muimaster.h>
+#include <string.h>
 
 /******************************************************************************/
 /*                                                                            */
