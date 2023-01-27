@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build-os3-debug:
+  build-os3:
     runs-on: ubuntu-latest
 
     steps:
