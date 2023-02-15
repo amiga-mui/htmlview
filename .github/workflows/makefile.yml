@@ -1,0 +1,34 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-os3:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run the build process with Docker
+      uses: addnab/docker-run-action@v3
+      with:
+        image: amigadev/crosstools:m68k-amigaos
+        options: -v ${{ github.workspace }}:/work
+        run: |
+          cd mcc
+          make OS=os3 DEBUG=
+          cd ../mcp
+          make OS=os3 DEBUG=
+          
+    - uses: actions/upload-artifact@v3
+      with:
+        name: HTMLview_os3
+        path: |
+          bin_os3/HTMLview.mcp
+          bin_os3/HTMLview-Prefs
+          bin_os3/HTMLview.mcc
+          bin_os3/HTMLview-Test
